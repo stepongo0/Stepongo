@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StepOnGo Inventory Panel</title>
+  <style>
+    /* Universal Box-Sizing and Font */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+
+    /* Body Styling */
+    body { background: #f4f4f4; color: #333; }
+
+    /* Header Styling */
+    header { background: #0c4c94; color: white; padding: 1rem 2rem; text-align: center; }
+
+    /* Main Container Styling */
+    .container {
+      padding: 2vw; /* Flexible padding based on viewport width */
+      max-width: 1200px; /* Maximum width for larger screens */
+      width: 95%; /* Occupy 95% of viewport width */
+      margin: auto; /* Center the container */
+      display: flex; /* Use flexbox for panel arrangement */
+      flex-direction: column; /* Panels stack vertically by default (for small screens) */
+      gap: 1.5rem; /* Space between panels */
+    }
+
+    /* Panel Styling */
+    .panel {
+      background: white;
+      padding: 1rem 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 0; /* 'gap' handles spacing between panels now */
+    }
+
+    h2 { margin-bottom: 1rem; }
+
+    /* Button Styling */
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      background: #0c4c94;
+      color: white;
+      cursor: pointer;
+      margin: 0.5rem 0;
+      /* Ensure button text is centered if needed */
+      display: inline-block; /* For proper padding and margin */
+      text-decoration: none; /* Remove underline for anchor buttons */
+    }
+    .btn:hover { background: #093b74; }
+
+    /* Table Styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      /* Responsive Table Specifics for small screens */
+      display: block; /* Allows table to be treated as a block for overflow */
+      overflow-x: auto; /* Enables horizontal scrolling for wider content */
+      white-space: nowrap; /* Prevents text from wrapping within cells */
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.8rem;
+      text-align: left;
+      min-width: 120px; /* Ensures minimum width for columns on small screens */
+    }
+    th { background: #0c4c94; color: white; }
+    tr:nth-child(even) { background: #f9f9f9; }
+
+    /* Low Stock Status Styling */
+    .low-stock { color: red; font-weight: bold; }
+
+    /* Form Input Styling */
+    .form-input { margin: 0.5rem 0; display: flex; flex-direction: column; }
+    .form-input input, .form-input select { padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px; }
+
+    /* Hardware Store Section Styling */
+    .hardware-store { background: #eef; padding: 1rem; margin: 1rem 0; border-radius: 10px; }
+    .hardware-store h4 { margin-bottom: 0.3rem; }
+
+    /* --- Media Queries for Responsiveness --- */
+
+    /* For Tablets (screens wider than 600px) */
+    @media (min-width: 601px) {
+      header {
+        padding: 1.5rem 3rem; /* Slightly more padding for header */
+      }
+      .container {
+        padding: 3vw; /* Adjust container padding */
+        gap: 2rem; /* Increase space between panels */
+      }
+      /* Remove min-width and allow text wrap for table cells on larger screens */
+      th, td {
+          min-width: unset;
+          white-space: normal;
+      }
+    }
+
+    /* For Laptops and Desktops (screens wider than 900px) */
+    @media (min-width: 901px) {
+      header {
+        padding: 2rem 4rem; /* More padding for header */
+      }
+      .container {
+        flex-direction: row; /* Arrange panels side-by-side */
+        flex-wrap: wrap; /* Allow panels to wrap to the next line */
+        justify-content: space-between; /* Distribute space evenly */
+        padding: 4vw; /* More padding for larger screens */
+      }
+      .panel {
+        flex: 1 1 48%; /* Each panel takes roughly 48% of the width, allowing two columns */
+        max-width: 48%; /* Ensures panels don't grow too large */
+      }
+    }
+
+    /* For very large screens (e.g., 1400px and up) - Optional: set a fixed max padding */
+    @media (min-width: 1400px) {
+      .container {
+        padding: 3rem; /* Set a fixed large padding */
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>StepOnGo Inventory Management Panel</h1>
+  </header>
+
+  <div class="container">
+    <div class="panel">
+      <h2>Current Inventory</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Material</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="inventoryTable">
+          </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2>Add / Update Inventory</h2>
+      <div class="form-input">
+        <label for="itemNameInput">Material Name</label>
+        <input type="text" id="itemNameInput" placeholder="e.g., Cement, Rod, Tiles" />
+      </div>
+      <div class="form-input">
+        <label for="itemQtyInput">Quantity</label>
+        <input type="number" id="itemQtyInput" />
+      </div>
+      <div class="form-input">
+        <label for="itemUnitSelect">Unit</label>
+        <select id="itemUnitSelect">
+          <option>kg</option>
+          <option>bags</option>
+          <option>tons</option>
+          <option>pieces</option>
+          <option>sq ft</option>
+        </select>
+      </div>
+      <button class="btn" onclick="addItem()">Add / Update Item</button>
+    </div>
+
+    <div class="panel">
+      <h2>Nearby Hardware Shops</h2>
+      <div class="hardware-store">
+        <h4>Shree Laxmi Hardware Mart</h4>
+        <p>Location: Malda Town Market</p>
+        <p>Contact: 9800001111</p>
+        <a href="tel:+919800001111" class="btn">Call Now</a>
+      </div>
+      <div class="hardware-store">
+        <h4>Jai Bajrang Cement Depot</h4>
+        <p>Location: Old Station Road</p>
+        <p>Contact: 9833332222</p>
+        <a href="tel:+919833332222" class="btn">Call Now</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const inventory = []; // Array to store inventory items
+
+    /**
+     * Adds a new item or updates the quantity of an existing item in the inventory.
+     */
+    function addItem() {
+      const name = document.getElementById('itemNameInput').value.trim();
+      const qty = parseFloat(document.getElementById('itemQtyInput').value);
+      const unit = document.getElementById('itemUnitSelect').value;
+
+      if (!name || isNaN(qty) || qty <= 0) { // Check for valid name and positive quantity
+        alert("Please enter a valid material name and a positive quantity.");
+        return;
+      }
+
+      const existing = inventory.find(item => item.name.toLowerCase() === name.toLowerCase());
+      if (existing) {
+        existing.qty += qty; // Add to existing quantity
+      } else {
+        inventory.push({ name, qty, unit }); // Add as a new item
+      }
+
+      renderTable(); // Re-render the inventory table
+      // Clear form fields after adding/updating
+      document.getElementById('itemNameInput').value = '';
+      document.getElementById('itemQtyInput').value = '';
+    }
+
+    /**
+     * Renders/updates the inventory table based on the 'inventory' array.
+     */
+    function renderTable() {
+      const table = document.getElementById('inventoryTable');
+      table.innerHTML = ''; // Clear existing table rows
+
+      if (inventory.length === 0) {
+        table.innerHTML = <tr><td colspan="5" style="text-align: center; padding: 1rem;">No items in inventory. Add some!</td></tr>;
+        return;
+      }
+
+      inventory.forEach((item, i) => {
+        // Determine status: "Low" if quantity < 10, otherwise "Available"
+        const status = item.qty < 10 ? <span class='low-stock'>Low</span> : 'Available';
+        table.innerHTML += `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.qty}</td>
+            <td>${item.unit}</td>
+            <td>${status}</td>
+            <td>
+              <button class="btn" onclick="deleteItem(${i})">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    /**
+     * Deletes an item from the inventory based on its index.
+     * @param {number} index - The index of the item to delete.
+     */
+    function deleteItem(index) {
+      if (confirm("Are you sure you want to delete this item?")) {
+        inventory.splice(index, 1); // Remove item from array
+        renderTable(); // Re-render table
+      }
+    }
+
+    // Initial render when the page loads
+    document.addEventListener('DOMContentLoaded', renderTable);
+  </script>
+</body>
+</html>

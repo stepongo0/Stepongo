@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StepOnGo Developer Panel</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+    }
+    header {
+      background-color: #007BFF;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .container {
+      padding: 20px;
+    }
+    .map-section {
+      margin-bottom: 20px;
+    }
+    #map {
+      height: 300px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .search-box {
+      margin-bottom: 15px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background: #007BFF;
+      color: white;
+    }
+    .notification {
+      background: #ffc107;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+    .btn {
+      padding: 5px 10px;
+      border: none;
+      background: #007BFF;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .btn:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<header>StepOnGo Developer Project Panel</header>
+
+<div class="container">
+
+  <div class="notification" id="alertBox">
+    🚧 Contractor Rahul reported delay due to rain – 10 June, 9:20 AM.
+  </div>
+
+  <div class="map-section">
+    <h3>Live Site Map</h3>
+    <div id="map"></div>
+  </div>
+
+  <div>
+    <h3>Contractor Activities</h3>
+    <input type="text" id="searchInput" class="search-box" placeholder="Search contractor..." />
+    <table>
+      <thead>
+        <tr>
+          <th>Name <button onclick="sortByName()" class="btn">Sort</button></th>
+          <th>Task</th>
+          <th>Status</th>
+          <th>Last Update</th>
+        </tr>
+      </thead>
+      <tbody id="contractorTableBody">
+        <!-- Data will be inserted via JS -->
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+  // Live Map
+  const map = L.map('map').setView([22.5726, 88.3639], 13); // Kolkata coordinates
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  const marker = L.marker([22.5726, 88.3639]).addTo(map)
+    .bindPopup('Live Site: RCC Tower Construction')
+    .openPopup();
+
+  // Contractor Mock Data
+  let contractors = [
+    { name: "Ajay Mistri", task: "Reinforcement Binding", status: "Working", update: "10 June, 09:45 AM" },
+    { name: "Rahul Roy", task: "Cement Pouring", status: "Delayed", update: "10 June, 09:20 AM" },
+    { name: "Manoj Das", task: "Welding Work", status: "Working", update: "10 June, 09:10 AM" }
+  ];
+
+  function renderTable(data) {
+    const tbody = document.getElementById("contractorTableBody");
+    tbody.innerHTML = "";
+    data.forEach(item => {
+      const row = `<tr>
+        <td>${item.name}</td>
+        <td>${item.task}</td>
+        <td>${item.status}</td>
+        <td>${item.update}</td>
+      </tr>`;
+      tbody.innerHTML += row;
+    });
+  }
+
+  function sortByName() {
+    contractors.sort((a, b) => a.name.localeCompare(b.name));
+    renderTable(contractors);
+  }
+
+  document.getElementById("searchInput").addEventListener("input", function () {
+    const keyword = this.value.toLowerCase();
+    const filtered = contractors.filter(item => item.name.toLowerCase().includes(keyword));
+    renderTable(filtered);
+  });
+
+  // Initial Load
+  renderTable(contractors);
+</script>
+
+</body>
+</html>

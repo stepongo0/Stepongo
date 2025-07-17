@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StepOnGo - Labour Documents</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a73e8; /* Google Blue */
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #3f51b5; /* Deeper Blue */
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        h2 i {
+            color: #1a73e8;
+        }
+
+        h3 {
+            color: #424242;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .document-category {
+            margin-bottom: 40px;
+        }
+
+        .document-panel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .document-panel {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 180px; /* Ensure consistent height */
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .document-panel:hover {
+            transform: translateY(-5px);
+        }
+
+        .status-indicator {
+            font-size: 0.9em;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-indicator i {
+            font-size: 1.1em;
+        }
+
+        .verified {
+            background-color: #e6ffe6;
+            color: #28a745; /* Green */
+            border: 1px solid #28a745;
+        }
+
+        .pending {
+            background-color: #fffacd; /* Light Yellow */
+            color: #ffc107; /* Orange */
+            border: 1px solid #ffc107;
+        }
+
+        .not-uploaded {
+            background-color: #ffe6e6;
+            color: #dc3545; /* Red */
+            border: 1px solid #dc3545;
+        }
+
+        .not-required, .not-applicable {
+            background-color: #e9ecef; /* Light Grey */
+            color: #6c757d; /* Dark Grey */
+            border: 1px solid #6c757d;
+        }
+
+        .file-info {
+            font-size: 0.85em;
+            color: #555;
+            margin-bottom: 15px;
+            word-break: break-word; /* Prevent long filenames from breaking layout */
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: auto; /* Push buttons to the bottom */
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+        }
+
+        .panel-actions button,
+        .panel-actions label {
+            flex: 1; /* Distribute space evenly */
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            display: inline-flex; /* For icon and text alignment */
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            white-space: nowrap; /* Prevent text wrapping on buttons */
+        }
+
+        .view-btn {
+            background-color: #6c757d; /* Bootstrap Secondary */
+            color: #fff;
+        }
+
+        .view-btn:hover:not(:disabled) {
+            background-color: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .upload-btn {
+            background-color: #1a73e8; /* Google Blue */
+            color: #fff;
+        }
+
+        .upload-btn:hover:not(:disabled) {
+            background-color: #1669db;
+            transform: translateY(-1px);
+        }
+
+        .panel-actions button.disabled,
+        .panel-actions label.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: #cccccc !important; /* Override hover for disabled */
+            transform: none !important;
+        }
+
+        .panel-actions label[for] {
+            cursor: pointer;
+        }
+
+        .legal-compliance-info {
+            background-color: #e3f2fd; /* Light Blue */
+            border: 1px solid #90caf9;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 50px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .legal-compliance-info h2 {
+            color: #1976d2;
+            border-bottom: 1px solid #bbdefb;
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .legal-compliance-info ul {
+            list-style: disc inside;
+            padding-left: 0;
+        }
+
+        .legal-compliance-info li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .document-panel-grid {
+                grid-template-columns: 1fr; /* Stack panels on small screens */
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .panel-actions button,
+            .panel-actions label {
+                flex: auto; /* Buttons will take full width */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Labour Document Management</h1>
+
+        <div class="document-category">
+            <h2><i class="fas fa-id-card"></i> Mandatory Documents (ID & Address Proof)</h2>
+            <div class="document-panel-grid">
+                <div class="document-panel" id="aadhaar-panel">
+                    <h3>Aadhaar Card</h3>
+                    <div class="status-indicator not-uploaded">
+                        <i class="fas fa-times-circle"></i> Not Uploaded
+                    </div>
+                    <p class="file-info">No file uploaded</p>
+                    <div class="panel-actions">
+                        <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                        <label for="aadhaar-upload" class="upload-btn"><i class="fas fa-upload"></i> Upload/Update</label>
+                        <input type="file" id="aadhaar-upload" accept=".pdf,.jpg,.png" hidden>
+                    </div>
+                </div>
+
+                <div class="document-panel" id="pan-voter-panel">
+                    <h3>PAN Card / Voter ID</h3>
+                    <div class="status-indicator not-uploaded">
+                        <i class="fas fa-times-circle"></i> Not Uploaded
+                    </div>
+                    <p class="file-info">No file uploaded</p>
+                    <div class="panel-actions">
+                        <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                        <label for="pan-voter-upload" class="upload-btn"><i class="fas fa-upload"></i> Upload/Update</label>
+                        <input type="file" id="pan-voter-upload" accept=".pdf,.jpg,.png" hidden>
+                    </div>
+                </div>
+
+                <div class="document-panel" id="photo-panel">
+                    <h3>Passport-sized Photograph</h3>
+                    <div class="status-indicator not-uploaded">
+                        <i class="fas fa-times-circle"></i> Not Uploaded
+                    </div>
+                    <p class="file-info">No file uploaded</p>
+                    <div class="panel-actions">
+                        <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                        <label for="photo-upload" class="upload-btn"><i class="fas fa-upload"></i> Upload/Update</label>
+                        <input type="file" id="photo-upload" accept=".jpg,.png" hidden>
+                    </div>
+                </div>
+
+                <div class="document-panel" id="bank-panel">
+                    <h3>Bank Passbook / Account Details</h3>
+                    <div class="status-indicator not-uploaded">
+                        <i class="fas fa-times-circle"></i> Not Uploaded
+                    </div>
+                    <p class="file-info">No file uploaded</p>
+                    <div class="panel-actions">
+                        <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                        <label for="bank-upload" class="upload-btn"><i class="fas fa-upload"></i> Upload/Update</label>
+                        <input type="file" id="bank-upload" accept=".pdf,.jpg,.png" hidden>
+                    </div>
+                </div>
+
+                <div class="document-panel" id="mobile-panel">
+                    <h3>Mobile Number Proof</h3>
+                    <div class="status-indicator verified">
+                        <i class="fas fa-check-circle"></i> Verified
+                    </div>
+                    <p class="file-info">9876543210 (Linked & Verified)</p>
+                    <div class="panel-actions">
+                         <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                         <button class="upload-btn disabled" disabled><i class="fas fa-upload"></i> Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="document-category">
+            <h2><i class="fas fa-sticky-note"></i> Optional but Recommended Documents</h2>
+            <div class="document-panel-grid">
+                <div class="document-panel" id="ration-panel">
+                    <h3>Ration Card / Local Address Proof</h3>
+                    <div class="status-indicator not-uploaded">
+                        <i class="fas fa-times-circle"></i> Not Uploaded
+                    </div>
+                    <p class="file-info">No file uploaded</p>
+                    <div class="panel-actions">
+                        <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                        <label for="ration-upload" class="upload-btn"><i class="fas fa-upload"></i> Upload</label>
+                        <input type="file" id="ration-upload" accept=".pdf,.jpg,.png" hidden>
+                    </div>
+                </div>
+
+                <div class="document-panel" id="birth-school-panel">
+                    <h3>Birth/School Certificate (Age Proof)</h3>
+                    <div class="status-indicator not-uploaded">
+                        <i class="fas fa-times-circle"></i> Not Uploaded
+                    </div>
+                    <p class="file-info">No file uploaded</p>
+                    <div class="panel-actions">
+                        <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                        <label for="birth-school-upload" class="upload-btn"><i class="fas fa-upload"></i> Upload</label>
+                        <input type="file" id="birth-school-upload" accept=".pdf,.jpg,.png" hidden>
+                    </div>
+                </div>
+
+                <div class="document-panel" id="esic-uan-panel">
+                    <h3>ESIC Card / UAN (EPFO)</h3>
+                    <div class="status-indicator not-required">
+                        <i class="fas fa-info-circle"></i> Not Required
+                    </div>
+                    <p class="file-info">N/A for this worker</p>
+                    <div class="panel-actions">
+                        <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                        <label for="esic-uan-upload" class="upload-btn"><i class="fas fa-upload"></i> Upload</label>
+                        <input type="file" id="esic-uan-upload" accept=".pdf,.jpg,.png" hidden>
+                    </div>
+                </div>
+
+                <div class="document-panel" id="police-verify-panel">
+                    <h3>Police Verification Certificate</h3>
+                    <div class="status-indicator not-uploaded">
+                        <i class="fas fa-times-circle"></i> Not Uploaded
+                    </div>
+                    <p class="file-info">No file uploaded</p>
+                    <div class="panel-actions">
+                        <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                        <label for="police-verify-upload" class="upload-btn"><i class="fas fa-upload"></i> Upload</label>
+                        <input type="file" id="police-verify-upload" accept=".pdf,.jpg,.png" hidden>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="document-category">
+            <h2><i class="fas fa-tools"></i> For Skilled Workers</h2>
+            <div class="document-panel-grid">
+                <div class="document-panel" id="skill-cert-panel">
+                    <h3>Skill Certification</h3>
+                    <div class="status-indicator not-uploaded">
+                        <i class="fas fa-times-circle"></i> Not Uploaded
+                    </div>
+                    <p class="file-info">No file uploaded</p>
+                    <div class="panel-actions">
+                        <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                        <label for="skill-cert-upload" class="upload-btn"><i class="fas fa-upload"></i> Upload/Update</label>
+                        <input type="file" id="skill-cert-upload" accept=".pdf,.jpg,.png" hidden>
+                    </div>
+                </div>
+
+                <div class="document-panel" id="experience-letter-panel">
+                    <h3>Experience Letter</h3>
+                    <div class="status-indicator not-uploaded">
+                        <i class="fas fa-times-circle"></i> Not Uploaded
+                    </div>
+                    <p class="file-info">No file uploaded</p>
+                    <div class="panel-actions">
+                        <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                        <label for="experience-letter-upload" class="upload-btn"><i class="fas fa-upload"></i> Upload</label>
+                        <input type="file" id="experience-letter-upload" accept=".pdf,.jpg,.png" hidden>
+                    </div>
+                </div>
+
+                <div class="document-panel" id="trade-license-panel">
+                    <h3>Trade License / Contractor ID</h3>
+                    <div class="status-indicator not-applicable">
+                        <i class="fas fa-minus-circle"></i> Not Applicable
+                    </div>
+                    <p class="file-info">Not applicable for this role</p>
+                    <div class="panel-actions">
+                        <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                        <label for="trade-license-upload" class="upload-btn"><i class="fas fa-upload"></i> Upload</label>
+                        <input type="file" id="trade-license-upload" accept=".pdf,.jpg,.png" hidden>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="document-category">
+            <h2><i class="fas fa-heartbeat"></i> Health & Safety Documents</h2>
+            <div class="document-panel-grid">
+                <div class="document-panel" id="medical-fitness-panel">
+                    <h3>Medical Fitness Certificate</h3>
+                    <div class="status-indicator not-uploaded">
+                        <i class="fas fa-times-circle"></i> Not Uploaded
+                    </div>
+                    <p class="file-info">No file uploaded</p>
+                    <div class="panel-actions">
+                        <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                        <label for="medical-fitness-upload" class="upload-btn"><i class="fas fa-upload"></i> Upload/Update</label>
+                        <input type="file" id="medical-fitness-upload" accept=".pdf,.jpg,.png" hidden>
+                    </div>
+                </div>
+
+                <div class="document-panel" id="vaccination-panel">
+                    <h3>Vaccination Certificate</h3>
+                    <div class="status-indicator not-uploaded">
+                        <i class="fas fa-times-circle"></i> Not Uploaded
+                    </div>
+                    <p class="file-info">No file uploaded</p>
+                    <div class="panel-actions">
+                        <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                        <label for="vaccination-upload" class="upload-btn"><i class="fas fa-upload"></i> Upload</label>
+                        <input type="file" id="vaccination-upload" accept=".pdf,.jpg,.png" hidden>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="document-category">
+            <h2><i class="fas fa-plane"></i> For Migrant or Interstate Labour</h2>
+            <div class="document-panel-grid">
+                <div class="document-panel" id="migration-noc-panel">
+                    <h3>Migration Certificate / NOC</h3>
+                    <div class="status-indicator not-applicable">
+                        <i class="fas fa-minus-circle"></i> Not Applicable
+                    </div>
+                    <p class="file-info">Worker is local</p>
+                    <div class="panel-actions">
+                        <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                        <label for="migration-noc-upload" class="upload-btn"><i class="fas fa-upload"></i> Upload</label>
+                        <input type="file" id="migration-noc-upload" accept=".pdf,.jpg,.png" hidden>
+                    </div>
+                </div>
+
+                <div class="document-panel" id="emergency-contact-panel">
+                    <h3>Emergency Contact Details</h3>
+                    <div class="status-indicator verified">
+                        <i class="fas fa-check-circle"></i> Verified
+                    </div>
+                    <p class="file-info">Family details provided</p>
+                    <div class="panel-actions">
+                         <button class="view-btn disabled" disabled><i class="fas fa-eye"></i> View</button>
+                         <button class="upload-btn disabled" disabled><i class="fas fa-upload"></i> Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="legal-compliance-info">
+            <h2><i class="fas fa-balance-scale"></i> Legal Compliance & Notes</h2>
+            <ul>
+                <li>Ensure age > 18 years (Child Labour Prohibition)</li>
+                <li>Record under CLRA Act, BOCW Act</li>
+                <li>Enroll in EPF/ESIC for long-term workers (as per Indian Labour Law)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fileInputs = document.querySelectorAll('input[type="file"]');
+            const uploadedFiles = {}; // Store uploaded files for client-side preview
+
+            fileInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const panel = this.closest('.document-panel');
+                    const fileInfo = panel.querySelector('.file-info');
+                    const statusIndicator = panel.querySelector('.status-indicator');
+                    const viewBtn = panel.querySelector('.view-btn');
+                    const documentId = panel.id; // Get the ID of the document panel
+
+                    if (this.files.length > 0) {
+                        const file = this.files[0];
+                        fileInfo.textContent = file.name;
+                        statusIndicator.className = 'status-indicator pending'; // Set to pending verification upon upload
+                        statusIndicator.innerHTML = '<i class="fas fa-hourglass-half"></i> Pending Verification';
+                        viewBtn.classList.remove('disabled');
+                        viewBtn.disabled = false;
+
+                        // Store the file in memory (for client-side preview)
+                        // This URL is temporary and valid only while the page is open
+                        uploadedFiles[documentId] = URL.createObjectURL(file);
+
+                        alert(`File "${file.name}" uploaded. Waiting for backend processing and verification.`);
+                        // In a real application, you would send 'file' to your backend here
+                        // via fetch() or XMLHttpRequest.
+                    } else {
+                        // If the file input is cleared (e.g., user selects then cancels)
+                        // Only reset if it wasn't a pre-existing "Linked & Verified" item
+                        if (!fileInfo.textContent.includes('No file uploaded') && !fileInfo.textContent.includes('Linked & Verified')) {
+                             fileInfo.textContent = 'No file uploaded';
+                             statusIndicator.className = 'status-indicator not-uploaded';
+                             statusIndicator.innerHTML = '<i class="fas fa-times-circle"></i> Not Uploaded';
+                             viewBtn.classList.add('disabled');
+                             viewBtn.disabled = true;
+                             delete uploadedFiles[documentId]; // Remove temporary URL
+                        }
+                    }
+                });
+            });
+
+            // Handle View button action
+            document.querySelectorAll('.view-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    if (!this.disabled) {
+                        const panel = this.closest('.document-panel');
+                        const documentId = panel.id; // Get the ID of the document panel
+
+                        const fileUrl = uploadedFiles[documentId]; // Retrieve the stored file URL
+
+                        if (fileUrl) {
+                            // If a file was uploaded in the current session, open its temporary URL
+                            window.open(fileUrl, '_blank');
+                        } else {
+                            // This part simulates behavior for documents that were
+                            // already uploaded and verified (e.g., from a database).
+                            // In a real app, you'd fetch the document's permanent URL from your server.
+                            const fileName = panel.querySelector('.file-info').textContent;
+                            if (fileName && fileName !== 'No file uploaded' && !fileName.includes('(Linked & Verified)') && !fileName.includes('N/A')) {
+                                alert(`Simulating view for pre-existing document: ${fileName}\nIn a real app, this would fetch the actual document from the server and open it.`);
+                            } else {
+                                alert('No document available to view for this item. Please upload one first.');
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Simulate general upload button behavior for disabled buttons (not for file input labels)
+            document.querySelectorAll('.upload-btn').forEach(button => {
+                if(button.tagName === 'BUTTON') { // Only target actual BUTTON elements
+                    button.addEventListener('click', function() {
+                        if (this.disabled) {
+                            alert('This action is currently disabled or not applicable.');
+                        }
+                    });
+                }
+            });
+
+            // Initial state setup for disabled view buttons
+            document.querySelectorAll('.document-panel').forEach(panel => {
+                const statusIndicator = panel.querySelector('.status-indicator');
+                const viewBtn = panel.querySelector('.view-btn');
+
+                // Disable view button if status is not-uploaded, not-required, not-applicable, or pending-upload
+                // (This ensures initial HTML state matches button disabled state)
+                if (statusIndicator.classList.contains('not-uploaded') ||
+                    statusIndicator.classList.contains('not-required') ||
+                    statusIndicator.classList.contains('not-applicable') ||
+                    // Although 'pending-upload' isn't explicitly set in initial HTML anymore,
+                    // keeping this for robustness if a 'pending-upload' class were introduced.
+                    statusIndicator.classList.contains('pending-upload')) {
+                    viewBtn.classList.add('disabled');
+                    viewBtn.disabled = true;
+                }
+                // Also explicitly disable if the file-info says 'No file uploaded'
+                if (panel.querySelector('.file-info').textContent === 'No file uploaded') {
+                     viewBtn.classList.add('disabled');
+                     viewBtn.disabled = true;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

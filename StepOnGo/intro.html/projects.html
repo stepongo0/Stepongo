@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StepOnGo Labour Project Panel</title>
+  <style>
+    /* General Body Styles */
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f7fa;
+      line-height: 1.6; /* Improved readability */
+    }
+
+    /* Header Styles */
+    header {
+      background: #1e88e5; /* Primary blue */
+      color: #fff;
+      padding: 1.2rem 2rem; /* Slightly more padding */
+      text-align: center;
+      font-size: 1.8rem; /* Slightly larger font */
+      font-weight: 600; /* Bolder header */
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15); /* Stronger shadow */
+    }
+
+    /* Container for Main Content */
+    .container {
+      max-width: 1000px;
+      margin: 25px auto; /* Increased margin for better spacing */
+      padding: 1.5rem; /* Increased padding */
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* More prominent shadow */
+    }
+
+    /* Filter Section Styles */
+    .filters {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem; /* Increased bottom margin */
+      flex-wrap: wrap;
+      justify-content: space-between; /* Distribute items evenly */
+    }
+
+    .filters input,
+    .filters select {
+      padding: 0.6rem 0.8rem; /* Slightly more padding */
+      border-radius: 6px; /* Slightly more rounded corners */
+      border: 1px solid #ccc;
+      flex: 1;
+      min-width: 160px; /* Slightly increased min-width */
+      font-size: 1rem; /* Consistent font size */
+      transition: border-color 0.3s ease; /* Smooth transition on focus */
+    }
+
+    .filters input:focus,
+    .filters select:focus {
+        border-color: #1e88e5; /* Highlight border on focus */
+        outline: none; /* Remove default outline */
+    }
+
+    /* Project Card Styles */
+    .project-card {
+      border: 1px solid #e0e0e0; /* Lighter border */
+      padding: 1.2rem; /* Increased padding */
+      border-radius: 8px;
+      margin-bottom: 1.2rem; /* Increased bottom margin */
+      background: #ffffff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04); /* Soft shadow for cards */
+      transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effect */
+    }
+
+    .project-card:hover {
+        transform: translateY(-3px); /* Lift card on hover */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* Enhance shadow on hover */
+    }
+
+    .project-title {
+      font-weight: 700; /* Bolder title */
+      font-size: 1.3rem; /* Slightly larger title */
+      color: #212121; /* Darker title color */
+      margin-bottom: 0.5rem;
+    }
+
+    .project-details p {
+      margin: 0.3rem 0; /* Adjust line spacing */
+      color: #555;
+    }
+
+    .project-details strong {
+      color: #333;
+    }
+
+    /* Status Tag Styles */
+    .status-tag {
+      display: inline-block;
+      padding: 4px 10px; /* More padding */
+      border-radius: 15px; /* More rounded, pill-like shape */
+      font-size: 0.8rem; /* Slightly smaller font for tag */
+      font-weight: 600; /* Bolder tag text */
+      color: white;
+      margin-left: 8px; /* Increased margin */
+      text-transform: uppercase; /* Uppercase text for status */
+      letter-spacing: 0.5px;
+    }
+
+    .status-ongoing {
+      background-color: #1e88e5; /* Primary blue for ongoing */
+    }
+
+    .status-completed {
+      background-color: #43a047; /* Green for completed */
+    }
+
+    /* Actions Button Styles */
+    .actions {
+      margin-top: 1rem;
+      text-align: right; /* Align button to the right */
+    }
+
+    .actions button {
+      padding: 0.6rem 1.2rem; /* More padding */
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+      font-size: 0.95rem; /* Slightly larger font */
+      transition: background-color 0.2s ease, transform 0.1s ease; /* Smooth hover effects */
+    }
+
+    .view-btn {
+      background: #42a5f5; /* Lighter blue for view button */
+    }
+
+    .view-btn:hover {
+        background: #2196f3; /* Darker blue on hover */
+        transform: translateY(-1px); /* Slight lift on hover */
+    }
+
+    /* No Projects Found Message */
+    #projectList p {
+        text-align: center;
+        color: #777;
+        padding: 30px; /* More padding */
+        font-style: italic;
+        font-size: 1.1rem; /* Slightly larger text */
+        background: #fdfdfd;
+        border-radius: 8px;
+        border: 1px dashed #e0e0e0; /* Dashed border for emphasis */
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .filters {
+            flex-direction: column;
+            gap: 0.8rem; /* Smaller gap on smaller screens */
+        }
+        .filters input,
+        .filters select {
+            min-width: unset; /* Allow full width */
+            width: 100%; /* Take full width */
+        }
+        .project-card {
+            padding: 1rem; /* Adjust padding for smaller screens */
+        }
+        header {
+            font-size: 1.4rem; /* Adjust header font size */
+        }
+    }
+  </style>
+</head>
+<body>
+
+<header>StepOnGo Labour Project Panel</header>
+
+<div class="container">
+  <div class="filters">
+    <input type="text" id="search" placeholder="Search Project Title or Contractor...">
+    <select id="statusFilter" aria-label="Filter by Status">
+      <option value="">All Statuses</option>
+      <option value="Ongoing">Ongoing</option>
+      <option value="Completed">Completed</option>
+    </select>
+    <select id="locationFilter" aria-label="Filter by Location">
+      <option value="">All Locations</option>
+      <option value="Kolkata">Kolkata</option>
+      <option value="Delhi">Delhi</option>
+      <option value="Mumbai">Mumbai</option>
+      <option value="Chennai">Chennai</option>
+      <option value="Bengaluru">Bengaluru</option>
+      <option value="Hyderabad">Hyderabad</option>
+      <option value="Ahmedabad">Ahmedabad</option>
+      <option value="Pune">Pune</option>
+      <option value="Lucknow">Lucknow</option>
+      <option value="Jaipur">Jaipur</option>
+      <option value="Bhopal">Bhopal</option>
+      <option value="Patna">Patna</option>
+      <option value="Ranchi">Ranchi</option>
+      <option value="Guwahati">Guwahati</option>
+      <option value="Bhubaneswar">Bhubaneswar</option>
+    </select>
+  </div>
+
+  <div id="projectList">
+    </div>
+</div>
+
+<script>
+  // Sample Project Data
+  const projects = [
+    {
+      id: 1,
+      title: "Residential Building Construction",
+      contractor: "Ramesh & Co.",
+      location: "Kolkata",
+      status: "Ongoing"
+    },
+    {
+      id: 2,
+      title: "Highway Road Repair",
+      contractor: "National Infra Ltd.",
+      location: "Delhi",
+      status: "Ongoing"
+    },
+    {
+      id: 3,
+      title: "Commercial Mall Setup",
+      contractor: "Elite BuildTech",
+      location: "Mumbai",
+      status: "Completed"
+    },
+    {
+      id: 4,
+      title: "Office Interior Renovation",
+      contractor: "Design Masters",
+      location: "Bengaluru",
+      status: "Ongoing"
+    },
+    {
+      id: 5,
+      title: "Bridge Construction",
+      contractor: "Mega Structures Inc.",
+      location: "Hyderabad",
+      status: "Completed"
+    },
+    {
+      id: 6,
+      title: "Hospital Expansion Project",
+      contractor: "HealthBuild Solutions",
+      location: "Pune",
+      status: "Ongoing"
+    },
+    {
+      id: 7,
+      title: "Water Treatment Plant Upgrade",
+      contractor: "AquaTech Solutions",
+      location: "Chennai",
+      status: "Ongoing"
+    },
+    {
+      id: 8,
+      title: "New Airport Terminal",
+      contractor: "Skyline Constructors",
+      location: "Ahmedabad",
+      status: "Completed"
+    },
+    {
+      id: 9,
+      title: "School Building Renovation",
+      contractor: "EduBuild Partners",
+      location: "Lucknow",
+      status: "Ongoing"
+    }
+  ];
+
+  // Get DOM elements
+  const searchInput = document.getElementById('search');
+  const statusFilter = document.getElementById('statusFilter');
+  const locationFilter = document.getElementById('locationFilter');
+  const projectList = document.getElementById('projectList');
+
+  /**
+   * Renders the list of projects based on current filters.
+   */
+  function renderProjects() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const selectedStatus = statusFilter.value;
+    const selectedLocation = locationFilter.value;
+
+    // Filter projects
+    const filteredProjects = projects.filter(p =>
+      // Search by title OR contractor
+      (!searchTerm || p.title.toLowerCase().includes(searchTerm) || p.contractor.toLowerCase().includes(searchTerm)) &&
+      // Filter by status
+      (!selectedStatus || p.status === selectedStatus) &&
+      // Filter by location
+      (!selectedLocation || p.location === selectedLocation)
+    );
+
+    // Clear previous projects
+    projectList.innerHTML = "";
+
+    // Display message if no projects found
+    if (filteredProjects.length === 0) {
+      projectList.innerHTML = "<p>No projects found matching your criteria. Try adjusting your search or filters.</p>";
+      return;
+    }
+
+    // Create and append project cards
+    filteredProjects.forEach(p => {
+      const div = document.createElement('div');
+      div.className = "project-card";
+      const statusClass = p.status === "Ongoing" ? "status-ongoing" : "status-completed";
+
+      div.innerHTML = `
+        <div class="project-title">${p.title}</div>
+        <div class="project-details">
+          <p><strong>Contractor:</strong> ${p.contractor}</p>
+          <p><strong>Location:</strong> ${p.location}</p>
+          <p><strong>Status:</strong>
+            <span class="status-tag ${statusClass}">${p.status}</span>
+          </p>
+        </div>
+        <div class="actions">
+          <button class="view-btn" data-project-id="${p.id}">View Details</button>
+        </div>
+      `;
+      projectList.appendChild(div);
+    });
+
+    // Add event listeners to newly created buttons
+    document.querySelectorAll('.view-btn').forEach(button => {
+      button.addEventListener('click', (event) => {
+        const projectId = parseInt(event.target.dataset.projectId);
+        viewDetails(projectId);
+      });
+    });
+  }
+
+  /**
+   * Displays details of a specific project in an alert.
+   * @param {number} id The ID of the project to display.
+   */
+  function viewDetails(id) {
+    const project = projects.find(p => p.id === id);
+    if (project) {
+      alert(`Project Details:\n\nTitle: ${project.title}\nContractor: ${project.contractor}\nLocation: ${project.location}\nStatus: ${project.status}`);
+    } else {
+      alert("Error: Project not found.");
+    }
+  }
+
+  // Attach Event Listeners to filter elements
+  searchInput.addEventListener('input', renderProjects);
+  statusFilter.addEventListener('change', renderProjects);
+  locationFilter.addEventListener('change', renderProjects);
+
+  // Initial render when the page loads
+  document.addEventListener('DOMContentLoaded', renderProjects);
+</script>
+
+</body>
+</html>

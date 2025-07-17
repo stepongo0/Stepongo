@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Authentication - StepOnGo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9; /* Default background for login */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: background-color 0.5s ease; /* Smooth background transition */
+        }
+
+        /* Styles common to both containers */
+        .auth-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            display: none; /* Hidden by default, JavaScript will show one */
+        }
+
+        .auth-container h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #333;
+            text-align: center;
+            padding-bottom: 3px;
+            position: relative; /* Needed for ::after positioning */
+        }
+
+        /* Target only the H2 in registration form for the underline */
+        #registration-form h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            width: 70px;
+            height: 3px;
+            background-color: #2c5aa0;
+        }
+
+        /* Generic input style for both forms */
+        .auth-container input {
+            width: calc(100% - 20px);
+            padding: 12px 10px;
+            margin: 10px 0; /* Default margin, adjusted by input-with-icon for password fields */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        /* Styling for the container around password inputs with icons */
+        .auth-container .input-with-icon {
+            position: relative;
+            width: 100%;
+            margin: 10px 0; /* Ensures consistent margin for these specific input groups */
+        }
+
+        /* Adjust padding for password inputs to make space for the icon */
+        .auth-container .input-with-icon input[type="password"] {
+            padding-right: 45px; /* Enough space for the eye icon in login form */
+        }
+
+        /* Styling for the eye icon */
+        .auth-container .toggle-password {
+            position: absolute;
+            right: 15px; /* Position the icon relative to its parent .input-with-icon */
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+            font-size: 1.2em;
+        }
+
+        .auth-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2c5aa0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+        .auth-container button:hover {
+            background-color: #1a427f;
+        }
+
+        /* Specific styles for Login */
+        #login-form .logo {
+            width: 80px;
+            margin-bottom: 20px;
+        }
+        #login-form .links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 1em;
+        }
+        #login-form .links a {
+            color: #2c5aa0;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        #login-form .links a:hover {
+            text-decoration: underline;
+        }
+        #login-form .google-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #dadce0;
+            border-radius: 25px;
+            padding: 10px 24px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #3c4043;
+            background-color: #fff;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            box-shadow: none;
+            transition: box-shadow 0.2s ease;
+            width: 100%;
+            margin-top: 15px;
+            height: 38px;
+        }
+        #login-form .google-btn:hover {
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        #login-form .google-btn img {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+        }
+        #login-form p {
+            margin-top: 20px;
+            font-size: 0.7em;
+            color: #333;
+            text-align: center;
+            line-height: 1.5;
+            font-weight: bold;
+        }
+
+        /* Specific styles for Registration */
+        #registration-form {
+            background-color: #fff;
+        }
+        /* Overrides for password fields in registration form for more spacing */
+        #registration-form .input-with-icon input[type="password"] {
+            padding-right: 60px; /* More space for the eye icon in modal */
+        }
+        #registration-form .toggle-password {
+            right: 25px; /* More space for the eye icon in modal */
+        }
+        #registration-form .terms-checkbox {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center the checkbox itself */
+            margin: 20px 0;
+            font-size: 0.9em;
+            color: #555;
+        }
+        #registration-form .terms-checkbox input[type="checkbox"] {
+            margin-right: 10px;
+            width: auto;
+        }
+        #registration-form .auth-link { /* Generic class for "Already have an account?" or "Sign up now" */
+            margin-top: 15px; /* Reduced margin to move it up */
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        #registration-form .auth-link a {
+            color: #2c5aa0;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        #registration-form .auth-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* For displaying messages */
+        .message {
+            margin-top: 10px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .auth-container {
+                margin: 10px auto;
+                padding: 20px;
+            }
+            .auth-container h2 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-form" class="auth-container">
+        <img class="logo" src="https://img.icons8.com/ios-filled/100/000000/user-male-circle.png" alt="Worker Icon">
+        <h2>Developer Login Portal</h2>
+        <form id="loginActualForm">
+            <input type="text" id="loginUsername" placeholder="Username or Email" required>
+
+            <div class="input-with-icon">
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <span class="toggle-password" data-target="loginPassword">
+                    <i class="fas fa-eye"></i>
+                </span>
+            </div>
+
+            <button type="submit">Login</button>
+        </form>
+        <div class="links">
+          <!-- <a href="#">Forgot Password?</a> -->
+           <a href="developer_forgot_password.html">Forgot Password?</a>
+
+
+          <a href="#" id="signupLink">Sign up now</a>
+        </div>
+        <button class="google-btn">
+          <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Logo" />
+          Sign in with Google
+        </button>
+        <p>Connecting top-quality labour with trustworthy builders</p>
+        <p id="loginMessage" class="message"></p>
+    </div>
+
+    <div id="registration-form" class="auth-container">
+        <h2>Registration</h2>
+        <form id="registrationActualForm">
+            <input type="text" id="regName" placeholder="Enter your name" required>
+            <input type="email" id="regEmail" placeholder="Enter your email" required>
+
+            <div class="input-with-icon">
+                <input type="password" id="createPassword" placeholder="Create password" required>
+                <span class="toggle-password" data-target="createPassword">
+                    <i class="fas fa-eye"></i>
+                </span>
+            </div>
+
+            <div class="input-with-icon">
+                <input type="password" id="confirmPassword" placeholder="Confirm password" required>
+                <span class="toggle-password" data-target="confirmPassword">
+                    <i class="fas fa-eye"></i>
+                </span>
+            </div>
+
+            <div class="terms-checkbox">
+                <input type="checkbox" id="terms" name="terms" required>
+                <label for="terms">I accept all terms & conditions</label>
+            </div>
+            <button type="submit">Register Now</button>
+        </form>
+        <div class="auth-link">
+            Already have an account? <a href="#" id="loginLink">Login now</a>
+        </div>
+        <p id="registrationMessage" class="message"></p>
+    </div>
+
+    <script>
+        // Function to toggle password visibility
+        function togglePasswordVisibility(id) {
+            const passwordField = document.getElementById(id);
+            const icon = passwordField.nextElementSibling.querySelector('i'); // Assumes the span is the next sibling
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = "password";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Functions to show/hide forms
+        const loginForm = document.getElementById('login-form');
+        const registrationForm = document.getElementById('registration-form');
+        const body = document.body;
+
+        function showLoginForm() {
+            loginForm.style.display = 'block';
+            registrationForm.style.display = 'none';
+            body.style.backgroundColor = '#f9f9f9'; /* Background for login */
+            // Clear any messages when switching forms
+            document.getElementById('loginMessage').textContent = '';
+            document.getElementById('registrationMessage').textContent = '';
+        }
+
+        function showRegistrationForm() {
+            loginForm.style.display = 'none';
+            registrationForm.style.display = 'block';
+            body.style.backgroundColor = '#2c5aa0'; /* Background for registration */
+            // Clear any messages when switching forms
+            document.getElementById('loginMessage').textContent = '';
+            document.getElementById('registrationMessage').textContent = '';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            showLoginForm(); // Show login form by default when the page loads
+
+            // Event listeners for toggling password visibility
+            document.querySelectorAll('.toggle-password').forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const targetId = this.dataset.target;
+                    togglePasswordVisibility(targetId);
+                });
+            });
+
+            // Event listeners for switching forms
+            document.getElementById('signupLink').addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent default link behavior
+                showRegistrationForm();
+            });
+
+            document.getElementById('loginLink').addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent default link behavior
+                showLoginForm();
+            });
+
+            // --- LOGIN FORM SUBMISSION ---
+            const loginActualForm = document.getElementById('loginActualForm');
+            const loginUsernameInput = document.getElementById('loginUsername');
+            const loginPasswordInput = document.getElementById('loginPassword');
+            const loginMessageDiv = document.getElementById('loginMessage');
+
+            loginActualForm.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevent the default form submission (page reload)
+
+                const username = loginUsernameInput.value.trim();
+                const password = loginPasswordInput.value.trim();
+
+                loginMessageDiv.textContent = ''; // Clear previous messages
+                loginMessageDiv.style.color = 'red'; // Default to red for errors
+
+                if (username === '' || password === '') {
+                    loginMessageDiv.textContent = 'Please enter both username/email and password.';
+                    return;
+                }
+
+                console.log('Attempting login with:', { username, password });
+
+                // --- SIMULATED LOGIN WITH REDIRECTION TO BUSINESS DASHBOARD ---
+                // IMPORTANT: In a real application, you would replace this entire block
+                // with a fetch() request to your backend authentication API.
+                // Replace 'test@example.com' and 'password123' with your desired demo credentials
+                if (username === 'test@example.com' && password === 'password123') { // Using the default test credentials
+                    loginMessageDiv.style.color = 'green';
+                    loginMessageDiv.textContent = 'Login successful! Redirecting...';
+                    // Redirect to the Business Dashboard page after a short delay
+                    setTimeout(() => {
+                        window.location.href = 'business_dashboard.html'; // <--- *THIS IS THE CRITICAL CHANGE*
+                    }, 1500); // Redirect after 1.5 seconds
+                } else {
+                    loginMessageDiv.style.color = 'red';
+                    loginMessageDiv.textContent = 'Invalid username/email or password.';
+                }
+
+
+                /*
+                // --- REAL BACKEND INTEGRATION EXAMPLE (UNCOMMENT AND ADAPT) ---
+                // Replace '/api/login' with your actual login endpoint
+                // REMOVE THE SIMULATED LOGIN BLOCK ABOVE IF YOU USE THIS
+                // fetch('/api/login', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+                //     body: JSON.stringify({ username: username, password: password })
+                // })
+                // .then(response => {
+                //     if (!response.ok) {
+                //         // Handle HTTP errors, e.g., 401 Unauthorized, 500 Server Error
+                //         return response.json().then(err => { throw new Error(err.message || 'Login failed'); });
+                //     }
+                //     return response.json();
+                // })
+                // .then(data => {
+                //     if (data.success) { // Assuming your backend sends { success: true, message: "..." }
+                //         loginMessageDiv.style.color = 'green';
+                //         loginMessageDiv.textContent = data.message || 'Login successful!';
+                //         // Store authentication token/session (e.g., localStorage.setItem('token', data.token);)
+                //         // Redirect ONLY after successful response from backend:
+                //         setTimeout(() => {
+                //             window.location.href = 'business_dashboard.html'; // Replace with your actual dashboard URL
+                //         }, 1500);
+                //     } else {
+                //         loginMessageDiv.style.color = 'red';
+                //         loginMessageDiv.textContent = data.message || 'Login failed. Please try again.';
+                //     }
+                // })
+                // .catch(error => {
+                //     console.error('Login error:', error);
+                //     loginMessageDiv.style.color = 'red';
+                //     loginMessageDiv.textContent = 'An error occurred during login. Please try again later.';
+                // });
+                */
+            });
+
+
+            // --- REGISTRATION FORM SUBMISSION ---
+            const registrationActualForm = document.getElementById('registrationActualForm');
+            const regNameInput = document.getElementById('regName');
+            const regEmailInput = document.getElementById('regEmail');
+            const createPasswordInput = document.getElementById('createPassword');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const termsCheckbox = document.getElementById('terms');
+            const registrationMessageDiv = document.getElementById('registrationMessage');
+
+            registrationActualForm.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevent default form submission
+
+                const name = regNameInput.value.trim();
+                const email = regEmailInput.value.trim();
+                const createPassword = createPasswordInput.value.trim();
+                const confirmPassword = confirmPasswordInput.value.trim();
+
+                registrationMessageDiv.textContent = ''; // Clear previous messages
+                registrationMessageDiv.style.color = 'red'; // Default to red for errors
+
+                if (name === '' || email === '' || createPassword === '' || confirmPassword === '') {
+                    registrationMessageDiv.textContent = 'All fields are required.';
+                    return;
+                }
+
+                if (createPassword !== confirmPassword) {
+                    registrationMessageDiv.textContent = 'Passwords do not match.';
+                    return;
+                }
+
+                if (createPassword.length < 6) { // Basic password length check
+                    registrationMessageDiv.textContent = 'Password must be at least 6 characters long.';
+                    return;
+                }
+
+                // Basic email format check (more robust validation typically done on backend)
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    registrationMessageDiv.textContent = 'Please enter a valid email address.';
+                    return;
+                }
+
+                if (!termsCheckbox.checked) {
+                    registrationMessageDiv.textContent = 'You must accept the terms & conditions.';
+                    return;
+                }
+
+                // --- THIS IS WHERE YOU'D INTEGRATE WITH YOUR BACKEND FOR REGISTRATION ---
+                console.log('Attempting registration with:', { name, email, createPassword });
+
+                // Example of a simulated registration (REPLACE THIS ENTIRE BLOCK WITH ACTUAL BACKEND CALL)
+                registrationMessageDiv.style.color = 'green';
+                registrationMessageDiv.textContent = 'Registration successful! You can now log in.';
+                // After successful registration, you might want to switch back to the login form
+                setTimeout(() => {
+                    showLoginForm();
+                    registrationMessageDiv.textContent = ''; // Clear message after switching
+                    regNameInput.value = ''; // Clear form fields
+                    regEmailInput.value = '';
+                    createPasswordInput.value = '';
+                    confirmPasswordInput.value = '';
+                    termsCheckbox.checked = false;
+                }, 2000); // Wait 2 seconds then switch
+
+                /*
+                // --- REAL BACKEND INTEGRATION EXAMPLE (UNCOMMENT AND ADAPT) ---
+                // Replace '/api/register' with your actual registration endpoint
+                // REMOVE THE SIMULATED REGISTRATION BLOCK ABOVE IF YOU USE THIS
+                // fetch('/api/register', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+                //     body: JSON.stringify({ name, email, password: createPassword })
+                // })
+                // .then(response => {
+                //     if (!response.ok) {
+                //         return response.json().then(err => { throw new Error(err.message || 'Registration failed'); });
+                //     }
+                //     return response.json();
+                // })
+                // .then(data => {
+                //     if (data.success) { // Assuming your backend sends { success: true, message: "..." }
+                //         registrationMessageDiv.style.color = 'green';
+                //         registrationMessageDiv.textContent = data.message || 'Registration successful! Please login.';
+                //         setTimeout(() => {
+                //             showLoginForm();
+                //             registrationMessageDiv.textContent = '';
+                //             regNameInput.value = ''; // Clear form fields
+                //             regEmailInput.value = '';
+                //             createPasswordInput.value = '';
+                //             confirmPasswordInput.value = '';
+                //             termsCheckbox.checked = false;
+                //         }, 2000);
+                //     } else {
+                //         registrationMessageDiv.style.color = 'red';
+                //         registrationMessageDiv.textContent = data.message || 'Registration failed. Please try again.';
+                //     }
+                // })
+                // .catch(error => {
+                //     console.error('Registration error:', error);
+                //     registrationMessageDiv.style.color = 'red';
+                //     registrationMessageDiv.textContent = 'An error occurred during registration. Please try again later.';
+                // });
+                */
+            });
+        });
+    </script>
+
+</body>
+</html>

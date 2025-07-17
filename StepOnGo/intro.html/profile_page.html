@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StepOnGo Professional Labour Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f1f1f1;
+        }
+        .profile-container {
+            max-width: 450px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .profile-header h2 {
+            color: #075e54;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .verified-badge {
+            color: #25d366;
+            font-size: 1.2em;
+        }
+
+        .profile-picture-section {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .profile-picture-section .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #25d366;
+            background-color: #e0e0e0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+        }
+        .profile-picture-section .profile-img i {
+            font-size: 100px;
+        }
+
+        .profile-picture-section label {
+            display: block;
+            margin-top: 8px;
+            color: #25d366;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .profile-picture-section input[type="file"] {
+            display: none;
+        }
+
+        /* Style for Labour ID section */
+        .labour-id-section {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #eaf7ed;
+            border-radius: 8px;
+            border: 1px solid #c8e6c9;
+        }
+        .labour-id-section p {
+            margin: 0;
+            font-size: 15px;
+            color: #075e54;
+            font-weight: bold;
+        }
+        .labour-id-section span {
+            font-size: 18px;
+            color: #25d366;
+            margin-left: 8px;
+        }
+
+        /* Profile Completeness Indicator */
+        .completeness-section {
+            margin-top: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .completeness-section p {
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 0.9em;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 10px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #25d366;
+            border-radius: 10px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .profile-fields {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .profile-field-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .profile-field-wrapper:last-child {
+            border-bottom: none;
+        }
+        .field-icon {
+            font-size: 20px;
+            color: #075e54;
+            width: 25px;
+            text-align: center;
+            flex-shrink: 0;
+            padding-top: 3px;
+        }
+        .field-content {
+            flex-grow: 1;
+        }
+        .field-content label {
+            font-size: 14px;
+            color: #444;
+            display: block;
+            margin-bottom: 2px;
+            font-weight: 600;
+        }
+        .field-value-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .profile-fields input,
+        .profile-fields textarea,
+        .profile-fields select {
+            padding: 5px 0;
+            border: none;
+            background: none;
+            color: #333;
+            font-size: 15px;
+            width: 100%;
+            resize: vertical;
+            min-height: 25px;
+        }
+        .profile-fields input:disabled,
+        .profile-fields textarea:disabled,
+        .profile-fields select:disabled {
+            background-color: transparent;
+            color: #333;
+            cursor: default;
+        }
+        .edit-icon {
+            cursor: pointer;
+            font-size: 18px;
+            color: #075e54;
+            margin-left: 5px;
+            flex-shrink: 0;
+        }
+        .profile-fields button {
+            margin-top: 10px;
+            padding: 12px;
+            background: #25d366;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .profile-fields button:hover {
+            background: #1ebc5d;
+        }
+
+        /* Contact Buttons (if you re-add them elsewhere) */
+        .contact-buttons {
+            display: flex;
+            justify-content: space-around;
+            gap: 15px;
+            margin-top: 25px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            border: 1px solid #cceeff;
+        }
+        .contact-buttons button {
+            flex-grow: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            transition: background 0.3s ease;
+        }
+        .contact-buttons .call-btn {
+            background-color: #075e54;
+            color: white;
+        }
+        .contact-buttons .call-btn:hover {
+            background-color: #064e46;
+        }
+        .contact-buttons .message-btn {
+            background-color: #25d366;
+            color: white;
+        }
+        .contact-buttons .message-btn:hover {
+            background-color: #1ebc5d;
+        }
+
+        .password-toggle {
+            margin-top: 25px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            color: #333;
+            border: none;
+            transition: background 0.3s ease;
+        }
+        .password-toggle:hover {
+            background: #e0e0e0;
+        }
+
+        .password-section {
+            margin-top: 15px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .password-section label {
+            color: #444;
+            font-size: 14px;
+        }
+        .password-section input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            background-color: #fff;
+            color: #333;
+        }
+        .password-section button {
+            background-color: #075e54;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .password-section button:hover {
+            background-color: #064e46;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-header">
+            <h2>StepOnGo Labour Profile <span class="verified-badge" title="Profile Verified"><i class="fa-solid fa-circle-check"></i></span></h2>
+        </div>
+        <div class="profile-picture-section">
+            <div class="profile-img" id="profileImg">
+                <i class="fa-solid fa-hard-hat"></i>
+            </div>
+            <label for="uploadImg"><i class="fa-regular fa-image"></i> Change Photo</label>
+            <input type="file" id="uploadImg" accept="image/*" />
+        </div>
+
+        <div class="labour-id-section">
+            <p>Labour ID: <span id="labourId">SOG-L-001</span></p>
+        </div>
+
+        <div class="completeness-section">
+            <p>Profile Completeness: <span id="completenessPercentage">0%</span></p>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="completenessBar"></div>
+            </div>
+        </div>
+
+        <div class="profile-fields">
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-address-card"></i></span>
+                <div class="field-content">
+                    <label for="name">Full Name</label>
+                    <div class="field-value-wrapper">
+                        <input type="text" id="name" value="Your Name" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('name', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-briefcase"></i></span>
+                <div class="field-content">
+                    <label for="profession">Primary Profession</label>
+                    <div class="field-value-wrapper">
+                        <input type="text" id="profession" value="Plumber" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('profession', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-phone"></i></span>
+                <div class="field-content">
+                    <label for="phone">Phone</label>
+                    <div class="field-value-wrapper">
+                        <input type="tel" id="phone" value="+91 98765 43210" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('phone', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-envelope"></i></span>
+                <div class="field-content">
+                    <label for="email">Email</label>
+                    <div class="field-value-wrapper">
+                        <input type="email" id="email" value="ram.plumber@example.com" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('email', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-id-card"></i></span>
+                <div class="field-content">
+                    <label for="aadhaar">Aadhaar Number</label>
+                    <div class="field-value-wrapper">
+                        <input type="text" id="aadhaar" value="XXXX XXXX XXXX" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('aadhaar', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-circle-info"></i></span>
+                <div class="field-content">
+                    <label for="about">About Me</label>
+                    <div class="field-value-wrapper">
+                        <textarea id="about" rows="3" disabled>I am a highly skilled and experienced plumber with 10 years of experience in residential and commercial projects. I specialize in pipe fitting, leak detection, and new installation. I am committed to delivering high-quality work and ensuring customer satisfaction.</textarea>
+                        <span class="edit-icon" onclick="window.toggleEditSave('about', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+                <div class="field-content">
+                    <label for="skills">Skills & Expertise (e.g., Plumbing, Electrical, Masonry)</label>
+                    <div class="field-value-wrapper">
+                        <input type="text" id="skills" value="Pipe Fitting, Leak Detection, Drainage Repair, Fixture Installation" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('skills', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-history"></i></span>
+                <div class="field-content">
+                    <label for="experience">Work Experience / Portfolio Summary</label>
+                    <div class="field-value-wrapper">
+                        <textarea id="experience" rows="3" disabled>Completed over 50 residential plumbing projects, including new home installations and extensive repair work. Successfully managed plumbing for a commercial office building renovation.</textarea>
+                        <span class="edit-icon" onclick="window.toggleEditSave('experience', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-certificate"></i></span>
+                <div class="field-content">
+                    <label for="certifications">Certifications / Licenses</label>
+                    <div class="field-value-wrapper">
+                        <input type="text" id="certifications" value="Certified Plumber, Safety Training Certified" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('certifications', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-user-shield"></i></span>
+                <div class="field-content">
+                    <label for="emergencyContact">Emergency Contact Name & Phone</label>
+                    <div class="field-value-wrapper">
+                        <input type="text" id="emergencyContact" value="Priya Devi, +91 99887 76655" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('emergencyContact', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-calendar-check"></i></span>
+                <div class="field-content">
+                    <label for="availability">Availability</label>
+                    <div class="field-value-wrapper">
+                        <select id="availability" disabled>
+                            <option value="full-time">Full-time</option>
+                            <option value="part-time">Part-time</option>
+                            <option value="weekends">Weekends Only</option>
+                            <option value="on-call">On Call</option>
+                        </select>
+                        <span class="edit-icon" onclick="window.toggleEditSave('availability', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-location-dot"></i></span>
+                <div class="field-content">
+                    <label for="address">Address / Preferred Work Location</label>
+                    <div class="field-value-wrapper">
+                        <input type="text" id="address" value="New Town, Kolkata, West Bengal" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('address', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-money-bill-wave"></i></span>
+                <div class="field-content">
+                    <label for="rate">Rate / Wage (per day)</label>
+                    <div class="field-value-wrapper">
+                        <input type="text" id="rate" value="₹600 - ₹900 (negotiable)" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('rate', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-globe"></i></span>
+                <div class="field-content">
+                    <label for="portfolioLink">Portfolio/Website Link (Optional)</label>
+                    <div class="field-value-wrapper">
+                        <input type="url" id="portfolioLink" value="https://example.com/ram-plumber" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('portfolioLink', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="window.saveAllFields()">
+                <i class="fa-solid fa-floppy-disk fa-beat-fade" style="color: #0000ff;"></i>
+                Save All Changes
+            </button>
+        </div>
+
+        <div class="password-toggle" onclick="window.togglePasswordSection()">
+            <i class="fa-solid fa-lock"></i> Change Password
+        </div>
+
+        <div id="password-section" class="password-section">
+            <label>Old Password</label>
+            <input type="password" id="oldPass" placeholder="Old password" />
+            <label>New Password</label>
+            <input type="password" id="newPass" placeholder="New password" />
+            <label>Confirm Password</label>
+            <input type="password" id="confirmPass" placeholder="Confirm new password" />
+            <button onclick="window.changePassword()">
+                <i class="fa-solid fa-arrows-rotate"></i> Update Password
+            </button>
+        </div>
+    </div>
+
+    <script>
+        (function() { // IIFE for scope
+            const uploadInput = document.getElementById("uploadImg");
+            const profileImgDiv = document.getElementById("profileImg");
+
+            // List of all editable fields for completeness calculation
+            const editableFields = [
+                "name", "about", "profession", "skills", "experience", "certifications",
+                "aadhaar", "phone", "email", "emergencyContact", "availability", "address", "rate", "portfolioLink"
+            ];
+
+            // Pre-fill values for demonstration
+            function initializeProfileData() {
+                document.getElementById("labourId").textContent = "SOG-L-001";
+                document.getElementById("name").value = "Ram Kumar";
+                document.getElementById("profession").value = "Plumber";
+                document.getElementById("phone").value = "+91 98765 43210";
+                document.getElementById("email").value = "ram.plumber@example.com";
+                document.getElementById("aadhaar").value = "1234 5678 9012";
+
+                document.getElementById("about").value = "I am a highly skilled and experienced plumber with 10 years of experience in residential and commercial projects. I specialize in pipe fitting, leak detection, and new installation. I am committed to delivering high-quality work and ensuring customer satisfaction.";
+                document.getElementById("skills").value = "Pipe Fitting, Leak Detection, Drainage Repair, Fixture Installation";
+                document.getElementById("experience").value = "Completed over 50 residential plumbing projects, including new home installations and extensive repair work. Successfully managed plumbing for a commercial office building renovation.";
+                document.getElementById("certifications").value = "Certified Plumber, Safety Training Certified";
+                document.getElementById("emergencyContact").value = "Priya Devi, +91 99887 76655";
+                document.getElementById("availability").value = "full-time";
+                document.getElementById("address").value = "New Town, Kolkata, West Bengal";
+                document.getElementById("rate").value = "₹600 - ₹900 (negotiable)";
+                document.getElementById("portfolioLink").value = "https://example.com/ram-plumber";
+
+                // Update completeness on load
+                updateProfileCompleteness();
+            }
+
+            uploadInput.addEventListener("change", function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const img = document.createElement("img");
+                        img.src = event.target.result;
+                        img.style.width = "100%";
+                        img.style.height = "100%";
+                        img.style.borderRadius = "50%";
+                        img.style.objectFit = "cover";
+                        profileImgDiv.innerHTML = "";
+                        profileImgDiv.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Make functions globally accessible for inline onclick attributes
+            window.toggleEditSave = function(fieldId, iconElement) {
+                const inputField = document.getElementById(fieldId);
+                const isSelect = inputField.tagName === 'SELECT';
+
+                if (inputField.disabled) {
+                    inputField.disabled = false;
+                    if (!isSelect) {
+                        inputField.focus();
+                    }
+                    iconElement.textContent = 'Save';
+                } else {
+                    inputField.disabled = true;
+                    iconElement.textContent = 'Edit';
+                    alert(`Changes to ${fieldId.charAt(0).toUpperCase() + fieldId.slice(1)} saved! (For demo only)`);
+                    updateProfileCompleteness();
+                }
+            };
+
+            window.saveAllFields = function() {
+                editableFields.forEach(fieldId => {
+                    const inputField = document.getElementById(fieldId);
+                    const iconElement = inputField.closest('.field-value-wrapper')?.querySelector('.edit-icon');
+
+                    if (!inputField.disabled) {
+                        inputField.disabled = true;
+                        if (iconElement) {
+                            iconElement.textContent = 'Edit';
+                        }
+                    }
+                });
+                alert("All profile changes saved! (For demo only)");
+                updateProfileCompleteness();
+            };
+
+            function updateProfileCompleteness() {
+                let filledFields = 0;
+                editableFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    // Check if field exists and has a non-empty value (excluding the initial "Your Name" placeholder)
+                    if (field && field.value && field.value.trim() !== '' && field.value.trim() !== 'Your Name' && field.value.trim() !== 'XXXX XXXX XXXX') {
+                        filledFields++;
+                    }
+                });
+
+                const completenessPercentage = (filledFields / editableFields.length) * 100;
+                document.getElementById('completenessPercentage').textContent = `${completenessPercentage.toFixed(0)}%`;
+                document.getElementById('completenessBar').style.width = `${completenessPercentage}%`;
+            }
+
+            window.togglePasswordSection = function() {
+                const section = document.getElementById("password-section");
+                section.style.display = section.style.display === "flex" ? "none" : "flex";
+            };
+
+            window.changePassword = function() {
+                const oldP = document.getElementById("oldPass").value;
+                const newP = document.getElementById("newPass").value;
+                const confirmP = document.getElementById("confirmPass").value;
+
+                if (!oldP || !newP || !confirmP) {
+                    alert("Please fill all password fields.");
+                    return;
+                }
+                if (newP !== confirmP) {
+                    alert("❌ New passwords do not match.");
+                    return;
+                }
+
+                alert("🔁 Password updated! (For demo only)");
+                document.getElementById("oldPass").value = "";
+                document.getElementById("newPass").value = "";
+                document.getElementById("confirmPass").value = "";
+            };
+
+            // Call functions to display data when the page loads
+            document.addEventListener('DOMContentLoaded', initializeProfileData);
+        })(); // End of IIFE
+    </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+body {
+  margin: 0;
+  background-color: #123a8b; /* StepOnGo Blue */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+  color: white; /* Ensures text is visible on the blue background */
+  overflow: hidden; /* Prevent scrollbars if content slightly exceeds viewport */
+}
+
+.logo-container {
+  text-align: center;
+}
+
+.logo-icon {
+  font-size: 60px; /* Size of the pickaxe emoji */
+  margin-bottom: 10px;
+  animation: rotateIcon 4s linear infinite; /* Applies the rotation animation */
+}
+
+/* Define the smooth rotation animation */
+@keyframes rotateIcon {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.logo-text h1 {
+  margin: 0;
+  font-size: 40px; /* Size of "StepOnGo" */
+}
+
+.logo-text p {
+  margin: 5px 0 0;
+  font-size: 18px; /* Size of "Connecting Workforce to Work" */
+  font-weight: 300; /* Lighter font weight for the tagline */
+}

@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stepongo Safety Guidelines</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            margin-top: 0;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+
+        /* Language Selector */
+        .language-selector {
+            text-align: right;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #e9f5ff;
+            border-radius: 5px;
+        }
+
+        .language-selector label {
+            font-weight: 500;
+            margin-right: 10px;
+            color: #0056b3;
+        }
+
+        .language-selector select {
+            padding: 8px 12px;
+            border: 1px solid #0056b3;
+            border-radius: 5px;
+            background-color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .language-selector select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        /* Guidelines Section */
+        .guidelines-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .guideline-panel {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden; /* For pseudo-element hover effect */
+        }
+
+        .guideline-panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .guideline-panel h3 {
+            color: #0056b3;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .guideline-panel p {
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .guideline-panel .read-more {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .guideline-panel .read-more:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        /* Modal for Detailed Information */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            width: 80%; /* Could be responsive */
+            max-width: 700px;
+            position: relative;
+            animation-name: animatetop;
+            animation-duration: 0.4s
+        }
+
+        @keyframes animatetop {
+            from {top: -300px; opacity: 0}
+            to {top: 0; opacity: 1}
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 30px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-content h3 {
+            color: #0056b3;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            text-align: center;
+        }
+
+        .modal-content p {
+            font-size: 1em;
+            color: #444;
+            margin-bottom: 1em;
+            text-align: justify;
+        }
+
+        .modal-content ul {
+            margin-left: 20px;
+            list-style-type: disc;
+            color: #444;
+        }
+        .modal-content li {
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            .language-selector {
+                text-align: center;
+            }
+
+            .guidelines-grid {
+                grid-template-columns: 1fr; /* Stack panels on small screens */
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .language-selector select {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stepongo Business App</h1>
+        <h2>Labour Section: Safety Guidelines</h2>
+
+        <div class="language-selector">
+            <label for="language-select">Choose your language:</label>
+            <select id="language-select">
+                <option value="en">English</option>
+                <option value="hi">Hindi (हिंदी)</option>
+                <option value="bn">Bengali (বাংলা)</option>
+                <option value="mr">Marathi (मराठी)</option>
+                <option value="ta">Tamil (தமிழ்)</option>
+                <option value="te">Telugu (తెలుగు)</option>
+                <option value="gu">Gujarati (ગુજરાતી)</option>
+                <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                <option value="ml">Malayalam (മലയാളം)</option>
+                <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                <option value="ur">Urdu (اردو)</option>
+                <option value="as">Assamese (অসমীয়া)</option>
+                <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                <option value="ks">Kashmiri (کٲشُر)</option>
+                <option value="kok">Konkani (कोंकणी)</option>
+                <option value="sd">Sindhi (سنڌي)</option>
+                <option value="ne">Nepali (नेपाली)</option>
+                <option value="sa">Sanskrit (संस्कृतम्)</option>
+                <option value="mni">Manipuri (মণিপুরী)</option>
+                <option value="doi">Dogri (डोगरी)</option>
+                <option value="brx">Bodo (बोड़ो)</option>
+                <option value="sat">Santali (ᱥᱟᱱᱛᱟᱲᱤ)</option>
+                </select>
+        </div>
+
+        <div class="guidelines-grid" id="guidelines-container">
+            <div class="guideline-panel" data-guideline-id="1">
+                <h3>Working at Heights</h3>
+                <p>Understand the risks and follow proper procedures for working at elevated positions to prevent falls...</p>
+                <a href="#" class="read-more" onclick="openModal(1); return false;">Read More</a>
+            </div>
+
+            <div class="guideline-panel" data-guideline-id="2">
+                <h3>Electrical Safety</h3>
+                <p>Learn about safe practices when dealing with electrical equipment and wiring to avoid shocks and fires...</p>
+                <a href="#" class="read-more" onclick="openModal(2); return false;">Read More</a>
+            </div>
+
+            <div class="guideline-panel" data-guideline-id="3">
+                <h3>Hazardous Materials Handling</h3>
+                <p>Guidelines for safe storage, transport, and use of hazardous chemicals and waste disposal...</p>
+                <a href="#" class="read-more" onclick="openModal(3); return false;">Read More</a>
+            </div>
+
+            <div class="guideline-panel" data-guideline-id="4">
+                <h3>Personal Protective Equipment (PPE)</h3>
+                <p>Information on the correct selection, use, and maintenance of PPE for various tasks...</p>
+                <a href="#" class="read-more" onclick="openModal(4); return false;">Read More</a>
+            </div>
+
+            <div class="guideline-panel" data-guideline-id="5">
+                <h3>Fire Safety and Prevention</h3>
+                <p>Procedures for fire prevention, emergency response, and proper use of fire extinguishers...</p>
+                <a href="#" class="read-more" onclick="openModal(5); return false;">Read More</a>
+            </div>
+
+            <div class="guideline-panel" data-guideline-id="6">
+                <h3>First Aid and Emergency Response</h3>
+                <p>Basic first aid procedures, emergency contact information, and reporting incidents...</p>
+                <a href="#" class="read-more" onclick="openModal(6); return false;">Read More</a>
+            </div>
+            </div>
+    </div>
+
+    <div id="safetyModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h3 id="modal-title"></h3>
+            <div id="modal-content-body">
+                <p>This is where the detailed safety guideline information will appear. This content should be comprehensive, accurate, and comply with all relevant Indian government labor laws and local regulations. It should include specific practices, dos and don'ts, and legal requirements.</p>
+                <p>Example: For "Working at Heights," this might include details on:</p>
+                <ul>
+                    <li>Mandatory use of safety harnesses and fall arrest systems.</li>
+                    <li>Inspection of scaffolding and ladders before use.</li>
+                    <li>Designated safe zones and warning signs.</li>
+                    <li>Training requirements for working at heights (e.g., as per Building and Other Construction Workers (Regulation of Employment and Conditions of Service) Act, 1996 and rules).</li>
+                    <li>Emergency procedures in case of a fall.</li>
+                </ul>
+                <p>Remember, this specific content needs to be filled by legal and safety experts.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // In a real application, this data would come from a backend API or database
+        // and would be structured to support multiple languages.
+        const safetyGuidelinesData = {
+            "en": {
+                1: {
+                    title: "Working at Heights",
+                    shortDesc: "Understand the risks and follow proper procedures for working at elevated positions to prevent falls...",
+                    detailedContent: `
+                        <p>Working at heights poses significant risks, including falls that can lead to severe injuries or fatalities. Adherence to safety protocols is paramount.</p>
+                        <h4>Key Guidelines:</h4>
+                        <ul>
+                            <li><strong>Risk Assessment:</strong> Always conduct a thorough risk assessment before any work at height begins. Identify potential hazards like unprotected edges, fragile surfaces, and overhead obstructions.</li>
+                            <li><strong>Fall Protection Systems:</strong> Utilize appropriate fall protection systems such as safety harnesses, lanyards, and fall arrest systems. Ensure these are regularly inspected and properly fitted.</li>
+                            <li><strong>Scaffolding and Ladders:</strong> All scaffolding must be erected by competent persons, inspected daily, and tagged accordingly. Ladders should be in good condition, set up on stable ground, and extend sufficiently above the landing point.</li>
+                            <li><strong>Edge Protection:</strong> Install guardrails, toe boards, and netting to prevent falls from edges and to stop materials from falling.</li>
+                            <li><strong>Training:</strong> All personnel working at heights must receive comprehensive training on safe work practices, equipment usage, and emergency procedures, in compliance with the Building and Other Construction Workers (Regulation of Employment and Conditions of Service) Act, 1996, and associated rules.</li>
+                            <li><strong>Weather Conditions:</strong> Do not work at height in adverse weather conditions (e.g., strong winds, heavy rain) that could compromise safety.</li>
+                        </ul>
+                        <p>Always prioritize collective protective measures over personal protective equipment where feasible. Regular supervision and adherence to legal requirements like those under the Factories Act, 1948, where applicable, are crucial.</p>
+                    `
+                },
+                2: {
+                    title: "Electrical Safety",
+                    shortDesc: "Learn about safe practices when dealing with electrical equipment and wiring to avoid shocks and fires...",
+                    detailedContent: `
+                        <p>Electrical hazards can lead to electric shock, burns, and fires. Strict adherence to electrical safety guidelines is mandatory.</p>
+                        <h4>Key Guidelines:</h4>
+                        <ul>
+                            <li><strong>Qualified Personnel:</strong> Only trained and authorized personnel should perform electrical work.</li>
+                            <li><strong>Lockout/Tagout (LOTO):</strong> Always de-energize and apply Lockout/Tagout procedures before working on electrical circuits or equipment.</li>
+                            <li><strong>Inspection:</strong> Regularly inspect all electrical tools, cords, and machinery for damage. Immediately replace or repair faulty equipment.</li>
+                            <li><strong>Grounding:</strong> Ensure all electrical equipment is properly grounded.</li>
+                            <li><strong>Overload Prevention:</strong> Avoid overloading circuits. Use appropriate circuit breakers and fuses.</li>
+                            <li><strong>Wet Conditions:</strong> Never operate electrical equipment in wet conditions unless it is specifically designed for such environments.</li>
+                            <li><strong>PPE:</strong> Use appropriate Personal Protective Equipment (PPE) such as insulated gloves, safety shoes, and eye protection when working with electricity.</li>
+                            <li><strong>Indian Electricity Rules:</strong> Adhere to the Indian Electricity Rules, 1956 (or the updated Electricity Rules, 2005) and other relevant BIS standards for electrical installations and safety.</li>
+                        </ul>
+                        <p>Promptly report any electrical hazards or incidents to your supervisor.</p>
+                    `
+                },
+                3: {
+                    title: "Hazardous Materials Handling",
+                    shortDesc: "Guidelines for safe storage, transport, and use of hazardous chemicals and waste disposal...",
+                    detailedContent: `
+                        <p>Handling hazardous materials requires careful attention to prevent exposure, spills, and environmental contamination. The Manufacturing, Storage and Import of Hazardous Chemicals Rules, 1989, and other environmental acts are relevant.</p>
+                        <h4>Key Guidelines:</h4>
+                        <ul>
+                            <li><strong>Material Safety Data Sheets (MSDS)/Safety Data Sheets (SDS):</strong> Always consult the MSDS/SDS for detailed information on chemical properties, hazards, safe handling, and emergency procedures.</li>
+                            <li><strong>Proper Labeling:</strong> Ensure all hazardous materials are correctly labeled with their contents, hazards, and necessary precautions.</li>
+                            <li><strong>Storage:</strong> Store chemicals in designated, well-ventilated areas, away from incompatible materials and ignition sources. Follow specific storage requirements (e.g., temperature, light).</li>
+                            <li><strong>PPE:</strong> Use appropriate PPE such as chemical-resistant gloves, safety goggles, respirators, and protective clothing.</li>
+                            <li><strong>Ventilation:</strong> Ensure adequate ventilation when working with volatile chemicals.</li>
+                            <li><strong>Spill Response:</strong> Know the spill response procedures and have spill kits readily available.</li>
+                            <li><strong>Disposal:</strong> Dispose of hazardous waste according to environmental regulations and local municipal solid waste rules.</li>
+                            <li><strong>Training:</strong> Personnel handling hazardous materials must be trained in their safe use, storage, and emergency procedures.</li>
+                        </ul>
+                        <p>Minimize exposure and prevent release into the environment. Always follow the 'right to know' principles regarding chemical hazards.</p>
+                    `
+                },
+                4: {
+                    title: "Personal Protective Equipment (PPE)",
+                    shortDesc: "Information on the correct selection, use, and maintenance of PPE for various tasks...",
+                    detailedContent: `
+                        <p>Personal Protective Equipment (PPE) is crucial for minimizing exposure to workplace hazards. Employers are obligated to provide appropriate PPE, and employees must use it correctly.</p>
+                        <h4>Key Guidelines:</h4>
+                        <ul>
+                            <li><strong>Hazard Assessment:</strong> PPE selection must be based on a thorough hazard assessment of the task and environment.</li>
+                            <li><strong>Types of PPE:</strong>
+                                <ul>
+                                    <li><strong>Head Protection:</strong> Hard hats (helmets) for protection against falling objects or impacts.</li>
+                                    <li><strong>Eye and Face Protection:</strong> Safety glasses, goggles, and face shields to guard against splashes, dust, and impacts.</li>
+                                    <li><strong>Hearing Protection:</strong> Earplugs or earmuffs in noisy environments.</li>
+                                    <li><strong>Hand Protection:</strong> Gloves suitable for the specific hazard (e.g., chemical-resistant, cut-resistant, heat-resistant).</li>
+                                    <li><strong>Foot Protection:</strong> Safety shoes or boots with steel toes or puncture-resistant soles.</li>
+                                    <li><strong>Respiratory Protection:</strong> Respirators or masks to protect against dust, fumes, gases, or vapors.</li>
+                                    <li><strong>Body Protection:</strong> Protective clothing like aprons, coveralls, or high-visibility vests.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Proper Fit and Use:</strong> Ensure PPE fits correctly and is used as intended. Ill-fitting or improperly used PPE can be ineffective.</li>
+                            <li><strong>Maintenance and Inspection:</strong> Regularly inspect PPE for damage or wear. Clean, maintain, and replace PPE as necessary. Do not use damaged PPE.</li>
+                            <li><strong>Training:</strong> Employees must be trained on when PPE is necessary, what type is required, how to properly don, doff, adjust, and wear it, and its limitations.</li>
+                            <li><strong>Compliance:</strong> Adhere to relevant Indian standards (e.g., BIS standards for helmets, safety footwear) and the provisions of the Factories Act, 1948, concerning PPE.</li>
+                        </ul>
+                        <p>PPE is the last line of defense; always try to eliminate or control hazards at the source first.</p>
+                    `
+                },
+                5: {
+                    title: "Fire Safety and Prevention",
+                    shortDesc: "Procedures for fire prevention, emergency response, and proper use of fire extinguishers...",
+                    detailedContent: `
+                        <p>Fire safety is critical to protect lives and property. Understanding prevention measures and emergency procedures is essential.</p>
+                        <h4>Key Guidelines:</h4>
+                        <ul>
+                            <li><strong>Hazard Identification:</strong> Identify potential fire hazards, such as flammable materials, faulty wiring, or improper storage.</li>
+                            <li><strong>Flammable Materials:</strong> Store flammable liquids and materials in approved containers and designated, well-ventilated areas, away from ignition sources.</li>
+                            <li><strong>Electrical Safety:</strong> Ensure all electrical installations are safe and regularly inspected. Avoid overloading sockets and using damaged cords.</li>
+                            <li><strong>Housekeeping:</strong> Maintain good housekeeping to prevent accumulation of combustible waste and debris.</li>
+                            <li><strong>Fire Extinguishers:</strong> Know the location and type of fire extinguishers. Only use an extinguisher if you are trained and the fire is small and contained (remember the <a href="https://en.wikipedia.org/wiki/PASS_device" target="_blank">PASS</a> method: Pull, Aim, Squeeze, Sweep).</li>
+                            <li><strong>Emergency Exits:</strong> Keep emergency exits and escape routes clear and unobstructed at all times.</li>
+                            <li><strong>Alarm Systems:</strong> Understand the fire alarm system and evacuation procedures. Participate in fire drills.</li>
+                            <li><strong>Emergency Assembly Point:</strong> Know your designated emergency assembly point.</li>
+                            <li><strong>Reporting:</strong> Report any fire hazards or suspicious activities immediately.</li>
+                            <li><strong>Legal Compliance:</strong> Adhere to local fire safety regulations, National Building Code of India provisions related to fire safety, and the Factories Act, 1948 rules on fire protection.</li>
+                        </ul>
+                        <p>In case of fire, remain calm, activate the alarm, evacuate immediately, and do not attempt to fight a large or rapidly spreading fire.</p>
+                    `
+                },
+                6: {
+                    title: "First Aid and Emergency Response",
+                    shortDesc: "Basic first aid procedures, emergency contact information, and reporting incidents...",
+                    detailedContent: `
+                        <p>Prompt and effective first aid can significantly mitigate the severity of injuries and save lives during emergencies. Every workplace should have a robust first aid and emergency response plan.</p>
+                        <h4>Key Guidelines:</h4>
+                        <ul>
+                            <li><strong>First Aid Kit:</strong> Know the location of the nearest first aid kit and ensure it is well-stocked and regularly maintained.</li>
+                            <li><strong>Trained First Aiders:</strong> Identify trained first aiders in your workplace. In larger establishments, there should be a sufficient number of certified first-aid personnel as per the Factories Act, 1948.</li>
+                            <li><strong>Emergency Contact Information:</strong> Have readily accessible emergency contact numbers for medical services (e.g., 102 for Ambulance, 112 for Emergency Helpline in India), fire department, and police.</li>
+                            <li><strong>Reporting Incidents:</strong> All injuries, even minor ones, and near misses must be reported to your supervisor immediately and documented. This is crucial for accident investigation and prevention.</li>
+                            <li><strong>Basic First Aid Procedures (General Principles):</strong>
+                                <ul>
+                                    <li><strong>Assess the Situation:</strong> Ensure the scene is safe before approaching the injured person.</li>
+                                    <li><strong>Call for Help:</strong> Immediately call for professional medical help if the injury is serious.</li>
+                                    <li><strong>Administer Aid:</strong> Provide basic first aid as trained (e.g., stop bleeding, manage shock, administer CPR if certified).</li>
+                                    <li><strong>Comfort and Reassure:</strong> Keep the injured person comfortable and reassure them until professional help arrives.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Evacuation Procedures:</strong> Understand and practice emergency evacuation procedures for different types of emergencies (e.g., fire, natural disaster).</li>
+                            <li><strong>Defibrillators (AEDs):</strong> If available, know the location and basic operation of Automated External Defibrillators (AEDs).</li>
+                        </ul>
+                        <p>Regular refreshers on first aid and emergency response are vital for all employees.</p>
+                    `
+                }
+            },
+            "hi": {
+                1: {
+                    title: "ऊंचाई पर काम करना",
+                    shortDesc: "गिरने से बचने के लिए ऊंचाई पर काम करते समय जोखिमों को समझें और उचित प्रक्रियाओं का पालन करें...",
+                    detailedContent: `
+                        <p>ऊंचाई पर काम करने से गिरने का महत्वपूर्ण जोखिम होता है जिससे गंभीर चोटें या मौत हो सकती है। सुरक्षा प्रोटोकॉल का पालन करना अत्यंत महत्वपूर्ण है।</p>
+                        <h4>मुख्य दिशानिर्देश:</h4>
+                        <ul>
+                            <li><strong>जोखिम मूल्यांकन:</strong> ऊंचाई पर कोई भी काम शुरू करने से पहले हमेशा गहन जोखिम मूल्यांकन करें। असुरक्षित किनारों, नाजुक सतहों और ऊपर की बाधाओं जैसे संभावित खतरों की पहचान करें।</li>
+                            <li><strong>गिरने से सुरक्षा प्रणाली:</strong> सुरक्षा हार्नेस, डोरी और फॉल अरेस्ट सिस्टम जैसे उचित गिरने से सुरक्षा प्रणालियों का उपयोग करें। सुनिश्चित करें कि इनकी नियमित रूप से जांच की जाती है और ठीक से फिट किया जाता है।</li>
+                            <li><strong>मचान और सीढ़ियाँ:</strong> सभी मचानों को सक्षम व्यक्तियों द्वारा खड़ा किया जाना चाहिए, दैनिक रूप से निरीक्षण किया जाना चाहिए और तदनुसार टैग किया जाना चाहिए। सीढ़ियाँ अच्छी स्थिति में होनी चाहिए, स्थिर जमीन पर स्थापित होनी चाहिए और लैंडिंग बिंदु से पर्याप्त ऊपर तक फैली होनी चाहिए।</li>
+                            <li><strong>किनारे की सुरक्षा:</strong> किनारों से गिरने और सामग्री को गिरने से रोकने के लिए गार्डरेल, टो बोर्ड और जाल स्थापित करें।</li>
+                            <li><strong>प्रशिक्षण:</strong> ऊंचाई पर काम करने वाले सभी कर्मियों को सुरक्षित कार्य प्रथाओं, उपकरण के उपयोग और आपातकालीन प्रक्रियाओं पर व्यापक प्रशिक्षण प्राप्त करना चाहिए, जो भवन और अन्य निर्माण श्रमिक (रोजगार और सेवा की शर्तें विनियमन) अधिनियम, 1996, और संबंधित नियमों के अनुरूप हो।</li>
+                            <li><strong>मौसम की स्थिति:</strong> प्रतिकूल मौसम की स्थिति (जैसे, तेज हवाएं, भारी बारिश) में ऊंचाई पर काम न करें जो सुरक्षा से समझौता कर सकती हैं।</li>
+                        </ul>
+                        <p>जहाँ संभव हो, व्यक्तिगत सुरक्षा उपकरणों पर सामूहिक सुरक्षा उपायों को हमेशा प्राथमिकता दें। नियमित पर्यवेक्षण और कारखाना अधिनियम, 1948, जहाँ लागू हो, के तहत कानूनी आवश्यकताओं का पालन करना महत्वपूर्ण है।</p>
+                    `
+                },
+                2: {
+                    title: "विद्युत सुरक्षा",
+                    shortDesc: "बिजली के झटके और आग से बचने के लिए बिजली के उपकरणों और तारों से निपटने के दौरान सुरक्षित प्रथाओं के बारे में जानें...",
+                    detailedContent: `
+                        <p>विद्युत खतरों से बिजली का झटका, जलन और आग लग सकती है। विद्युत सुरक्षा दिशानिर्देशों का कड़ाई से पालन अनिवार्य है।</p>
+                        <h4>मुख्य दिशानिर्देश:</h4>
+                        <ul>
+                            <li><strong>योग्य कर्मी:</strong> केवल प्रशिक्षित और अधिकृत कर्मियों को ही बिजली का काम करना चाहिए।</li>
+                            <li><strong>लॉकआउट/टैगआउट (LOTO):</strong> विद्युत सर्किट या उपकरणों पर काम करने से पहले हमेशा डी-एनर्जाइज करें और लॉकआउट/टैगआउट प्रक्रियाओं को लागू करें।</li>
+                            <li><strong>निरीक्षण:</strong> सभी विद्युत उपकरणों, डोरियों और मशीनों को क्षति के लिए नियमित रूप से निरीक्षण करें। दोषपूर्ण उपकरणों को तुरंत बदलें या मरम्मत करें।</li>
+                            <li><strong>ग्राउंडिंग:</strong> सुनिश्चित करें कि सभी विद्युत उपकरण ठीक से ग्राउंडेड हैं।</li>
+                            <li><strong>ओवरलोड रोकथाम:</strong> सर्किट को ओवरलोड करने से बचें। उचित सर्किट ब्रेकर और फ्यूज का उपयोग करें।</li>
+                            <li><strong>गीली स्थितियाँ:</strong> गीली स्थितियों में कभी भी विद्युत उपकरण न चलाएं जब तक कि इसे विशेष रूप से ऐसे वातावरण के लिए डिज़ाइन न किया गया हो।</li>
+                            <li><strong>पीपीई:</strong> बिजली के साथ काम करते समय इन्सुलेटेड दस्ताने, सुरक्षा जूते और आंखों की सुरक्षा जैसे उचित व्यक्तिगत सुरक्षा उपकरण (पीपीई) का उपयोग करें।</li>
+                            <li><strong>भारतीय विद्युत नियम:</strong> विद्युत स्थापना और सुरक्षा के लिए भारतीय विद्युत नियम, 1956 (या अद्यतन विद्युत नियम, 2005) और अन्य संबंधित बीआईएस मानकों का पालन करें।</li>
+                        </ul>
+                        <p>किसी भी विद्युत खतरे या घटना की तुरंत अपने पर्यवेक्षक को रिपोर्ट करें।</p>
+                    `
+                },
+                3: {
+                    title: "खतरनाक सामग्री का संचालन",
+                    shortDesc: "खतरनाक रसायनों के सुरक्षित भंडारण, परिवहन और उपयोग और अपशिष्ट निपटान के लिए दिशानिर्देश...",
+                    detailedContent: `
+                        <p>खतरनाक सामग्री को संभालने के लिए जोखिम, रिसाव और पर्यावरणीय संदूषण को रोकने के लिए सावधानीपूर्वक ध्यान देने की आवश्यकता है। खतरनाक रसायन नियम, 1989 का निर्माण, भंडारण और आयात, और अन्य पर्यावरण अधिनियम प्रासंगिक हैं।</p>
+                        <h4>मुख्य दिशानिर्देश:</h4>
+                        <ul>
+                            <li><strong>सामग्री सुरक्षा डेटा शीट (MSDS)/सुरक्षा डेटा शीट (SDS):</strong> रासायनिक गुणों, खतरों, सुरक्षित हैंडलिंग और आपातकालीन प्रक्रियाओं पर विस्तृत जानकारी के लिए हमेशा MSDS/SDS से परामर्श करें।</li>
+                            <li><strong>उचित लेबलिंग:</strong> सुनिश्चित करें कि सभी खतरनाक सामग्री को उनकी सामग्री, खतरों और आवश्यक सावधानियों के साथ सही ढंग से लेबल किया गया है।</li>
+                            <li><strong>भंडारण:</strong> रसायनों को नामित, अच्छी तरह हवादार क्षेत्रों में, असंगत सामग्री और इग्निशन स्रोतों से दूर रखें। विशिष्ट भंडारण आवश्यकताओं (जैसे, तापमान, प्रकाश) का पालन करें।</li>
+                            <li><strong>पीपीई:</strong> रासायनिक प्रतिरोधी दस्ताने, सुरक्षा चश्मा, श्वासयंत्र और सुरक्षात्मक कपड़ों जैसे उचित पीपीई का उपयोग करें।</li>
+                            <li><strong>वेंटिलेशन:</strong> अस्थिर रसायनों के साथ काम करते समय पर्याप्त वेंटिलेशन सुनिश्चित करें।</li>
+                            <li><strong>स्पिल रिस्पांस:</strong> स्पिल रिस्पांस प्रक्रियाओं को जानें और स्पिल किट आसानी से उपलब्ध रखें।</li>
+                            <li><strong>निपटान:</strong> पर्यावरणीय नियमों और स्थानीय नगरपालिका ठोस अपशिष्ट नियमों के अनुसार खतरनाक कचरे का निपटान करें।</li>
+                            <li><strong>प्रशिक्षण:</strong> खतरनाक सामग्री को संभालने वाले कर्मियों को उनके सुरक्षित उपयोग, भंडारण और आपातकालीन प्रक्रियाओं में प्रशिक्षित किया जाना चाहिए।</li>
+                        </ul>
+                        <p>जोखिम को कम करें और पर्यावरण में रिसाव को रोकें। रासायनिक खतरों के संबंध में हमेशा 'जानने का अधिकार' सिद्धांतों का पालन करें।</p>
+                    `
+                },
+                4: {
+                    title: "व्यक्तिगत सुरक्षा उपकरण (पीपीई)",
+                    shortDesc: "विभिन्न कार्यों के लिए पीपीई के सही चयन, उपयोग और रखरखाव की जानकारी...",
+                    detailedContent: `
+                        <p>व्यक्तिगत सुरक्षा उपकरण (पीपीई) कार्यस्थल के खतरों के संपर्क को कम करने के लिए महत्वपूर्ण है। नियोक्ताओं को उचित पीपीई प्रदान करने के लिए बाध्य किया जाता है, और कर्मचारियों को इसका सही ढंग से उपयोग करना चाहिए।</p>
+                        <h4>मुख्य दिशानिर्देश:</h4>
+                        <ul>
+                            <li><strong>खतरा मूल्यांकन:</strong> पीपीई का चयन कार्य और पर्यावरण के गहन खतरा मूल्यांकन पर आधारित होना चाहिए।</li>
+                            <li><strong>पीपीई के प्रकार:</strong>
+                                <ul>
+                                    <li><strong>सिर की सुरक्षा:</strong> गिरने वाली वस्तुओं या प्रभावों से सुरक्षा के लिए हार्ड हैट (हेलमेट)।</li>
+                                    <li><strong>आंख और चेहरे की सुरक्षा:</strong> छींटे, धूल और प्रभावों से बचाव के लिए सुरक्षा चश्मा, चश्मा और फेस शील्ड।</li>
+                                    <li><strong>श्रवण सुरक्षा:</strong> शोरगुल वाले वातावरण में ईयरप्लग या ईयरमफ।</li>
+                                    <li><strong>हाथ की सुरक्षा:</strong> विशिष्ट खतरे के लिए उपयुक्त दस्ताने (जैसे, रासायनिक प्रतिरोधी, कट-प्रतिरोधी, गर्मी-प्रतिरोधी)।</li>
+                                    <li><strong>पैर की सुरक्षा:</strong> स्टील टो या पंचर-प्रतिरोधी तलवों वाले सुरक्षा जूते या बूट।</li>
+                                    <li><strong>श्वसन सुरक्षा:</strong> धूल, धुएं, गैसों या वाष्पों से बचाव के लिए श्वासयंत्र या मास्क।</li>
+                                    <li><strong>शरीर की सुरक्षा:</strong> एप्रन, कवरऑल या उच्च-दृश्यता वाली जैकेट जैसे सुरक्षात्मक कपड़े।</li>
+                                </ul>
+                            </li>
+                            <li><strong>उचित फिट और उपयोग:</strong> सुनिश्चित करें कि पीपीई सही ढंग से फिट बैठता है और इरादा के अनुसार उपयोग किया जाता है। खराब-फिटिंग या अनुचित तरीके से इस्तेमाल किया गया पीपीई अप्रभावी हो सकता है।</li>
+                            <li><strong>रखरखाव और निरीक्षण:</strong> क्षति या टूट-फूट के लिए पीपीई का नियमित रूप से निरीक्षण करें। आवश्यकतानुसार पीपीई को साफ करें, बनाए रखें और बदलें। क्षतिग्रस्त पीपीई का उपयोग न करें।</li>
+                            <li><strong>प्रशिक्षण:</strong> कर्मचारियों को प्रशिक्षित किया जाना चाहिए कि पीपीई कब आवश्यक है, किस प्रकार की आवश्यकता है, इसे ठीक से कैसे पहनना, उतारना, समायोजित करना और पहनना है, और इसकी सीमाएं क्या हैं।</li>
+                            <li><strong>अनुपालन:</strong> प्रासंगिक भारतीय मानकों (जैसे, हेलमेट, सुरक्षा जूते के लिए बीआईएस मानक) और कारखाना अधिनियम, 1948 के पीपीई से संबंधित प्रावधानों का पालन करें।</li>
+                        </ul>
+                        <p>पीपीई रक्षा की अंतिम पंक्ति है; हमेशा पहले स्रोत पर खतरों को खत्म करने या नियंत्रित करने का प्रयास करें।</p>
+                    `
+                },
+                5: {
+                    title: "अग्निशमन सुरक्षा और रोकथाम",
+                    shortDesc: "अग्निशमन रोकथाम, आपातकालीन प्रतिक्रिया और अग्निशामक यंत्रों के उचित उपयोग के लिए प्रक्रियाएं...",
+                    detailedContent: `
+                        <p>आग से सुरक्षा जीवन और संपत्ति की रक्षा के लिए महत्वपूर्ण है। रोकथाम उपायों और आपातकालीन प्रक्रियाओं को समझना आवश्यक है।</p>
+                        <h4>मुख्य दिशानिर्देश:</h4>
+                        <ul>
+                            <li><strong>खतरा पहचान:</strong> आग के संभावित खतरों की पहचान करें, जैसे ज्वलनशील सामग्री, दोषपूर्ण वायरिंग, या अनुचित भंडारण।</li>
+                            <li><strong>ज्वलनशील सामग्री:</strong> ज्वलनशील तरल पदार्थों और सामग्री को अनुमोदित कंटेनरों और निर्दिष्ट, अच्छी तरह हवादार क्षेत्रों में, इग्निशन स्रोतों से दूर रखें।</li>
+                            <li><strong>विद्युत सुरक्षा:</strong> सुनिश्चित करें कि सभी विद्युत प्रतिष्ठान सुरक्षित हैं और नियमित रूप से निरीक्षण किए जाते हैं। सॉकेट को ओवरलोड करने और क्षतिग्रस्त डोरियों का उपयोग करने से बचें।</li>
+                            <li><strong>हाउसकीपिंग:</strong> ज्वलनशील कचरे और मलबे के संचय को रोकने के लिए अच्छी हाउसकीपिंग बनाए रखें।</li>
+                            <li><strong>अग्निशामक यंत्र:</strong> अग्निशामक यंत्रों का स्थान और प्रकार जानें। केवल तभी अग्निशामक यंत्र का उपयोग करें जब आप प्रशिक्षित हों और आग छोटी और नियंत्रित हो (याद रखें <a href="https://en.wikipedia.org/wiki/PASS_device" target="_blank">PASS</a> विधि: पुल, लक्ष्य, निचोड़ें, स्वीप करें)।</li>
+                            <li><strong>आपातकालीन निकास:</strong> आपातकालीन निकास और भागने के रास्तों को हर समय स्पष्ट और अबाधित रखें।</li>
+                            <li><strong>अलार्म सिस्टम:</strong> फायर अलार्म सिस्टम और निकासी प्रक्रियाओं को समझें। फायर ड्रिल में भाग लें।</li>
+                            <li><strong>आपातकालीन असेंबली पॉइंट:</strong> अपने नामित आपातकालीन असेंबली पॉइंट को जानें।</li>
+                            <li><strong>रिपोर्टिंग:</strong> किसी भी आग के खतरे या संदिग्ध गतिविधियों की तुरंत रिपोर्ट करें।</li>
+                            <li><strong>कानूनी अनुपालन:</strong> स्थानीय आग सुरक्षा नियमों, भारत के राष्ट्रीय भवन संहिता के आग सुरक्षा से संबंधित प्रावधानों, और कारखाना अधिनियम, 1948 के आग सुरक्षा नियमों का पालन करें।</li>
+                        </ul>
+                        <p>आग लगने की स्थिति में शांत रहें, अलार्म सक्रिय करें, तुरंत खाली करें, और एक बड़ी या तेजी से फैलने वाली आग से लड़ने का प्रयास न करें।</p>
+                    `
+                },
+                6: {
+                    title: "प्राथमिक चिकित्सा और आपातकालीन प्रतिक्रिया",
+                    shortDesc: "बुनियादी प्राथमिक चिकित्सा प्रक्रियाएं, आपातकालीन संपर्क जानकारी, और घटनाओं की रिपोर्टिंग...",
+                    detailedContent: `
+                        <p>तत्काल और प्रभावी प्राथमिक चिकित्सा चोटों की गंभीरता को काफी कम कर सकती है और आपात स्थिति के दौरान जान बचा सकती है। प्रत्येक कार्यस्थल में एक मजबूत प्राथमिक चिकित्सा और आपातकालीन प्रतिक्रिया योजना होनी चाहिए।</p>
+                        <h4>मुख्य दिशानिर्देश:</h4>
+                        <ul>
+                            <li><strong>प्राथमिक चिकित्सा किट:</strong> निकटतम प्राथमिक चिकित्सा किट का स्थान जानें और सुनिश्चित करें कि यह अच्छी तरह से स्टॉक किया गया है और नियमित रूप से रखरखाव किया जाता है।</li>
+                            <li><strong>प्रशिक्षित प्राथमिक चिकित्सक:</strong> अपने कार्यस्थल में प्रशिक्षित प्राथमिक चिकित्सकों की पहचान करें। बड़े प्रतिष्ठानों में, कारखाना अधिनियम, 1948 के अनुसार प्रमाणित प्राथमिक चिकित्सा कर्मियों की पर्याप्त संख्या होनी चाहिए।</li>
+                            <li><strong>आपातकालीन संपर्क जानकारी:</strong> चिकित्सा सेवाओं (जैसे, एम्बुलेंस के लिए 102, भारत में आपातकालीन हेल्पलाइन के लिए 112), अग्निशमन विभाग और पुलिस के लिए आसानी से सुलभ आपातकालीन संपर्क नंबर रखें।</li>
+                            <li><strong>घटनाओं की रिपोर्टिंग:</strong> सभी चोटों, यहां तक कि मामूली चोटों, और लगभग दुर्घटनाओं की तुरंत अपने पर्यवेक्षक को रिपोर्ट की जानी चाहिए और प्रलेखित किया जाना चाहिए। यह दुर्घटना जांच और रोकथाम के लिए महत्वपूर्ण है।</li>
+                            <li><strong>बुनियादी प्राथमिक चिकित्सा प्रक्रियाएं (सामान्य सिद्धांत):</strong>
+                                <ul>
+                                    <li><strong>स्थिति का आकलन करें:</strong> घायल व्यक्ति के पास जाने से पहले सुनिश्चित करें कि दृश्य सुरक्षित है।</li>
+                                    <li><strong>मदद के लिए बुलाओ:</strong> यदि चोट गंभीर है तो तुरंत पेशेवर चिकित्सा सहायता के लिए बुलाओ।</li>
+                                    <li><strong>सहायता प्रदान करें:</strong> प्रशिक्षित के रूप में बुनियादी प्राथमिक चिकित्सा प्रदान करें (जैसे, रक्तस्राव को रोकें, सदमे का प्रबंधन करें, यदि प्रमाणित हो तो सीपीआर दें)।</li>
+                                    <li><strong>आराम और आश्वासन:</strong> पेशेवर मदद आने तक घायल व्यक्ति को आरामदायक रखें और उन्हें आश्वस्त करें।</li>
+                                </ul>
+                            </li>
+                            <li><strong>निकासी प्रक्रियाएं:</strong> विभिन्न प्रकार की आपात स्थितियों (जैसे, आग, प्राकृतिक आपदा) के लिए आपातकालीन निकासी प्रक्रियाओं को समझें और अभ्यास करें।</li>
+                            <li><strong>डिफाइब्रिलेटर (AEDs):</strong> यदि उपलब्ध हो, तो स्वचालित बाहरी डिफाइब्रिलेटर (AEDs) का स्थान और बुनियादी संचालन जानें।</li>
+                        </ul>
+                        <p>सभी कर्मचारियों के लिए प्राथमिक चिकित्सा और आपातकालीन प्रतिक्रिया पर नियमित रिफ्रेशर महत्वपूर्ण हैं।</p>
+                    `
+                }
+            },
+            "bn": {
+                1: {
+                    title: "উচ্চতায় কাজ",
+                    shortDesc: "পতন রোধ করতে উচ্চতায় কাজ করার সময় ঝুঁকিগুলি বুঝুন এবং সঠিক পদ্ধতি অনুসরণ করুন...",
+                    detailedContent: `
+                        <p>উচ্চতায় কাজ করার ফলে পতন থেকে গুরুতর আঘাত বা মৃত্যু হওয়ার যথেষ্ট ঝুঁকি থাকে। সুরক্ষা প্রোটোকলগুলি মেনে চলা অত্যন্ত গুরুত্বপূর্ণ।</p>
+                        <h4>মূল নির্দেশিকা:</h4>
+                        <ul>
+                            <li><strong>ঝুঁকি মূল্যায়ন:</strong> উচ্চতায় কোনো কাজ শুরু করার আগে সর্বদা একটি পুঙ্খানুপুঙ্খ ঝুঁকি মূল্যায়ন করুন। অরক্ষিত প্রান্ত, ভঙ্গুর পৃষ্ঠ এবং উপরের বাধাগুলির মতো সম্ভাব্য বিপদগুলি চিহ্নিত করুন।</li>
+                            <li><strong>পতন সুরক্ষা ব্যবস্থা:</strong> সুরক্ষা জোতা, ল্যানিয়ার্ড এবং পতন প্রতিরোধ ব্যবস্থার মতো উপযুক্ত পতন সুরক্ষা ব্যবস্থা ব্যবহার করুন। নিশ্চিত করুন যে এগুলি নিয়মিত পরিদর্শন করা হয় এবং সঠিকভাবে লাগানো হয়।</li>
+                            <li><strong>মাচা এবং মই:</strong> সমস্ত মাচা যোগ্য ব্যক্তিদের দ্বারা তৈরি করা উচিত, প্রতিদিন পরিদর্শন করা উচিত এবং সেই অনুযায়ী ট্যাগ করা উচিত। মইগুলি ভাল অবস্থায় থাকতে হবে, স্থিতিশীল মাটিতে স্থাপন করা উচিত এবং ল্যান্ডিং পয়েন্টের উপরে যথেষ্ট প্রসারিত হওয়া উচিত।</li>
+                            <li><strong>প্রান্ত সুরক্ষা:</strong> প্রান্ত থেকে পতন রোধ করতে এবং উপকরণগুলিকে নিচে পড়া থেকে আটকাতে গার্ডরেল, টো বোর্ড এবং জাল স্থাপন করুন।</li>
+                            <li><strong>প্রশিক্ষণ:</strong> উচ্চতায় কাজ করা সমস্ত কর্মীদের বিল্ডিং অ্যান্ড আদার কনস্ট্রাকশন ওয়ার্কার্স (রেগুলেশন অফ এমপ্লয়মেন্ট অ্যান্ড কন্ডিশনস অফ সার্ভিস) অ্যাক্ট, ১৯৯৬, এবং সংশ্লিষ্ট নিয়মাবলী অনুসারে নিরাপদ কাজের পদ্ধতি, সরঞ্জাম ব্যবহার এবং জরুরি পদ্ধতির উপর ব্যাপক প্রশিক্ষণ গ্রহণ করতে হবে।</li>
+                            <li><strong>আবহাওয়ার অবস্থা:</strong> প্রতিকূল আবহাওয়ার পরিস্থিতিতে (যেমন, তীব্র বাতাস, ভারী বৃষ্টি) উচ্চতায় কাজ করবেন না যা সুরক্ষাকে ব্যাহত করতে পারে।</li>
+                        </ul>
+                        <p>যেখানে সম্ভব, ব্যক্তিগত সুরক্ষা সরঞ্জামের উপর সর্বদা সম্মিলিত সুরক্ষা ব্যবস্থাগুলিকে অগ্রাধিকার দিন। নিয়মিত তত্ত্বাবধান এবং কারখানা আইন, ১৯৪৮, যেখানে প্রযোজ্য, এর মতো আইনি প্রয়োজনীয়তাগুলি মেনে চলা অত্যন্ত গুরুত্বপূর্ণ।</p>
+                    `
+                },
+                2: {
+                    title: "বৈদ্যুতিক সুরক্ষা",
+                    shortDesc: "বৈদ্যুতিক সরঞ্জাম এবং তারের সাথে কাজ করার সময় শক এবং আগুন এড়াতে নিরাপদ অনুশীলন সম্পর্কে জানুন...",
+                    detailedContent: `
+                        <p>বৈদ্যুতিক বিপদগুলি বৈদ্যুতিক শক, পোড়া এবং আগুনের কারণ হতে পারে। বৈদ্যুতিক সুরক্ষা নির্দেশিকাগুলির কঠোর আনুগত্য বাধ্যতামূলক।</p>
+                        <h4>মূল নির্দেশিকা:</h4>
+                        <ul>
+                            <li><strong>যোগ্য কর্মী:</strong> শুধুমাত্র প্রশিক্ষিত এবং অনুমোদিত কর্মীরাই বৈদ্যুতিক কাজ করবেন।</li>
+                            <li><strong>লকআউট/ট্যাগআউট (LOTO):</strong> বৈদ্যুতিক সার্কিট বা সরঞ্জামগুলিতে কাজ করার আগে সর্বদা ডি-এনার্জাইজ করুন এবং লকআউট/ট্যাগআউট পদ্ধতি প্রয়োগ করুন।</li>
+                            <li><strong>পরিদর্শন:</strong> সমস্ত বৈদ্যুতিক সরঞ্জাম, কর্ড এবং যন্ত্রপাতি ক্ষতির জন্য নিয়মিত পরিদর্শন করুন। অবিলম্বে ত্রুটিপূর্ণ সরঞ্জাম প্রতিস্থাপন বা মেরামত করুন।</li>
+                            <li><strong>গ্রাউন্ডিং:</strong> নিশ্চিত করুন যে সমস্ত বৈদ্যুতিক সরঞ্জাম সঠিকভাবে গ্রাউন্ডেড।</li>
+                            <li><strong>ওভারলোড প্রতিরোধ:</strong> সার্কিট ওভারলোড করা এড়িয়ে চলুন। উপযুক্ত সার্কিট ব্রেকার এবং ফিউজ ব্যবহার করুন।</li>
+                            <li><strong>আর্দ্র অবস্থা:</strong> আর্দ্র অবস্থায় বৈদ্যুতিক সরঞ্জাম চালাবেন না যদি না এটি বিশেষভাবে এমন পরিবেশের জন্য ডিজাইন করা হয়।</li>
+                            <li><strong>পিপিই:</strong> বিদ্যুতের সাথে কাজ করার সময় ইনসুলেটেড গ্লাভস, নিরাপত্তা জুতো এবং চোখের সুরক্ষার মতো উপযুক্ত ব্যক্তিগত সুরক্ষা সরঞ্জাম (পিপিই) ব্যবহার করুন।</li>
+                            <li><strong>ভারতীয় বিদ্যুৎ বিধি:</strong> বৈদ্যুতিক ইনস্টলেশন এবং সুরক্ষার জন্য ভারতীয় বিদ্যুৎ বিধি, ১৯৫৬ (বা আপডেট করা বিদ্যুৎ বিধি, ২০০৫) এবং অন্যান্য প্রাসঙ্গিক বিআইএস মান মেনে চলুন।</li>
+                        </ul>
+                        <p>যেকোনো বৈদ্যুতিক বিপদ বা ঘটনার কথা অবিলম্বে আপনার তত্ত্বাবধায়ককে জানান।</p>
+                    `
+                },
+                3: {
+                    title: "বিপজ্জনক উপকরণ পরিচালনা",
+                    shortDesc: "বিপজ্জনক রাসায়নিকের নিরাপদ সঞ্চয়, পরিবহন এবং ব্যবহার এবং বর্জ্য নিষ্পত্তির জন্য নির্দেশিকা...",
+                    detailedContent: `
+                        <p>বিপজ্জনক উপকরণ পরিচালনা করার জন্য এক্সপোজার, ছিটকে পড়া এবং পরিবেশ দূষণ রোধ করতে সতর্ক মনোযোগের প্রয়োজন। বিপজ্জনক রাসায়নিক নিয়ম, ১৯৮৯ এর উত্পাদন, সঞ্চয় এবং আমদানি, এবং অন্যান্য পরিবেশ আইন প্রাসঙ্গিক।</p>
+                        <h4>মূল নির্দেশিকা:</h4>
+                        <ul>
+                            <li><strong>উপাদান সুরক্ষা ডেটা শীট (MSDS)/সুরক্ষা ডেটা শীট (SDS):</strong> রাসায়নিক বৈশিষ্ট্য, বিপদ, নিরাপদ হ্যান্ডলিং এবং জরুরি পদ্ধতির বিশদ তথ্যের জন্য সর্বদা MSDS/SDS দেখুন।</li>
+                            <li><strong>সঠিক লেবেলিং:</strong> নিশ্চিত করুন যে সমস্ত বিপজ্জনক উপকরণ তাদের বিষয়বস্তু, বিপদ এবং প্রয়োজনীয় সতর্কতা সহ সঠিকভাবে লেবেল করা হয়েছে।</li>
+                            <li><strong>সঞ্চয়স্থান:</strong> রাসায়নিকগুলিকে মনোনীত, ভাল বায়ুচলাচলযুক্ত এলাকায়, অসঙ্গতিপূর্ণ উপকরণ এবং ইগনিশন উত্স থেকে দূরে সংরক্ষণ করুন। নির্দিষ্ট স্টোরেজ প্রয়োজনীয়তা (যেমন, তাপমাত্রা, আলো) অনুসরণ করুন।</li>
+                            <li><strong>পিপিই:</strong> রাসায়নিক-প্রতিরোধী গ্লাভস, সুরক্ষা চশমা, শ্বাসযন্ত্র এবং প্রতিরক্ষামূলক পোশাকের মতো উপযুক্ত পিপিই ব্যবহার করুন।</li>
+                            <li><strong>বায়ুচলাচল:</strong> অস্থির রাসায়নিকের সাথে কাজ করার সময় পর্যাপ্ত বায়ুচলাচল নিশ্চিত করুন।</li>
+                            <li><strong>ছড়িয়ে পড়া প্রতিক্রিয়া:</strong> ছড়িয়ে পড়া প্রতিক্রিয়া পদ্ধতিগুলি জানুন এবং স্পিল কিটগুলি সহজে উপলব্ধ রাখুন।</li>
+                            <li><strong>নিষ্পত্তি:</strong> পরিবেশগত বিধিমালা এবং স্থানীয় পৌর কঠিন বর্জ্য নিয়ম অনুসারে বিপজ্জনক বর্জ্য নিষ্পত্তি করুন।</li>
+                            <li><strong>প্রশিক্ষণ:</strong> বিপজ্জনক উপকরণ হ্যান্ডলিংকারী কর্মীদের তাদের নিরাপদ ব্যবহার, সঞ্চয়স্থান এবং জরুরি পদ্ধতিতে প্রশিক্ষণ দিতে হবে।</li>
+                        </ul>
+                        <p>এক্সপোজার কমিয়ে দিন এবং পরিবেশে নির্গমন রোধ করুন। রাসায়নিক বিপদ সম্পর্কিত 'জানার অধিকার' নীতিগুলি সর্বদা অনুসরণ করুন।</p>
+                    `
+                },
+                4: {
+                    title: "ব্যক্তিগত সুরক্ষা সরঞ্জাম (পিপিই)",
+                    shortDesc: "বিভিন্ন কাজের জন্য পিপিই এর সঠিক নির্বাচন, ব্যবহার এবং রক্ষণাবেক্ষণের তথ্য...",
+                    detailedContent: `
+                        <p>কর্মক্ষেত্রে বিপদ থেকে এক্সপোজার কমানোর জন্য ব্যক্তিগত সুরক্ষা সরঞ্জাম (পিপিই) অত্যন্ত গুরুত্বপূর্ণ। নিয়োগকর্তারা উপযুক্ত পিপিই সরবরাহ করতে বাধ্য, এবং কর্মীদের এটি সঠিকভাবে ব্যবহার করতে হবে।</p>
+                        <h4>মূল নির্দেশিকা:</h4>
+                        <ul>
+                            <li><strong>ঝুঁকি মূল্যায়ন:</strong> পিপিই নির্বাচন অবশ্যই কাজ এবং পরিবেশের একটি পুঙ্খানুপুঙ্খ ঝুঁকি মূল্যায়নের উপর ভিত্তি করে হতে হবে।</li>
+                            <li><strong>পিপিই এর প্রকারভেদ:</strong>
+                                <ul>
+                                    <li><strong>মাথার সুরক্ষা:</strong> পতনশীল বস্তু বা প্রভাবের বিরুদ্ধে সুরক্ষার জন্য হার্ড হ্যাট (হেলমেট)।</li>
+                                    <li><strong>চোখ এবং মুখের সুরক্ষা:</strong> ছিটা, ধুলো এবং প্রভাব থেকে রক্ষা করার জন্য সুরক্ষা চশমা, গগলস এবং ফেস শিল্ড।</li>
+                                    <li><strong>শ্রবণ সুরক্ষা:</strong> কোলাহলপূর্ণ পরিবেশে ইয়ারপ্লাগ বা ইয়ারমফ।</li>
+                                    <li><strong>হাতের সুরক্ষা:</strong> নির্দিষ্ট বিপদের জন্য উপযুক্ত গ্লাভস (যেমন, রাসায়নিক-প্রতিরোধী, কাট-প্রতিরোধী, তাপ-প্রতিরোধী)।</li>
+                                    <li><strong>পায়ের সুরক্ষা:</strong> স্টিল টো বা পঞ্চার-প্রতিরোধী সোল সহ নিরাপত্তা জুতো বা বুট।</li>
+                                    <li><strong>শ্বাসযন্ত্রের সুরক্ষা:</strong> ধুলো, ধোঁয়া, গ্যাস বা বাষ্প থেকে রক্ষা করার জন্য রেসপিরেটর বা মাস্ক।</li>
+                                    <li><strong>শরীরের সুরক্ষা:</strong> অ্যাপ্রন, কভারঅল বা উচ্চ-দৃশ্যমানতা ভেস্টের মতো প্রতিরক্ষামূলক পোশাক।</li>
+                                </ul>
+                            </li>
+                            <li><strong>সঠিক ফিট এবং ব্যবহার:</strong> নিশ্চিত করুন যে পিপিই সঠিকভাবে ফিট করে এবং উদ্দেশ্য অনুযায়ী ব্যবহার করা হয়। খারাপ ফিটিং বা ভুলভাবে ব্যবহৃত পিপিই অকার্যকর হতে পারে।</li>
+                            <li><strong>রক্ষণাবেক্ষণ এবং পরিদর্শন:</strong> ক্ষতি বা ক্ষয়ের জন্য পিপিই নিয়মিত পরিদর্শন করুন। প্রয়োজন অনুযায়ী পিপিই পরিষ্কার করুন, রক্ষণাবেক্ষণ করুন এবং প্রতিস্থাপন করুন। ক্ষতিগ্রস্ত পিপিই ব্যবহার করবেন না।</li>
+                            <li><strong>প্রশিক্ষণ:</strong> কর্মীদের কখন পিপিই প্রয়োজন, কোন প্রকারের প্রয়োজন, কীভাবে সঠিকভাবে পরিধান করতে, খুলতে, সামঞ্জস্য করতে এবং পরতে হয় এবং এর সীমাবদ্ধতাগুলি কী কী তা প্রশিক্ষণ দিতে হবে।</li>
+                            <li><strong>অনুসরণ:</strong> প্রাসঙ্গিক ভারতীয় মান (যেমন, হেলমেট, নিরাপত্তা পাদুকাগুলির জন্য বিআইএস মান) এবং কারখানা আইন, ১৯৪৮ এর পিপিই সম্পর্কিত বিধানগুলি মেনে চলুন।</li>
+                        </ul>
+                        <p>পিপিই হল প্রতিরক্ষার শেষ লাইন; সর্বদা প্রথমে উৎস থেকে বিপদগুলি দূর করতে বা নিয়ন্ত্রণ করার চেষ্টা করুন।</p>
+                    `
+                },
+                5: {
+                    title: "অগ্নিনির্বাপক সুরক্ষা এবং প্রতিরোধ",
+                    shortDesc: "অগ্নিনির্বাপক প্রতিরোধ, জরুরি প্রতিক্রিয়া এবং অগ্নিনির্বাপক যন্ত্রের সঠিক ব্যবহারের পদ্ধতি...",
+                    detailedContent: `
+                        <p>জীবন ও সম্পত্তি রক্ষার জন্য অগ্নি নিরাপত্তা অত্যন্ত গুরুত্বপূর্ণ। প্রতিরোধ ব্যবস্থা এবং জরুরি পদ্ধতিগুলি বোঝা অপরিহার্য।</p>
+                        <h4>মূল নির্দেশিকা:</h4>
+                        <ul>
+                            <li><strong>বিপদ সনাক্তকরণ:</strong> সম্ভাব্য আগুন লাগার বিপদগুলি চিহ্নিত করুন, যেমন দাহ্য পদার্থ, ত্রুটিপূর্ণ তারের কাজ, বা অনুপযুক্ত সঞ্চয়স্থান।</li>
+                            <li><strong>দাহ্য পদার্থ:</strong> দাহ্য তরল এবং পদার্থগুলি অনুমোদিত পাত্রে এবং মনোনীত, ভাল বায়ুচলাচলযুক্ত এলাকায়, ইগনিশন উত্স থেকে দূরে সংরক্ষণ করুন।</li>
+                            <li><strong>বৈদ্যুতিক সুরক্ষা:</strong> নিশ্চিত করুন যে সমস্ত বৈদ্যুতিক ইনস্টলেশন নিরাপদ এবং নিয়মিত পরিদর্শন করা হয়। সকেট ওভারলোড করা এবং ক্ষতিগ্রস্ত কর্ড ব্যবহার করা এড়িয়ে চলুন।</li>
+                            <li><strong>পরিচ্ছন্নতা:</strong> দাহ্য বর্জ্য এবং আবর্জনার জমাট বাঁধা রোধ করতে ভাল পরিচ্ছন্নতা বজায় রাখুন।</li>
+                            <li><strong>অগ্নিনির্বাপক যন্ত্র:</strong> অগ্নিনির্বাপক যন্ত্রের অবস্থান এবং প্রকার জানুন। কেবলমাত্র তখনই একটি যন্ত্র ব্যবহার করুন যদি আপনি প্রশিক্ষিত হন এবং আগুন ছোট ও সীমাবদ্ধ থাকে (মনে রাখবেন <a href="https://en.wikipedia.org/wiki/PASS_device" target="_blank">PASS</a> পদ্ধতি: পুল, লক্ষ্য, নিড়ানো, ঝাঁটা)।</li>
+                            <li><strong>জরুরি প্রস্থান:</strong> জরুরি প্রস্থান এবং পালানোর পথগুলি সর্বদা পরিষ্কার এবং অবাধ রাখুন।</li>
+                            <li><strong>এলার্ম সিস্টেম:</strong> ফায়ার অ্যালার্ম সিস্টেম এবং জরুরি সরানোর পদ্ধতিগুলি বুঝুন। ফায়ার ড্রিলে অংশগ্রহণ করুন।</li>
+                            <li><strong>জরুরি সমাবেশ বিন্দু:</strong> আপনার মনোনীত জরুরি সমাবেশ বিন্দু জানুন।</li>
+                            <li><strong>রিপোর্টিং:</strong> যেকোনো অগ্নিকাণ্ডের বিপদ বা সন্দেহজনক কার্যকলাপ অবিলম্বে রিপোর্ট করুন।</li>
+                            <li><strong>আইনি সম্মতি:</strong> স্থানীয় অগ্নি নিরাপত্তা বিধিমালা, ভারতের জাতীয় বিল্ডিং কোডের অগ্নি নিরাপত্তা সম্পর্কিত বিধান এবং কারখানা আইন, ১৯৪৮ এর অগ্নি সুরক্ষা নিয়মাবলী মেনে চলুন।</li>
+                        </ul>
+                        <p>আগুনের ক্ষেত্রে, শান্ত থাকুন, অ্যালার্ম সক্রিয় করুন, অবিলম্বে সরিয়ে নিন এবং একটি বড় বা দ্রুত ছড়িয়ে পড়া আগুনের সাথে লড়াই করার চেষ্টা করবেন না।</p>
+                    `
+                },
+                6: {
+                    title: "প্রাথমিক চিকিৎসা এবং জরুরি প্রতিক্রিয়া",
+                    shortDesc: "প্রাথমিক চিকিৎসার মৌলিক পদ্ধতি, জরুরি যোগাযোগের তথ্য এবং ঘটনাগুলির প্রতিবেদন...",
+                    detailedContent: `
+                        <p>তাৎক্ষণিক এবং কার্যকর প্রাথমিক চিকিৎসা আঘাতের তীব্রতা উল্লেখযোগ্যভাবে হ্রাস করতে পারে এবং জরুরি অবস্থার সময় জীবন বাঁচাতে পারে। প্রতিটি কর্মস্থলে একটি শক্তিশালী প্রাথমিক চিকিৎসা এবং জরুরি প্রতিক্রিয়া পরিকল্পনা থাকা উচিত।</p>
+                        <h4>মূল নির্দেশিকা:</h4>
+                        <ul>
+                            <li><strong>প্রাথমিক চিকিৎসা কিট:</strong> নিকটতম প্রাথমিক চিকিৎসা কিটের অবস্থান জানুন এবং নিশ্চিত করুন যে এটি ভালভাবে স্টক করা হয়েছে এবং নিয়মিতভাবে রক্ষণাবেক্ষণ করা হয়।</li>
+                            <li><strong>প্রশিক্ষিত প্রাথমিক চিকিৎসক:</strong> আপনার কর্মস্থলে প্রশিক্ষিত প্রাথমিক চিকিৎসকদের সনাক্ত করুন। বৃহত্তর প্রতিষ্ঠানে, কারখানা আইন, ১৯৪৮ অনুসারে পর্যাপ্ত সংখ্যক প্রত্যয়িত প্রাথমিক চিকিৎসা কর্মী থাকা উচিত।</li>
+                            <li><strong>জরুরি যোগাযোগের তথ্য:</strong> চিকিৎসা পরিষেবাগুলির জন্য (যেমন, অ্যাম্বুলেন্সের জন্য ১০২, ভারতে জরুরি হেল্পলাইনের জন্য ১১২), ফায়ার ডিপার্টমেন্ট এবং পুলিশের জন্য সহজে অ্যাক্সেসযোগ্য জরুরি যোগাযোগের নম্বর রাখুন।</li>
+                            <li><strong>ঘটনাগুলির প্রতিবেদন:</strong> সমস্ত আঘাত, এমনকি ছোটখাটো আঘাত, এবং প্রায়-মিসগুলি অবিলম্বে আপনার তত্ত্বাবধায়ককে জানানো উচিত এবং নথিভুক্ত করা উচিত। এটি দুর্ঘটনা তদন্ত এবং প্রতিরোধের জন্য অত্যন্ত গুরুত্বপূর্ণ।</li>
+                            <li><strong>বুनियाদি প্রাথমিক চিকিৎসা প্রক্রিয়াएं (সাধারণ सिद्धांत):</strong>
+                                <ul>
+                                    <li><strong>পরিস্থিতি মূল্যায়ন করুন:</strong> আহত ব্যক্তির কাছে যাওয়ার আগে নিশ্চিত করুন যে দৃশ্যটি নিরাপদ।</li>
+                                    <li><strong>সাহায্যের জন্য ডাকুন:</strong> আঘাত গুরুতর হলে অবিলম্বে পেশাদার চিকিৎসা সাহায্যের জন্য ডাকুন।</li>
+                                    <li><strong>সাহায্য প্রদান করুন:</strong> প্রশিক্ষিত হিসাবে মৌলিক প্রাথমিক চিকিৎসা প্রদান করুন (जैसे, रक्तस्राव को रोकें, सदमे का प्रबंधन करें, यदि प्रमाणित हो तो सीपीआर दें)।</li>
+                                    <li><strong>आराम और आश्वासन:</strong> পেশাদার সাহায্য না আসা পর্যন্ত আহত ব্যক্তিকে আরামদায়ক রাখুন এবং তাকে আশ্বাস দিন।</li>
+                                </ul>
+                            </li>
+                            <li><strong>নিকাশী পদ্ধতি:</strong> বিভিন্ন ধরণের জরুরি অবস্থার জন্য (যেমন, আগুন, প্রাকৃতিক দুর্যোগ) জরুরি নিকাশী পদ্ধতিগুলি বুঝুন এবং অনুশীলন করুন।</li>
+                            <li><strong>ডিফিব্রিলেটর (AEDs):</strong> যদি উপলব্ধ থাকে, তবে স্বয়ংক্রিয় বাহ্যিক ডিফিব্রিলেটর (AEDs) এর অবস্থান এবং মৌলিক অপারেশন জানুন।</li>
+                        </ul>
+                        <p>সমস্ত কর্মীদের জন্য প্রাথমিক চিকিৎসা এবং জরুরি প্রতিক্রিয়ার উপর নিয়মিত রিফ্রেশার অত্যন্ত গুরুত্বপূর্ণ।</p>
+                    `
+                }
+            }
+            // ... Add content for other languages as needed
+        };
+
+        const languageSelect = document.getElementById('language-select');
+        const guidelinesContainer = document.getElementById('guidelines-container');
+        const modal = document.getElementById('safetyModal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContentBody = document.getElementById('modal-content-body');
+
+        // Function to update the guidelines displayed
+        function updateGuidelines(lang) {
+            const currentLangData = safetyGuidelinesData[lang];
+            if (!currentLangData) {
+                console.warn(`No data for language: ${lang}`);
+                return;
+            }
+
+            // Clear existing guidelines (if any)
+            guidelinesContainer.innerHTML = '';
+
+            for (const id in currentLangData) {
+                const guideline = currentLangData[id];
+                const panel = document.createElement('div');
+                panel.className = 'guideline-panel';
+                panel.setAttribute('data-guideline-id', id);
+                panel.innerHTML = `
+                    <h3>${guideline.title}</h3>
+                    <p>${guideline.shortDesc}</p>
+                    <a href="#" class="read-more" onclick="openModal(${id}); return false;">Read More</a>
+                `;
+                guidelinesContainer.appendChild(panel);
+            }
+        }
+
+        // Function to open the modal with detailed content
+        function openModal(id) {
+            const lang = languageSelect.value;
+            const guideline = safetyGuidelinesData[lang][id];
+            if (guideline) {
+                modalTitle.textContent = guideline.title;
+                modalContentBody.innerHTML = guideline.detailedContent;
+                modal.style.display = "flex"; // Use flex to center the modal content
+            }
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        // Event listener for language selection change
+        languageSelect.addEventListener('change', (event) => {
+            updateGuidelines(event.target.value);
+            // Close the modal if it's open and language changes
+            closeModal();
+        });
+
+        // Close the modal if the user clicks anywhere outside of the modal content
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Initial load: display English guidelines by default
+        document.addEventListener('DOMContentLoaded', () => {
+            updateGuidelines('en');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StepOnGo Profile Setup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+        }
+
+        .app {
+            max-width: 500px;
+            margin: 20px auto;
+            border: 2px solid #ccc;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        /* Header styles */
+        .header {
+            background-color: #0d61c4;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 30px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-icons a {
+            color: inherit;
+            text-decoration: none;
+            font-size: inherit;
+        }
+
+        .header-icons a:hover {
+            opacity: 0.8;
+        }
+
+        /* Content area styles */
+        .content {
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+
+        label.required::after {
+            content: " *";
+            color: red;
+        }
+
+        /* Input field styles */
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #0d61c4;
+            box-shadow: 0 0 0 2px rgba(13, 97, 196, 0.2);
+        }
+
+        textarea::placeholder {
+            color: #b0b0b0;
+            font-style: italic;
+        }
+
+        /* Tags for multi-select (not used in this specific form but good to keep) */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .tag {
+            background: #e0e0e0;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            color: #888;
+            font-weight: bold;
+        }
+
+        /* Save button style */
+        .save-btn {
+            margin-top: 20px;
+            width: 100%;
+            background-color: #1a73e8;
+            color: white;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .save-btn:hover {
+            background-color: #0d61c4;
+        }
+
+        /* Bank section styling */
+        .bank-section {
+            border: 2px solid #ccc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .bank-section h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        /* Multi-select dropdown styles */
+        .multi-select-container {
+            position: relative;
+            width: 100%;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .multi-select-display {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #333;
+            font-weight: 600;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .multi-select-display.active {
+            border-color: #f7931e; /* Highlight border when something is selected */
+        }
+
+        .multi-select-display.active span {
+            color: #333;
+        }
+
+        .multi-select-display .fas.fa-chevron-down {
+            transition: transform 0.3s ease;
+        }
+
+        .multi-select-display.show .fas.fa-chevron-down {
+            transform: rotate(180deg);
+        }
+
+        .multi-select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            z-index: 100;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 5px;
+        }
+
+        .multi-select-dropdown.show {
+            display: block;
+        }
+
+        .multi-select-dropdown label {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            cursor: pointer;
+            margin-top: 0; /* Override default label margin */
+            font-weight: normal;
+        }
+
+        .multi-select-dropdown label:hover {
+            background-color: #f0f0f0;
+        }
+
+        .multi-select-dropdown input[type="checkbox"],
+        .multi-select-dropdown input[type="radio"] {
+            margin-right: 8px;
+            width: auto;
+            padding: 0;
+            margin-top: 0;
+            /* Restore default appearance */
+            -webkit-appearance: checkbox;
+            -moz-appearance: checkbox;
+            appearance: checkbox;
+            min-width: unset; /* Ensure it doesn't get stretched */
+        }
+
+        .multi-select-dropdown #locationSearch,
+        .multi-select-dropdown #bankSearch {
+            width: calc(100% - 20px); /* Account for padding */
+            margin: 10px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; /* Include padding in width calculation */
+        }
+
+        .selected-locations-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .selected-location-tag {
+            background: #e0e0e0;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap; /* Prevent tag text from wrapping */
+            color: #333;
+            font-weight: 500;
+        }
+
+        .selected-location-tag .tag-remove {
+            color: #ff0000;
+            cursor: pointer;
+            margin-left: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1; /* Center the X vertically */
+        }
+
+        /* Error message and input error styles */
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none; /* Hidden by default */
+        }
+
+        .input-error {
+            border-color: red !important;
+            box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2) !important;
+        }
+
+        /* File input specific styles */
+        input[type="file"] {
+            border: 1px dashed #ccc;
+            background-color: #f8f8f8;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 1em;
+            color: #555;
+            transition: border-color 0.3s ease;
+        }
+        input[type="file"]::-webkit-file-upload-button {
+            visibility: hidden;
+        }
+        input[type="file"]::before {
+            content: 'Choose PDF file (Max 10 MB)';
+            display: inline-block;
+            background: linear-gradient(top, #f9f9f9, #e3e3e3);
+            border: 1px solid #999;
+            border-radius: 3px;
+            padding: 8px 12px;
+            outline: none;
+            white-space: nowrap;
+            -webkit-user-select: none;
+            cursor: pointer;
+            text-shadow: 1px 1px #fff;
+            font-weight: 700;
+            font-size: 10pt;
+            color: #444;
+        }
+        input[type="file"]:hover::before {
+            border-color: black;
+        }
+        input[type="file"]:active {
+            outline: 0;
+        }
+        input[type="file"]:active::before {
+            background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+        }
+        input[type="file"].input-error {
+            border-color: red !important;
+            box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2) !important;
+        }
+
+        /* Confirmation Page Styles */
+        .confirmation-page-section {
+            display: none; /* Initially hidden */
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #cce5ff;
+            background-color: #e6f7ff;
+            border-radius: 8px;
+        }
+
+        .confirmation-page-section h2 {
+            color: #0d61c4;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .confirmation-page-section p {
+            margin-bottom: 10px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .confirmation-page-section strong {
+            color: #000;
+            font-weight: 700;
+            display: inline-block;
+            min-width: 150px; /* Align labels for display */
+        }
+
+        .confirmation-page-section span {
+            font-weight: 400;
+            color: #555;
+        }
+
+        .confirmation-page-section .back-button {
+            background-color: #6c757d; /* Different color for back button */
+            margin-top: 25px;
+        }
+        .confirmation-page-section .back-button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="header">
+            <h1>StepOnGo-Profile Setup</h1>
+            <div class="header-icons">
+                <a href="#" aria-label="Go to Profile">
+                    <i class="fas fa-user-circle"></i>
+                </a>
+            </div>
+        </div>
+        <div class="content">
+            <div id="registration-form-section">
+                <label for="fullName" class="required">Full Name</label>
+                <input type="text" id="fullName" required placeholder="e.g., Ram Kumar" />
+                <p id="fullNameError" class="error-message">Full Name is required.</p>
+
+                <label for="address" class="required">Address</label>
+                <textarea id="address" required placeholder="e.g., 123, Main Street, Near Landmark"></textarea>
+                <p id="addressError" class="error-message">Address is required.</p>
+
+                <label for="pincode" class="required">Pincode</label>
+                <input type="text" id="pincode" required placeholder="e.g., 700102" maxlength="6" />
+                <p id="pincodeError" class="error-message">Pincode must be 6 digits long.</p>
+
+                <label for="state" class="required">State</label>
+                <select id="state" required>
+                    <option value="">Select State</option>
+                    <option>Andhra Pradesh</option>
+                    <option>Arunachal Pradesh</option>
+                    <option>Assam</option>
+                    <option>Bihar</option>
+                    <option>Chhattisgarh</option>
+                    <option>Goa</option>
+                    <option>Gujarat</option>
+                    <option>Haryana</option>
+                    <option>Himachal Pradesh</option>
+                    <option>Jharkhand</option>
+                    <option>Karnataka</option>
+                    <option>Kerala</option>
+                    <option>Madhya Pradesh</option>
+                    <option>Maharashtra</option>
+                    <option>Manipur</option>
+                    <option>Meghalaya</option>
+                    <option>Mizoram</option>
+                    <option>Nagaland</option>
+                    <option>Odisha</option>
+                    <option>Punjab</option>
+                    <option>Rajasthan</option>
+                    <option>Sikkim</option>
+                    <option>Tamil Nadu</option>
+                    <option>Telangana</option>
+                    <option>Tripura</option>
+                    <option>Uttar Pradesh</option>
+                    <option>Uttarakhand</option>
+                    <option>West Bengal</option>
+                </select>
+                <p id="stateError" class="error-message">State is required.</p>
+
+                <label for="district" class="required">District</label>
+                <select id="district" required>
+                    <option value="">Select District</option>
+                    </select>
+                <p id="districtError" class="error-message">District is required.</p>
+
+                <label for="gender" class="required">Gender</label>
+                <select id="gender" required>
+                    <option value="">Select your gender</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                </select>
+                <p id="genderError" class="error-message">Gender is required.</p>
+
+                <label for="dob" class="required">Date of Birth</label>
+                <input type="date" id="dob" required />
+                <p id="dobError" class="error-message">Date of Birth is required.</p>
+
+
+                <label for="skills" class="required">Skills</label>
+                <select id="skills" required>
+                    <option value="">Select Skill</option>
+                    <option>Labour</option>
+                    <option>Mistry</option>
+                    <option>Carpenter</option>
+                    <option>Painter</option>
+                    <option>Shuttering</option>
+                    <option>Other</option>
+                </select>
+                <input type="text" id="otherSkill" placeholder="e.g., Welding" style="display:none; margin-top: 5px;" />
+                <p id="skillsError" class="error-message">Skill is required.</p>
+
+                <label for="govtIdType" class="required">Govt ID Type</label>
+                <select id="govtIdType" required>
+                    <option value="">Select ID</option>
+                    <option value="Aadhaar Card">Aadhaar Card</option>
+                    <option value="PAN Card">PAN Card</option>
+                    <option value="Voter Card">Voter Card</option>
+                    <option value="Driving Licence">Driving Licence</option>
+                    <option value="Passport ID">Passport ID</option>
+                </select>
+                <p id="govtIdTypeError" class="error-message">Govt ID Type is required.</p>
+
+                <label for="govtIdNumber" class="required">Govt ID Number</label>
+                <input type="text" id="govtIdNumber" required placeholder="e.g., 123456789012" />
+                <p id="govtIdNumberError" class="error-message">Govt ID Number is required.</p>
+                <p id="aadhaarError" class="error-message">Aadhaar number must be 12 digits long.</p>
+                <p id="panError" class="error-message">PAN number must be 10 alphanumeric characters (e.g., ABCDE1234F).</p>
+                <p id="voterError" class="error-message">Voter ID number should be 10 alphanumeric characters (e.g., ABC1234567).</p>
+                <p id="drivingLicenseError" class="error-message">Driving Licence number should be 15 alphanumeric characters.</p>
+                <p id="passportError" class="error-message">Passport ID must be 8 characters long (e.g., A1234567).</p>
+
+                <label for="govtIdPhoto" class="required">Upload Govt ID Photo (PDF, max 10 MB)</label>
+                <input type="file" id="govtIdPhoto" accept="application/pdf" required />
+                <p id="govtIdPhotoError" class="error-message">Govt ID photo is required and must be a PDF under 10 MB.</p>
+
+                <label for="selfPhoto" class="required">Upload Self Photo (PDF, max 10 MB)</label>
+                <input type="file" id="selfPhoto" accept="application/pdf" required />
+                <p id="selfPhotoError" class="error-message">Self photo is required and must be a PDF under 10 MB.</p>
+
+                <label for="experience" class="required">Experience</label>
+                <select id="experience" required>
+                    <option value="">Select Experience</option>
+                    <option value="0 year">0 year</option>
+                    <option value="1 year">1 year</option>
+                    <option value="2 years">2 years</option>
+                    <option value="3 years">3 years</option>
+                    <option value="4 years">4 years</option>
+                    <option value="5 years">5 year</option>
+                    <option value="5+ years">5+ years</option>
+                    <option value="10+ years">10+ years</option>
+                </select>
+                <p id="experienceError" class="error-message">Experience is required.</p>
+
+                <label for="prevCompany">Previous work company</label>
+                <input type="text" id="prevCompany" placeholder="e.g., ABC CONSTRUCTION COMPANY" />
+
+                <label class="required" style="font-weight: bold;">Preferred Job Location</label>
+                <div class="multi-select-container">
+                    <div class="multi-select-display" id="preferredLocationDisplay" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="preferredLocationDropdown" aria-label="Select Preferred Job Locations">
+                        <span id="selectedCount">0 selected</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="multi-select-dropdown" id="preferredLocationDropdown" role="listbox">
+                        </div>
+                </div>
+                <div class="selected-locations-tags" id="selectedLocationsTags"></div>
+                <input type="text" id="otherLocation" placeholder="e.g., Your desired location" style="display:none; margin-top: 5px;" />
+                <p id="preferredLocationError" class="error-message">At least one preferred job location is required.</p>
+
+
+                <label for="contactNumber" class="required">Contact Number</label>
+                <div style="display: flex; align-items: center;">
+                    <span style="padding-right: 5px; font-weight: 600;">+91-</span>
+                    <input type="text" id="contactNumber" required placeholder="9876543210" style="flex-grow: 1;" maxlength="10" />
+                </div>
+                <p id="contactNumberError" class="error-message">Contact Number must be 10 digits long.</p>
+
+                <label for="alternativeContactNumber">Alternative Contact Number</label>
+                <div style="display: flex; align-items: center;">
+                    <span style="padding-right: 5px; font-weight: 600;">+91-</span>
+                    <input type="text" id="alternativeContactNumber" placeholder="9087563421" style="flex-grow: 1;" maxlength="10" />
+                </div>
+                <p id="alternativeContactNumberError" class="error-message">Alternative Contact Number must be 10 digits long.</p>
+
+                <div class="bank-section">
+                    <h3>Bank Details (Compulsory)</h3>
+
+                    <label for="accountHolderName" class="required">Account Holder Name</label>
+                    <input type="text" id="accountHolderName" required placeholder="e.g., Ram Kumar" />
+                    <p id="accountHolderNameError" class="error-message">Account Holder Name is required.</p>
+
+                    <label class="required">Bank Name</label>
+                    <div class="multi-select-container">
+                        <div class="multi-select-display" id="bankNameDisplay" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="bankNameDropdown" aria-label="Select Bank Name">
+                            <span id="selectedBankName">Select Bank</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="multi-select-dropdown" id="bankNameDropdown" role="listbox">
+                            </div>
+                    </div>
+                    <input type="text" id="otherBankName" placeholder="e.g., Your Bank Name" style="display:none; margin-top: 5px;" />
+                    <p id="bankNameError" class="error-message">Bank Name is required.</p>
+
+
+                    <label for="branchName" class="required">Branch Name</label>
+                    <input type="text" id="branchName" required placeholder="e.g., Salt Lake City Branch" />
+                    <p id="branchNameError" class="error-message">Branch Name is required.</p>
+
+                    <label for="accountNumber" class="required">Account Number</label>
+                    <input type="text" id="accountNumber" required placeholder="e.g., 1234567890" />
+                    <p id="accountNumberError" class="error-message">Account Number is required.</p>
+
+                    <label for="confirmAccountNumber" class="required">Confirm Account Number</label>
+                    <input type="text" id="confirmAccountNumber" required placeholder="Re-enter account number" />
+                    <p id="confirmAccountNumberError" class="error-message">Account numbers do not match.</p>
+
+                    <label for="ifscCode" class="required">IFSC Code</label>
+                    <input type="text" id="ifscCode" required placeholder="e.g., SBIN0000123" maxlength="11" style="text-transform: uppercase;" />
+                    <p id="ifscCodeError" class="error-message">IFSC Code must be 11 alphanumeric characters.</p>
+
+                    <label for="passbookPhoto" class="required">Upload Passbook Photo (PDF, max 10 MB)</label>
+                    <input type="file" id="passbookPhoto" accept="application/pdf" required />
+                    <p id="passbookPhotoError" class="error-message">Passbook photo is required and must be a PDF under 10 MB.</p>
+                </div>
+
+                <button type="submit" class="save-btn" id="saveProfileBtn">Save Profile</button>
+            </div>
+
+            <div id="confirmation-page-section" class="confirmation-page-section">
+                <h2>Profile Summary</h2>
+                <p>Thank you for setting up your profile! Here are your details:</p>
+                <hr style="margin: 15px 0; border: none; border-top: 1px dashed #ccc;">
+
+                <p><strong>Full Name:</strong> <span id="displayFullName"></span></p>
+                <p><strong>Address:</strong> <span id="displayAddress"></span></p>
+                <p><strong>Pincode:</strong> <span id="displayPincode"></span></p>
+                <p><strong>State:</strong> <span id="displayState"></span></p>
+                <p><strong>District:</strong> <span id="displayDistrict"></span></p>
+                <p><strong>Gender:</strong> <span id="displayGender"></span></p>
+                <p><strong>Date of Birth:</strong> <span id="displayDob"></span></p>
+                <p><strong>Skill:</strong> <span id="displaySkills"></span></p>
+                <p><strong>Govt ID Type:</strong> <span id="displayGovtIdType"></span></p>
+                <p><strong>Govt ID Number:</strong> <span id="displayGovtIdNumber"></span></p>
+                <p><strong>Experience:</strong> <span id="displayExperience"></span></p>
+                <p><strong>Previous Company:</strong> <span id="displayPrevCompany"></span></p>
+                <p><strong>Preferred Locations:</strong> <span id="displayPreferredLocations"></span></p>
+                <p><strong>Contact Number:</strong> <span id="displayContactNumber"></span></p>
+                <p><strong>Alternative Contact:</strong> <span id="displayAlternativeContactNumber"></span></p>
+
+                <hr style="margin: 15px 0; border: none; border-top: 1px dashed #ccc;">
+                <h3>Bank Details</h3>
+                <p><strong>Account Holder:</strong> <span id="displayAccountHolderName"></span></p>
+                <p><strong>Bank Name:</strong> <span id="displayBankName"></span></p>
+                <p><strong>Branch Name:</strong> <span id="displayBranchName"></span></p>
+                <p><strong>Account Number:</strong> <span id="displayAccountNumber"></span></p>
+                <p><strong>IFSC Code:</strong> <span id="displayIfscCode"></span></p>
+
+                <button class="save-btn back-button" onclick="goBackToRegistration()">Edit Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>

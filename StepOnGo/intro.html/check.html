@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Area / View Attendance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top */
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px; /* Typical mobile width */
+            margin: 20px;
+            overflow: hidden; /* For header border-radius */
+        }
+        header {
+            background-color: #4285F4; /* Blue */
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+        }
+        header .back-arrow {
+            margin-right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Styles for the Activity Area (Page 1 - initial) */
+        #activityArea {
+            display: block; /* Show by default */
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            /* Deeper box-shadow for a more prominent border effect */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 20px;
+            padding: 15px;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #333;
+            font-size: 20px; /* Increased size for StepOnGo */
+            margin-bottom: 5px; /* Adjust spacing */
+        }
+        .card .company-info {
+            display: flex;
+            align-items: flex-start; /* Align logo higher */
+            margin-bottom: 10px; /* Space after company info block */
+        }
+        .card .company-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            margin-top: 2px; /* Slight adjustment to move it up */
+        }
+        .card .company-info .text-content {
+            display: flex;
+            flex-direction: column;
+        }
+        .card .tagline {
+            margin: 0;
+            font-size: 12px; /* Smaller font for tagline */
+            color: #666;
+        }
+        .card-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .card-row .fa-solid,
+        .card-row .fa-regular {
+            font-size: 20px;
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        .card-row span {
+            color: #555;
+            font-size: 14px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin: 20px;
+            margin-bottom: 10px;
+        }
+        .action-button {
+            background-color: #e0e0e0; /* Grey color */
+            border: 1px solid #ccc; /* Slightly darker grey border */
+            padding: 15px;
+            margin: 0 20px 10px 20px;
+            border-radius: 8px;
+            text-align: center; /* Centered text */
+            font-size: 16px;
+            color: #333;
+            cursor: pointer;
+            width: calc(100% - 40px);
+            box-sizing: border-box;
+            display: block; /* Ensure it takes full width */
+        }
+        .action-button:hover {
+            background-color: #d0d0d0; /* Slightly darker grey on hover */
+        }
+
+        /* Styles for the Mark Attendance Page (Page 2 - from first code) */
+        #markAttendancePage {
+            display: none; /* Hidden by default */
+        }
+        
+        /* Attendance Type Selection */
+        .attendance-type-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+        .attendance-type-tabs button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        .attendance-type-tabs button.active {
+            border-bottom: 3px solid #4285F4;
+            font-weight: bold;
+            color: #4285F4;
+        }
+        
+        /* Check-In/Check-Out Sections */
+        .attendance-section {
+            display: none;
+            padding: 20px;
+        }
+        .attendance-section.active {
+            display: block;
+        }
+        
+        /* Photo Capture */
+        .photo-upload-box {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            color: #777;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .photo-upload-box i {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+        .photo-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        /* Submit Button */
+        .submit-btn {
+            background-color: #4285F4;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .submit-btn.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        /* Record Details */
+        .record-details {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            display: none;
+        }
+        .record-details p {
+            margin: 5px 0;
+        }
+        .record-details strong {
+            color: #333;
+        }
+        
+        /* Map */
+        .map-container {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding: 20px;
+        }
+        .map-iframe {
+            width: 100%;
+            height: 200px;
+            border: 0;
+            border-radius: 8px;
+        }
+        .map-address {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* Styles for the View Attendance Page */
+        #viewAttendancePage {
+            display: none; /* Hidden by default */
+        }
+        #viewAttendancePage .section-title {
+            color: #333;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+        #viewAttendancePage .card {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin: 0 20px 20px 20px;
+            padding: 15px;
+            position: relative;
+        }
+        #viewAttendancePage .calendar-nav-buttons button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px 8px;
+        }
+        #viewAttendancePage .calendar-nav-buttons button:not(:last-child) {
+            margin-right: 5px;
+        }
+        #viewAttendancePage .calendar-icon {
+            font-size: 20px;
+            margin-left: 5px;
+            cursor: pointer;
+            color: #4285F4;
+        }
+        #viewAttendancePage .month-selector-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            display: none;
+        }
+        #viewAttendancePage .month-selector-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 300px;
+            padding: 20px;
+            text-align: center;
+        }
+        #viewAttendancePage .year-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #viewAttendancePage .year-nav button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+            padding: 5px 10px;
+        }
+        #viewAttendancePage .months-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        #viewAttendancePage .month-button {
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            padding: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+        }
+        #viewAttendancePage .month-button.selected {
+            background-color: #4285F4;
+            color: white;
+            border-color: #4285F4;
+            font-weight: bold;
+        }
+
+        /* --- NEW LAYOUT FOR NUMBER & MONTH/WEEK/DAY BUTTONS --- */
+        #viewAttendancePage .top-buttons-row {
+            display: flex; /* Use flexbox to align items horizontally */
+            justify-content: space-between; /* Space out the items */
+            align-items: center; /* Vertically align them */
+            margin: 15px 20px 10px 20px; /* Adjust margins */
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+
+        #viewAttendancePage .attendance-count-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 20px;
+            border-radius: 25px; /* Pill shape */
+            font-size: 16px;
+            font-weight: bold;
+            color: white; /* Default text color */
+            background-color: #bbb; /* Default grey background */
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-width: 50px;
+            text-align: center;
+            flex-shrink: 0; /* Don't shrink the button */
+        }
+
+        #viewAttendancePage .attendance-count-button.zero-count {
+            background-color: #888; /* Darker grey for zero count */
+            font-size: 20px; /* Slightly larger for the X */
+            padding: 8px 15px; /* Adjust padding for X */
+        }
+
+        #viewAttendancePage .view-toggle-buttons {
+            display: flex;
+            justify-content: center; /* Center buttons within their flex container */
+            background-color: #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            flex-grow: 1; /* Allow these buttons to take available space */
+            max-width: 180px; /* Limit their max width */
+            margin-left: 10px; /* Space from the count button */
+            flex-shrink: 0; /* Don't shrink them too much */
+        }
+        /* --- END NEW LAYOUT --- */
+
+
+        #viewAttendancePage .attendance-filter-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+            margin-top: 10px; /* Adjust spacing between two button groups */
+            background-color: #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #viewAttendancePage .view-toggle-buttons button,
+        #viewAttendancePage .attendance-filter-buttons button {
+            flex-grow: 1;
+            padding: 8px 15px;
+            border: none;
+            background-color: transparent;
+            color: #555;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: normal;
+            transition: all 0.2s ease;
+        }
+        #viewAttendancePage .view-toggle-buttons button:not(:last-child),
+        #viewAttendancePage .attendance-filter-buttons button:not(:last-child) {
+            border-right: 1px solid #ccc;
+        }
+        #viewAttendancePage .view-toggle-buttons button.active,
+        #viewAttendancePage .attendance-filter-buttons button.active {
+            background-color: #4285F4;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Specific colors for count button based on filter */
+        #viewAttendancePage .attendance-count-button.present-bg {
+            background-color: #28a745; /* Green */
+        }
+        #viewAttendancePage .attendance-count-button.absent-bg {
+            background-color: #e53966; /* Red */
+        }
+        #viewAttendancePage .attendance-count-button.not-recorded-bg {
+            background-color: #a0a0a0; /* Grey */
+        }
+
+
+        #viewAttendancePage #monthView .day-grid-cell {
+            padding: 8px 4px;
+            border-radius: 5px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 40px;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        #viewAttendancePage #monthView .day-number {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 2px;
+        }
+        #viewAttendancePage #monthView .presence-status {
+            font-size: 10px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 3px;
+            padding: 2px 4px;
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        #viewAttendancePage #monthView .present-day {
+            background-color: #e6ffe6;
+        }
+        #viewAttendancePage #monthView .absent-day {
+             background-color: #ffe6e6; /* Light red */
+        }
+        #viewAttendancePage #monthView .not-recorded-day {
+             background-color: #f0f0f0; /* Light grey */
+        }
+
+        #viewAttendancePage #monthView .past-month-day, #viewAttendancePage #monthView .future-month-day {
+            color: #aaa;
+            cursor: default;
+        }
+        #viewAttendancePage #monthView .past-month-day .presence-status, #viewAttendancePage #monthView .future-month-day .presence-status {
+            display: none;
+        }
+        #viewAttendancePage #weekView > div {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            text-align: center;
+            font-size: 11px;
+            padding: 0 2px;
+            box-sizing: border-box;
+        }
+        #viewAttendancePage #weekView .week-day-header {
+            font-weight: bold;
+            color: #777;
+            text-align: center;
+            padding: 5px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 45px;
+            box-sizing: border-box;
+        }
+        #viewAttendancePage #weekView .week-day-header span.date-num {
+            font-size: 10px;
+            margin-top: 3px;
+            font-weight: normal;
+        }
+        #viewAttendancePage #weekView .week-day-cell {
+            padding: 3px;
+            border-radius: 5px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 55px;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        #viewAttendancePage #weekView .day-status-card {
+            background-color: #e6ffe6;
+            padding: 3px;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            margin-top: 3px;
+        }
+        #viewAttendancePage #weekView .day-status-card.absent {
+             background-color: #ffe6e6;
+        }
+        #viewAttendancePage #weekView .day-status-card.not-recorded {
+             background-color: #f0f0f0;
+        }
+        #viewAttendancePage #weekView .day-status-card span {
+            display: block;
+            font-size: 11px;
+            font-weight: bold;
+            color: #28a745;
+        }
+        #viewAttendancePage #weekView .day-status-card.absent span {
+            color: #e53966;
+        }
+        #viewAttendancePage #weekView .day-status-card.not-recorded span {
+            color: #777; /* Darker grey for text */
+        }
+        #viewAttendancePage #dayView .single-day-header {
+            font-weight: bold;
+            color: #777;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        #viewAttendancePage #dayView .day-status-large {
+            background-color: #e6ffe6;
+            color: #28a745;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #viewAttendancePage #dayView .day-status-large.absent {
+            background-color: #ffe6e6;
+            color: #e53966;
+        }
+        #viewAttendancePage #dayView .day-status-large.not-recorded {
+            background-color: #f0f0f0;
+            color: #777;
+        }
+
+
+        /* Styles for the Attendance Detail Page */
+        #attendanceDetailPage {
+            display: none;
+            padding: 20px;
+            position: relative;
+        }
+        #attendanceDetailPage .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: nowrap;
+        }
+        #attendanceDetailPage .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            flex-grow: 1;
+            flex-shrink: 0;
+            margin-right: 10px;
+        }
+        #attendanceDetailPage .close-icon {
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            padding: 3px 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+        #attendanceDetailPage .detail-table {
+            width: 100%;
+            border-spacing: 0;
+            margin-top: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: none;
+        }
+        #attendanceDetailPage .detail-table tr:last-child td {
+            border-bottom: none;
+        }
+        #attendanceDetailPage .detail-table td {
+            padding: 12px;
+            font-size: 15px;
+            color: #333;
+            border: 1px solid #a0a0a0;
+            background-color: #fff;
+        }
+        #attendanceDetailPage .detail-table td:first-child {
+            width: 45%;
+            font-weight: bold;
+            color: #555;
+            background-color: #f0f0f0;
+            border-right: 1px solid #888;
+        }
+        #attendanceDetailPage .detail-table td:last-child {
+            text-align: right;
+            width: 55%;
+        }
+
+        /* Top-left corner cell */
+        #attendanceDetailPage .detail-table tr:first-child td:first-child {
+            border-top-left-radius: 8px;
+        }
+        /* Top-right corner cell */
+        #attendanceDetailPage .detail-table tr:first-child td:last-child {
+            border-top-right-radius: 8px;
+        }
+        /* Bottom-left corner cell */
+        #attendanceDetailPage .detail-table tr:last-child td:first-child {
+            border-bottom-left-radius: 8px;
+        }
+        /* Bottom-right corner cell */
+        #attendanceDetailPage .detail-table tr:last-child td:last-child {
+            border-bottom-right-radius: 8px;
+        }
+
+        #attendanceDetailPage .map-link {
+            color: #e53966;
+            text-decoration: none;
+            display: block;
+            text-align: right;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header id="mainHeader">
+            <span class="back-arrow" onclick="goBack()"><i class="fas fa-arrow-left"></i></span>
+            <span id="headerTitle">Activity Area</span>
+        </header>
+
+        <div id="activityArea">
+            <div class="card">
+                <div class="company-info">
+                    <img src="image.png" alt="Company Logo">
+                    <div class="text-content">
+                        <h3>StepOnGo</h3>
+                        <p class="tagline">Connecting Workforce to Work</p>
+                    </div>
+                </div>
+                <div class="card-row">
+                    <i class="fa-solid fa-user"></i>
+                    <span><b>Labour Name:</b> John Doe</span>
+                </div>
+                <div class="card-row">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>Full-time Labour</span>
+                </div>
+                <div class="card-row">
+                    <i class="fa-solid fa-id-card"></i>
+                    <span><b>Labour ID:</b> LBR12345</span>
+                </div>
+                <div class="card-row">
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                    <span><b>Rate (INR):</b> 450/day</span>
+                </div>
+                <div class="card-row">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <span><b>Supervisor Name:</b> Jane Smith</span>
+                </div>
+                <div class="card-row">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span><b>Payment Frequency:</b> Monthy</span>
+                </div>
+            </div>
+
+            <button class="action-button" onclick="showMarkAttendance()"><b>Mark Attendance</b></button>
+
+            <button class="action-button" onclick="showViewAttendance()"><b>View Attendance</b></button>
+        </div>
+
+        <div id="markAttendancePage">
+            <div class="attendance-type-tabs">
+                <button class="active" onclick="showAttendanceSection('checkIn')">Check-In</button>
+                <button onclick="showAttendanceSection('checkOut')">Check-Out</button>
+            </div>
+            
+            <!-- Check-In Section -->
+            <div id="checkInSection" class="attendance-section active">
+                <div class="photo-upload-box" onclick="capturePhoto('checkIn')">
+                    <i class="fas fa-camera"></i>
+                    <div id="checkInUploadText">Tap to capture Check-In photo</div>
+                </div>
+                <img id="checkInPreview" class="photo-preview" alt="Check-In Preview">
+                
+                <button id="checkInSubmit" class="submit-btn" onclick="submitAttendance('checkIn')">Submit Check-In</button>
+                
+                <div id="checkInDetails" class="record-details">
+                    <h4>Check-In Recorded</h4>
+                    <p><strong>Time:</strong> <span id="checkInTime"></span></p>
+                    <p><strong>Location:</strong> <span id="checkInLocation"></span></p>
+                </div>
+            </div>
+            
+            <!-- Check-Out Section -->
+            <div id="checkOutSection" class="attendance-section">
+                <div class="photo-upload-box" onclick="capturePhoto('checkOut')">
+                    <i class="fas fa-camera"></i>
+                    <div id="checkOutUploadText">Tap to capture Check-Out photo</div>
+                </div>
+                <img id="checkOutPreview" class="photo-preview" alt="Check-Out Preview">
+                
+                <button id="checkOutSubmit" class="submit-btn" onclick="submitAttendance('checkOut')">Submit Check-Out</button>
+                
+                <div id="checkOutDetails" class="record-details">
+                    <h4>Check-Out Recorded</h4>
+                    <p><strong>Time:</strong> <span id="checkOutTime"></span></p>
+                    <p><strong>Location:</strong> <span id="checkOutLocation"></span></p>
+                </div>
+            </div>
+            
+            <div class="map-container">
+                <h4>Current Location</h4>
+                <iframe
+                    class="map-iframe"
+                    loading="lazy"
+                    allowfullscreen
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://maps.google.com/maps?q=22.611472,88.448806&z=15&output=embed"
+                    aria-label="Current Location Map"
+                ></iframe>
+                <p class="map-address" id="currentLocation">Fetching location...</p>
+            </div>
+            
+            <!-- Hidden file input for camera capture -->
+            <input type="file" id="photoInput" accept="image/*" capture="environment" style="display: none;">
+        </div>
+
+        <div id="viewAttendancePage">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span style="font-weight: bold;" id="currentDateDisplay">Jun, 2025</span>
+                    <div class="calendar-nav-buttons">
+                        <button onclick="navigate(-1)">←</button>
+                        <button onclick="navigate(1)">→</button>
+                        <button style="border: 1px solid #ccc; padding: 5px 10px; border-radius: 5px; background-color: #f9f9f9; cursor: pointer;" onclick="goToToday()">Today</button>
+                        <span class="calendar-icon" id="openMonthSelector">🗓️</span>
+                    </div>
+                </div>
+
+                <div id="monthView" class="calendar-view">
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 5px; font-size: 13px;" id="calendarDaysGrid">
+                        <div style="font-weight: bold; color: #777;">MON</div>
+                        <div style="font-weight: bold; color: #777;">TUE</div>
+                        <div style="font-weight: bold; color: #777;">WED</div>
+                        <div style="font-weight: bold; color: #777;">THU</div>
+                        <div style="font-weight: bold; color: #777;">FRI</div>
+                        <div style="font-weight: bold; color: #777;">SAT</div>
+                        <div style="font-weight: bold; color: #777;">SUN</div>
+                    </div>
+                </div>
+
+                <div id="weekView" class="calendar-view" style="display: none;">
+                    <div>
+                    </div>
+                </div>
+
+                <div id="dayView" class="calendar-view" style="display: none;">
+                </div>
+
+                <div class="top-buttons-row">
+                    <button id="attendanceCountButton" class="attendance-count-button">0</button>
+
+                    <div class="view-toggle-buttons">
+                        <button class="active" onclick="setView('month')">Month</button>
+                        <button onclick="setView('week')">Week</button>
+                        <button onclick="setView('day')">Day</button>
+                    </div>
+                </div>
+
+                <div class="attendance-filter-buttons">
+                    <button class="active" onclick="setAttendanceFilter('All')">All</button>
+                    <button onclick="setAttendanceFilter('Present')">Present</button>
+                    <button onclick="setAttendanceFilter('Absent')">Absent</button>
+                    <button onclick="setAttendanceFilter('Not Recorded')">Not Recorded</button>
+                </div>
+
+                <div class="month-selector-overlay" id="monthSelectorOverlay">
+                    <div class="month-selector-card">
+                        <div class="year-nav">
+                            <button onclick="changeYear(-1)">‹</button>
+                            <span id="currentYear">2025</span>
+                            <button onclick="changeYear(1)">›</button>
+                        </div>
+                        <div class="months-grid">
+                            <button class="month-button" data-month="0">Jan</button>
+                            <button class="month-button" data-month="1">Feb</button>
+                            <button class="month-button" data-month="2">Mar</button>
+                            <button class="month-button" data-month="3">Apr</button>
+                            <button class="month-button" data-month="4">May</button>
+                            <button class="month-button" data-month="5">Jun</button>
+                            <button class="month-button" data-month="6">Jul</button>
+                            <button class="month-button" data-month="7">Aug</button>
+                            <button class="month-button" data-month="8">Sep</button>
+                            <button class="month-button" data-month="9">Oct</button>
+                            <button class="month-button" data-month="10">Nov</button>
+                            <button class="month-button" data-month="11">Dec</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="attendanceDetailPage">
+            <div class="header-section">
+                <span class="header-title">View Attendance</span>
+                <span class="close-icon" onclick="goBackToViewAttendance()">×</span>
+            </div>
+
+            <table class="detail-table" id="attendanceDetailTable">
+                <tr>
+                    <td>Job Name</td>
+                    <td id="detailJobName"></td>
+                </tr>
+                <tr>
+                    <td>Business Unit</td>
+                    <td id="detailBusinessUnit"></td>
+                </tr>
+                <tr>
+                    <td>Attendance</td>
+                    <td id="detailAttendanceStatus"></td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td id="detailDate"></td>
+                </tr>
+                <tr>
+                    <td>Intime</td>
+                    <td id="detailIntime"></td>
+                </tr>
+                <tr>
+                    <td>Outtime</td>
+                    <td id="detailOuttime"></td>
+                </tr>
+                <tr>
+                    <td>Physical Address(Check in location)</td>
+                    <td id="detailCheckinAddress"></td>
+                </tr>
+                <tr>
+                    <td>Physical Address(Check out location)</td>
+                    <td id="detailCheckoutAddress"></td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Common State Variables ---
+        let currentSelectedDate = new Date();
+        let currentView = 'month'; // Default view for View Attendance
+        let selectedYear = currentSelectedDate.getFullYear();
+        let selectedMonth = currentSelectedDate.getMonth();
+        let currentAttendanceFilter = 'All'; // New state variable for attendance filter
+
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const dayNamesShort = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+        const dayNamesFull = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const today = new Date(); // Current date for highlighting
+
+        // Dummy attendance data (from second code, expanded for more details)
+        const dummyAttendanceDetails = {
+            "2025-06-01": { status: "Present", intime: "09:00 AM", outtime: "05:00 PM", job: "Retail Store Executive", bu: "SSL-Kolkata-Salt Lake (U115)", checkin_address: "123 Main St, Kolkata", checkout_address: "123 Main St, Kolkata" },
+            "2025-06-02": { status: "Present", intime: "09:15 AM", outtime: "05:15 PM", job: "Retail Store Executive", bu: "SSL-Kolkata-Salt Lake (U115)", checkin_address: "123 Main St, Kolkata", checkout_address: "123 Main St, Kolkata" },
+            "2025-06-03": { status: "Present", intime: "04:31 PM", outtime: "09:48 PM", job: "Connecting top-quality labour with trustworthy builders", bu: "SSL-Kolkata-Salt Lake (U115)", checkin_address: "456 Park Ave, New Town", checkout_address: "456 Park Ave, New Town" },
+            "2025-06-04": { status: "Present", intime: "04:31 PM", outtime: "09:48 PM", job: "Connecting top-quality labour with trustworthy builders", bu: "SSL-Kolkata-Salt Lake (U115)", checkin_address: "789 City Rd, Kolkata", checkout_address: "789 City Rd, Kolkata" },
+            "2025-06-05": { status: "Present", intime: "04:31 PM", outtime: "09:48 PM", job: "Connecting top-quality labour with trustworthy builders", bu: "SSL-Kolkata-Salt Lake (U115)", checkin_address: "101 Bridge St, Howrah", checkout_address: "101 Bridge St, Howrah" },
+            "2025-06-06": { status: "Present", intime: "04:31 PM", outtime: "09:48 PM", job: "Connecting top-quality labour with trustworthy builders", bu: "SSL-Kolkata-Salt Lake (U115)", checkin_address: "202 River Rd, Kolkata", checkout_address: "202 River Rd, Kolkata" },
+            "2025-06-07": { status: "Present", intime: "04:31 PM", outtime: "09:48 PM", job: "Connecting top-quality labour with trustworthy builders", bu: "SSL-Kolkata-Salt Lake (U115)", checkin_address: "303 Lake View, Kolkata", checkout_address: "303 Lake View, Kolkata" },
+            "2025-06-08": { status: "Absent" },
+            "2025-06-09": { status: "Present", intime: "04:31 PM", outtime: "09:48 PM", job: "Connecting top-quality labour with trustworthy builders", bu: "SSL-Kolkata-Salt Lake (U115)", checkin_address: "505 Hill Rd, New Town", checkout_address: "505 Hill Rd, New Town" },
+            "2025-06-10": { status: "Present", intime: "04:35 PM", outtime: "09:50 PM", job: "Connecting top-quality labour with trustworthy builders", bu: "SSL-Kolkata-Salt Lake (U115)", checkin_address: "606 Cross St, Kolkata", checkout_address: "606 Cross St, Kolkata" },
+            "2025-06-11": { status: "Present", intime: "04:30 PM", outtime: "09:45 PM", job: "Connecting top-quality labour with trustworthy builders", bu: "SSL-Kolkata-Salt Lake (U115)", checkin_address: "707 Main St, Kolkata", checkout_address: "707 Main St, Kolkata" },
+            "2025-06-12": { status: "Present", intime: "04:31 PM", outtime: "09:48 PM", job: "Connecting top-quality labour with trustworthy builders", bu: "SSL-Kolkata-Salt Lake (U115)", checkin_address: "808 School Ln, Kolkata", checkout_address: "808 School Ln, Kolkata" },
+            "2025-06-13": { status: "Absent" }, // Current date is June 13, 2025
+            "2025-05-29": { status: "Present", intime: "04:31 PM", outtime: "09:48 PM", job: "Part time Retail Store Executive", bu: "SSL-Kolkata-Salt Lake (U115)", checkin_address: "Ground Floor, Tower 1, DLF IT Park", checkout_address: "Ground Floor, Tower 1, DLF IT Park" }
+        };
+
+        function getAttendanceData(date) {
+            const dateKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+            const attendanceRecord = dummyAttendanceDetails[dateKey];
+
+            // Get today's date without time for accurate comparison
+            const todayWithoutTime = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            // Get the date being checked without time
+            const dateToCheckWithoutTime = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+            // If the date is in the future, return an "Not Recorded" status
+            if (dateToCheckWithoutTime > todayWithoutTime) {
+                return { status: "Not Recorded" };
+            }
+
+            // Otherwise, return the actual attendance record or "Absent" if not found
+            return attendanceRecord || { status: "Absent" };
+        }
+
+        // --- View Switching Functions ---
+        function showMarkAttendance() {
+            document.getElementById('activityArea').style.display = 'none';
+            document.getElementById('viewAttendancePage').style.display = 'none';
+            document.getElementById('attendanceDetailPage').style.display = 'none'; // Ensure new detail page is hidden
+            document.getElementById('markAttendancePage').style.display = 'block';
+            document.getElementById('headerTitle').innerText = 'Mark Attendance';
+            
+            // Initialize location when showing mark attendance page
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        currentLocation = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                        document.getElementById('currentLocation').textContent = currentLocation;
+                        
+                        // Update map
+                        const mapIframe = document.querySelector('.map-iframe');
+                        mapIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+                    },
+                    function(error) {
+                        console.error("Error getting location:", error);
+                        document.getElementById('currentLocation').textContent = "Location access denied";
+                    }
+                );
+            }
+        }
+
+        function showViewAttendance() {
+            document.getElementById('activityArea').style.display = 'none';
+            document.getElementById('markAttendancePage').style.display = 'none';
+            document.getElementById('attendanceDetailPage').style.display = 'none'; // Ensure new detail page is hidden
+            document.getElementById('viewAttendancePage').style.display = 'block';
+            document.getElementById('headerTitle').innerText = 'View Attendance'; // Change header title
+            // Initialize the view attendance calendar when shown
+            currentSelectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // Reset to today
+            currentAttendanceFilter = 'All'; // Reset filter to All
+            setView('month'); // Always start with month view
+            updateAttendanceFilterUI(); // Update filter buttons
+        }
+
+        function showAttendanceDetail(date, data) {
+            document.getElementById('activityArea').style.display = 'none';
+            document.getElementById('markAttendancePage').style.display = 'none';
+            document.getElementById('viewAttendancePage').style.display = 'none';
+            document.getElementById('attendanceDetailPage').style.display = 'block';
+            document.getElementById('headerTitle').innerText = 'View Attendance'; // Header remains same
+
+            // Populate the detail table
+            document.getElementById('detailJobName').innerText = data.job || 'N/A';
+            document.getElementById('detailBusinessUnit').innerText = data.bu || 'N/A';
+            document.getElementById('detailAttendanceStatus').innerText = data.status || 'N/A';
+            document.getElementById('detailDate').innerText = `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+            document.getElementById('detailIntime').innerText = data.intime || 'N/A';
+            document.getElementById('detailOuttime').innerText = data.outtime || 'N/A';
+            document.getElementById('detailCheckinAddress').innerText = data.checkin_address || 'N/A';
+            document.getElementById('detailCheckoutAddress').innerText = data.checkout_address || 'N/A';
+        }
+
+        function goBack() {
+            if (document.getElementById('markAttendancePage').style.display === 'block') {
+                document.getElementById('markAttendancePage').style.display = 'none';
+                document.getElementById('activityArea').style.display = 'block';
+                document.getElementById('headerTitle').innerText = 'Activity Area';
+            } else if (document.getElementById('viewAttendancePage').style.display === 'block') {
+                document.getElementById('viewAttendancePage').style.display = 'none';
+                document.getElementById('activityArea').style.display = 'block';
+                document.getElementById('headerTitle').innerText = 'Activity Area';
+            } else if (document.getElementById('attendanceDetailPage').style.display === 'block') {
+                goBackToViewAttendance(); // Specific back for detail page
+            } else {
+                history.back(); // Fallback for browser history if on initial "Activity Area"
+            }
+        }
+
+        function goBackToViewAttendance() {
+            document.getElementById('attendanceDetailPage').style.display = 'none';
+            document.getElementById('viewAttendancePage').style.display = 'block';
+            document.getElementById('headerTitle').innerText = 'View Attendance';
+        }
+
+        // --- Mark Attendance Functions ---
+        let currentLocation = "Location not available";
+        let currentSection = "checkIn";
+        
+        // Show the selected attendance section
+        function showAttendanceSection(type) {
+            currentSection = type;
+            
+            // Update tabs
+            document.querySelectorAll('.attendance-type-tabs button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update sections
+            document.querySelectorAll('.attendance-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`${type}Section`).classList.add('active');
+        }
+        
+        // Capture photo for the specified type (checkIn/checkOut)
+        function capturePhoto(type) {
+            const fileInput = document.getElementById('photoInput');
+            fileInput.setAttribute('data-type', type);
+            fileInput.click();
+        }
+        
+        // Submit attendance for the specified type
+        function submitAttendance(type) {
+            const currentTime = new Date();
+            const timeString = currentTime.toLocaleTimeString();
+            const dateString = currentTime.toLocaleDateString();
+            
+            // Update record details
+            document.getElementById(`${type}Time`).textContent = `${dateString} ${timeString}`;
+            document.getElementById(`${type}Location`).textContent = currentLocation;
+            document.getElementById(`${type}Details`).style.display = 'block';
+            
+            // Here you would normally send this data to your server
+            console.log(`${type} recorded at ${timeString} on ${dateString} at ${currentLocation}`);
+            
+            // Reset form after delay
+            setTimeout(() => {
+                resetForm(type);
+            }, 3000);
+        }
+        
+        // Reset form elements for the given type
+        function resetForm(type) {
+            document.getElementById('photoInput').value = '';
+            const preview = document.getElementById(`${type}Preview`);
+            preview.style.display = 'none';
+            preview.src = '';
+            document.getElementById(`${type}UploadText`).textContent = `Tap to capture ${type.replace('check', 'Check-')} photo`;
+            document.getElementById(`${type}Submit`).classList.remove('active');
+        }
+
+        // Set up photo input change listener
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            const type = this.getAttribute('data-type');
+            const preview = document.getElementById(`${type}Preview`);
+            const uploadText = document.getElementById(`${type}UploadText`);
+            const submitBtn = document.getElementById(`${type}Submit`);
+            
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    uploadText.textContent = 'Photo captured';
+                    submitBtn.classList.add('active');
+                };
+                
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        // --- View Attendance Specific Functions (from first code) ---
+
+        function updateDisplayHeader() {
+            const currentDateDisplay = document.getElementById('currentDateDisplay');
+            if (currentView === 'month') {
+                currentDateDisplay.textContent = monthNames[currentSelectedDate.getMonth()] + ", " + currentSelectedDate.getFullYear();
+            } else if (currentView === 'week') {
+                const startOfWeek = new Date(currentSelectedDate);
+                const day = startOfWeek.getDay(); // 0 for Sunday, 1 for Monday
+                const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Adjust to Monday
+                startOfWeek.setDate(diff);
+                startOfWeek.setHours(0, 0, 0, 0);
+
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+                currentDateDisplay.textContent = `${monthNames[startOfWeek.getMonth()]} ${startOfWeek.getDate().toString().padStart(2, '0')} - ${monthNames[endOfWeek.getMonth()]} ${endOfWeek.getDate().toString().padStart(2, '0')}, ${endOfWeek.getFullYear()}`;
+            } else if (currentView === 'day') {
+                currentDateDisplay.textContent = `${dayNamesFull[currentSelectedDate.getDay()]}, ${monthNames[currentSelectedDate.getMonth()]} ${currentSelectedDate.getDate().toString().padStart(2, '0')}, ${currentSelectedDate.getFullYear()}`;
+            }
+        }
+
+        function handleDayClick(date) {
+            const details = getAttendanceData(date);
+            // Only show details if status is Present. For "Absent" or "Not Recorded", just show an alert.
+            if (details.status === "Present") {
+                showAttendanceDetail(date, details); // Open the new detail page
+            } else {
+                alert(`Attendance for ${date.toDateString()}: ${details.status}`);
+            }
+        }
+
+        function renderMonthView() {
+            const daysGrid = document.getElementById('calendarDaysGrid');
+            daysGrid.innerHTML = `
+                <div style="font-weight: bold; color: #777;">MON</div>
+                <div style="font-weight: bold; color: #777;">TUE</div>
+                <div style="font-weight: bold; color: #777;">WED</div>
+                <div style="font-weight: bold; color: #777;">THU</div>
+                <div style="font-weight: bold; color: #777;">FRI</div>
+                <div style="font-weight: bold; color: #777;">SAT</div>
+                <div style="font-weight: bold; color: #777;">SUN</div>
+            `;
+
+            const year = currentSelectedDate.getFullYear();
+            const month = currentSelectedDate.getMonth();
+
+            const firstDayOfMonth = new Date(year, month, 1);
+            let startDay = firstDayOfMonth.getDay(); // 0 for Sunday, 1 for Monday
+            startDay = (startDay === 0) ? 6 : startDay - 1; // Adjust to 0 for Monday, 6 for Sunday
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+            let filteredDayCount = 0; // Counter for filtered days
+
+            // Render days from previous month
+            for (let i = 0; i < startDay; i++) {
+                const day = daysInPrevMonth - startDay + i + 1;
+                const cell = document.createElement('div');
+                cell.classList.add('day-grid-cell', 'past-month-day');
+                cell.innerHTML = `<span class="day-number">${day}</span>`;
+                daysGrid.appendChild(cell);
+            }
+
+            // Render current month days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const cell = document.createElement('div');
+                cell.classList.add('day-grid-cell');
+
+                const currentDateForCell = new Date(year, month, day);
+                const attendanceData = getAttendanceData(currentDateForCell);
+
+                // Apply filter
+                const shouldDisplay = currentAttendanceFilter === 'All' || attendanceData.status === currentAttendanceFilter;
+
+                if (shouldDisplay) {
+                    filteredDayCount++; // Increment count only for displayed days
+                    if (attendanceData.status === "Present") {
+                        cell.classList.add('present-day');
+                        cell.innerHTML = `<span class="day-number">${day}</span><span class="presence-status">Pres...</span>`;
+                    } else if (attendanceData.status === "Absent") {
+                        cell.classList.add('absent-day');
+                        cell.innerHTML = `<span class="day-number">${day}</span><span class="presence-status" style="background-color: #e53966;">Absent</span>`;
+                    } else if (attendanceData.status === "Not Recorded") {
+                        cell.classList.add('not-recorded-day');
+                        cell.innerHTML = `<span class="day-number">${day}</span><span class="presence-status" style="background-color: #a0a0a0;">N.R.</span>`;
+                    } else {
+                        cell.innerHTML = `<span class="day-number">${day}</span>`;
+                    }
+                } else {
+                    // If not displayed by filter, mark as hidden or inactive
+                    cell.style.opacity = '0.4'; // Dim out non-matching days
+                    cell.style.pointerEvents = 'none'; // Make them non-clickable
+                    cell.innerHTML = `<span class="day-number" style="text-decoration: line-through;">${day}</span>`; // Strikethrough non-matching days
+                }
+
+
+                // Highlight today with main blue color
+                if (currentDateForCell.getDate() === today.getDate() &&
+                    currentDateForCell.getMonth() === today.getMonth() &&
+                    currentDateForCell.getFullYear() === today.getFullYear()) {
+                    cell.style.border = '1px solid #4285F4';
+                    cell.style.backgroundColor = '#eaf2ff';
+                }
+
+                cell.addEventListener('click', () => {
+                    // Only allow clicking on actual days of the current month and if not filtered out
+                    if (shouldDisplay && !cell.classList.contains('past-month-day') && !cell.classList.contains('future-month-day')) {
+                        handleDayClick(currentDateForCell);
+                    }
+                });
+
+                daysGrid.appendChild(cell);
+            }
+
+            // Render days from next month
+            const totalFilledCells = daysGrid.children.length;
+            const cellsNeededForFullWeek = 7 - (totalFilledCells % 7);
+            const cellsToFill = cellsNeededForFullWeek === 7 ? 0 : cellsNeededForFullWeek;
+
+            let nextMonthDay = 1;
+            for(let i = 0; i < cellsToFill; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('day-grid-cell', 'future-month-day');
+                cell.innerHTML = `<span class="day-number">${nextMonthDay}</span>`;
+                daysGrid.appendChild(cell);
+                nextMonthDay++;
+            }
+            updateAttendanceCount(filteredDayCount); // Update count button after rendering
+        }
+
+        function renderWeekView() {
+            const weekGridContainer = document.querySelector('#weekView > div');
+            weekGridContainer.innerHTML = ''; // Clear previous content
+
+            weekGridContainer.style.gridTemplateRows = 'auto auto'; // Headers row, status row
+
+            const startOfWeek = new Date(currentSelectedDate);
+            const day = startOfWeek.getDay(); // 0 for Sunday, 1 for Monday
+            const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Adjust to Monday of the week
+            startOfWeek.setDate(diff);
+            startOfWeek.setHours(0, 0, 0, 0); // Normalize to start of day
+
+            let filteredDayCount = 0; // Counter for filtered days
+
+            // Render week day headers (MON, TUE, etc.)
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(startOfWeek);
+                date.setDate(startOfWeek.getDate() + i);
+
+                const headerCell = document.createElement('div');
+                headerCell.classList.add('week-day-header');
+
+                // Highlight today's date in header
+                if (date.getDate() === today.getDate() &&
+                    date.getMonth() === today.getMonth() &&
+                    date.getFullYear() === today.getFullYear()) {
+                    headerCell.style.color = '#4285F4'; // Main blue color
+                    headerCell.style.fontWeight = 'bold';
+                }
+
+                headerCell.innerHTML = `
+                    <span>${dayNamesShort[i]}</span>
+                    <span class="date-num">${date.getDate()} ${monthNames[date.getMonth()]}</span>
+                `;
+                weekGridContainer.appendChild(headerCell);
+            }
+
+            // Render attendance status for each day of the week
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(startOfWeek);
+                date.setDate(startOfWeek.getDate() + i);
+
+                const cell = document.createElement('div');
+                cell.classList.add('week-day-cell');
+                const attendanceData = getAttendanceData(date);
+
+                // Apply filter
+                const shouldDisplay = currentAttendanceFilter === 'All' || attendanceData.status === currentAttendanceFilter;
+
+                let statusCard = '';
+                if (shouldDisplay) {
+                    filteredDayCount++; // Increment count only for displayed days
+                    if (attendanceData.status === "Present") {
+                        statusCard = `<div class="day-status-card present"><span>Present</span></div>`;
+                    } else if (attendanceData.status === "Absent") {
+                        statusCard = `<div class="day-status-card absent"><span>Absent</span></div>`;
+                    } else if (attendanceData.status === "Not Recorded") {
+                        statusCard = `<div class="day-status-card not-recorded"><span>N.R.</span></div>`;
+                    } else {
+                        // Default empty for future or unknown status not matching filters
+                        statusCard = `<div></div>`;
+                    }
+                } else {
+                    // If not displayed by filter, dim out and make non-clickable
+                    cell.style.opacity = '0.4';
+                    cell.style.pointerEvents = 'none';
+                    statusCard = `<div style="text-decoration: line-through; opacity: 0.7; font-size: 11px;">${attendanceData.status || 'N/A'}</div>`; // Show dimmed status
+                }
+
+
+                cell.innerHTML = statusCard;
+
+                cell.addEventListener('click', () => {
+                    if (shouldDisplay) {
+                        handleDayClick(date);
+                    }
+                });
+
+                weekGridContainer.appendChild(cell);
+            }
+            updateAttendanceCount(filteredDayCount); // Update count button after rendering
+        }
+
+        function renderDayView() {
+            const dayViewContainer = document.getElementById('dayView');
+            dayViewContainer.innerHTML = ''; // Clear previous content
+
+            // Add the day header (e.g., Friday, Jun 13, 2025)
+            const singleDayHeader = document.createElement('div');
+            singleDayHeader.classList.add('single-day-header');
+            singleDayHeader.textContent = `${dayNamesFull[currentSelectedDate.getDay()]}, ${monthNames[currentSelectedDate.getMonth()]} ${currentSelectedDate.getDate().toString().padStart(2, '0')}, ${currentSelectedDate.getFullYear()}`;
+            dayViewContainer.appendChild(singleDayHeader);
+
+
+            const attendanceData = getAttendanceData(currentSelectedDate);
+            let statusClass = '';
+            let statusText = '';
+            let filteredDayCount = 0; // Counter for filtered days
+
+            if (attendanceData.status === "Present") {
+                statusClass = "present";
+                statusText = "Present";
+            } else if (attendanceData.status === "Absent") {
+                statusClass = "absent";
+                statusText = "Absent";
+            } else {
+                // For "Not Recorded" or future days
+                statusText = "Not Recorded";
+                statusClass = "not-recorded";
+            }
+
+            // Apply filter to day view
+            const shouldDisplay = currentAttendanceFilter === 'All' || attendanceData.status === currentAttendanceFilter;
+
+            if (shouldDisplay) {
+                filteredDayCount = 1; // Only one day in day view, if it matches filter
+                const statusCardHTML = `<div class="day-status-large ${statusClass}">${statusText}</div>`;
+                dayViewContainer.innerHTML += statusCardHTML;
+
+                const dayStatusLarge = dayViewContainer.querySelector('.day-status-large');
+                if (dayStatusLarge) {
+                    dayStatusLarge.addEventListener('click', () => {
+                        handleDayClick(currentSelectedDate);
+                    });
+                }
+            } else {
+                // If the selected day does not match the filter, display a message
+                dayViewContainer.innerHTML += `<div class="day-status-large" style="background-color: #f0f0f0; color: #777;">No ${currentAttendanceFilter} record for this day.</div>`;
+            }
+            updateAttendanceCount(filteredDayCount); // Update count button after rendering
+        }
+
+        function updateCalendarView() {
+            document.querySelectorAll('.calendar-view').forEach(view => {
+                view.style.display = 'none'; // Hide all calendar views
+            });
+
+            // Show and render the active view
+            if (currentView === 'month') {
+                document.getElementById('monthView').style.display = 'block';
+                renderMonthView();
+            } else if (currentView === 'week') {
+                document.getElementById('weekView').style.display = 'block';
+                renderWeekView();
+            } else if (currentView === 'day') {
+                document.getElementById('dayView').style.display = 'block';
+                renderDayView();
+            }
+            updateDisplayHeader(); // Update the date display in the header
+        }
+
+        function navigate(offset) {
+            if (currentView === 'month') {
+                currentSelectedDate.setMonth(currentSelectedDate.getMonth() + offset);
+            } else if (currentView === 'week') {
+                currentSelectedDate.setDate(currentSelectedDate.getDate() + (offset * 7));
+            } else if (currentView === 'day') {
+                currentSelectedDate.setDate(currentSelectedDate.getDate() + offset);
+            }
+            updateCalendarView(); // Re-render the calendar for the new date
+        }
+
+        function goToToday() {
+            currentSelectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            updateCalendarView();
+        }
+
+        function setView(viewType) {
+            currentView = viewType;
+            // Update active state of view toggle buttons
+            const buttons = document.querySelectorAll('#viewAttendancePage .view-toggle-buttons button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            document.querySelector(`#viewAttendancePage .view-toggle-buttons button[onclick="setView('${viewType}')"]`).classList.add('active');
+
+            updateCalendarView();
+        }
+
+        // --- New Attendance Filter Functions ---
+        function setAttendanceFilter(filterType) {
+            currentAttendanceFilter = filterType;
+            // Update active state of attendance filter buttons
+            const buttons = document.querySelectorAll('#viewAttendancePage .attendance-filter-buttons button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            document.querySelector(`#viewAttendancePage .attendance-filter-buttons button[onclick="setAttendanceFilter('${filterType}')"]`).classList.add('active');
+
+            updateAttendanceCount(0); // Reset count before re-rendering
+            updateCalendarView(); // Re-render calendar with new filter
+            updateCountButtonColor(); // Update the color of the count button
+        }
+
+        function updateAttendanceFilterUI() {
+            const buttons = document.querySelectorAll('#viewAttendancePage .attendance-filter-buttons button');
+            buttons.forEach(button => {
+                if (button.textContent.trim() === currentAttendanceFilter) {
+                    button.classList.add('active');
+                } else if (currentAttendanceFilter === 'All' && button.textContent.trim() === 'All') {
+                    button.classList.add('active');
+                }
+                else {
+                    button.classList.remove('active');
+                }
+            });
+            updateCountButtonColor(); // Ensure color is set on UI update
+        }
+
+        // Updated function to handle "Day", "Days", or "X"
+        function updateAttendanceCount(count) {
+            const countButton = document.getElementById('attendanceCountButton');
+            countButton.classList.remove('zero-count'); // Remove class first
+
+            if (count === 0) {
+                countButton.textContent = '✕'; // Unicode multiplication sign or a simple 'X'
+                countButton.classList.add('zero-count'); // Apply specific styling for zero
+            } else if (count === 1) {
+                countButton.textContent = '1 Day';
+            } else {
+                countButton.textContent = `${count} Days`;
+            }
+        }
+
+        // New function to change the count button's background color
+        function updateCountButtonColor() {
+            const countButton = document.getElementById('attendanceCountButton');
+            // Remove previous color classes
+            countButton.classList.remove('present-bg', 'absent-bg', 'not-recorded-bg');
+
+            // Apply new color class based on current filter
+            if (currentAttendanceFilter === 'Present') {
+                countButton.classList.add('present-bg');
+            } else if (currentAttendanceFilter === 'Absent') {
+                countButton.classList.add('absent-bg');
+            } else if (currentAttendanceFilter === 'Not Recorded') {
+                countButton.classList.add('not-recorded-bg');
+            }
+            // For 'All', no specific color class is added, it will revert to the default grey.
+        }
+
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const monthSelectorOverlay = document.getElementById('monthSelectorOverlay');
+            const openMonthSelectorButton = document.getElementById('openMonthSelector');
+            const currentYearSpan = document.getElementById('currentYear');
+            const monthButtons = document.querySelectorAll('#viewAttendancePage .month-button');
+
+            openMonthSelectorButton.addEventListener('click', () => {
+                selectedYear = currentSelectedDate.getFullYear();
+                selectedMonth = currentSelectedDate.getMonth();
+                currentYearSpan.textContent = selectedYear;
+                updateMonthSelectionUI();
+                monthSelectorOverlay.style.display = 'flex';
+            });
+
+            // Close overlay if clicked outside the card
+            monthSelectorOverlay.addEventListener('click', (event) => {
+                if (event.target === monthSelectorOverlay) {
+                    monthSelectorOverlay.style.display = 'none';
+                }
+            });
+
+            // Year navigation within month selector
+            window.changeYear = function(offset) { // Make global for onclick
+                selectedYear += offset;
+                currentYearSpan.textContent = selectedYear;
+            };
+
+            // Month selection within month selector
+            monthButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    selectedMonth = parseInt(button.dataset.month);
+                    currentSelectedDate.setFullYear(selectedYear);
+                    currentSelectedDate.setMonth(selectedMonth);
+                    currentSelectedDate.setDate(1); // Set to 1st of selected month
+                    currentView = 'month'; // Always switch to month view after selection
+                    // Update toggle button active state
+                    document.querySelector('#viewAttendancePage .view-toggle-buttons button.active').classList.remove('active');
+                    document.querySelector(`#viewAttendancePage .view-toggle-buttons button[onclick="setView('month')"]`).classList.add('active');
+
+                    updateCalendarView();
+                    monthSelectorOverlay.style.display = 'none'; // Close overlay
+                });
+            });
+
+            function updateMonthSelectionUI() {
+                monthButtons.forEach(button => {
+                    if (parseInt(button.dataset.month) === selectedMonth) {
+                        button.classList.add('selected');
+                    } else {
+                        button.classList.remove('selected');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

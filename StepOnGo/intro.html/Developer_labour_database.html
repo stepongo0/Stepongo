@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StepOnGo Developer Labour Database - View Only</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4CAF50; /* Green */
+            --secondary-color: #2196F3; /* Blue */
+            --accent-color: #FFC107; /* Amber for ratings */
+            --text-color: #333;
+            --bg-color: #f4f7f6;
+            --card-bg: #fff;
+            --border-color: #ddd;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px var(--shadow-color);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        /* Search, Filter, Sort Panel */
+        .controls-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #e9f5e9; /* Light green background */
+            border-radius: 8px;
+            box-shadow: 0 2px 5px var(--shadow-color);
+            align-items: flex-end; /* Align items to the bottom */
+        }
+
+        .controls-panel label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: block;
+            color: var(--primary-color);
+        }
+
+        .controls-panel input[type="text"],
+        .controls-panel input[type="number"],
+        .controls-panel select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .controls-panel input[type="text"]:focus,
+        .controls-panel input[type="number"]:focus,
+        .controls-panel select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .input-group {
+            flex: 1 1 200px; /* Allows flexibility and minimum width */
+        }
+
+        .range-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .range-group input {
+            flex: 1; /* Inputs inside range group take equal space */
+        }
+
+        .buttons-group {
+            display: flex;
+            gap: 10px;
+            flex-grow: 1; /* Allows buttons to take available space */
+            justify-content: flex-end; /* Pushes buttons to the right */
+        }
+
+        .controls-panel button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .controls-panel button.primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .controls-panel button.primary:hover {
+            background-color: #43A047; /* Darker green on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+        }
+
+        /* Worker List */
+        .worker-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .worker-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .worker-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px var(--shadow-color);
+        }
+
+        .worker-card h3 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .worker-card p {
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .worker-card p strong {
+            color: var(--primary-color);
+            margin-right: 5px;
+        }
+
+        .worker-card .rating {
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+
+        .worker-card .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center; /* Center the single view button */
+        }
+
+        .worker-card .actions button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .worker-card .actions .view-btn {
+            background-color: #03A9F4; /* Light blue */
+            color: white;
+            flex-grow: 1; /* Allow view button to take full width if alone */
+        }
+        .worker-card .actions .view-btn:hover {
+            background-color: #0288D1;
+        }
+
+        /* Modal for Full Profile View */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000; /* High z-index to be on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if content is too long */
+            background-color: rgba(0, 0, 0, 0.6); /* Black with opacity */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            position: relative;
+            animation: fadeIn 0.3s ease-out; /* Smooth fade-in animation */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #F44336; /* Danger color for close button on hover */
+            text-decoration: none;
+        }
+
+        .modal-content h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        /* Styles for View Profile (read-only) */
+        .modal-view-profile p {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .modal-view-profile p strong {
+            color: var(--secondary-color);
+            display: inline-block; /* Allows strong to have fixed width */
+            min-width: 120px; /* Aligns values better */
+        }
+
+        .modal-view-profile .rating {
+            color: var(--accent-color);
+            font-size: 1.2em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .controls-panel {
+                flex-direction: column;
+                align-items: stretch; /* Stretch items to fill column width */
+            }
+
+            .input-group, .buttons-group {
+                width: 100%;
+                justify-content: flex-start; /* Buttons align left */
+            }
+
+            .worker-list {
+                grid-template-columns: 1fr; /* Single column on smaller screens */
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>StepOnGo Developer Labour Database Panel </h1>
+
+        <div class="controls-panel">
+            <div class="input-group">
+                <label for="searchName">Search by Name</label>
+                <input type="text" id="searchName" placeholder="Worker name...">
+            </div>
+            <div class="input-group">
+                <label for="filterProfession">Filter by Profession</label>
+                <select id="filterProfession">
+                    <option value="">All Professions</option>
+                    <option value="Labour">Labour</option>
+                    <option value="Mason">Mason</option>
+                    <option value="Painter">Painter</option>
+                    <option value="Electrician">Electrician</option>
+                    <option value="Plumber">Plumber</option>
+                    <option value="Carpenter">Carpenter</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="filterSite">Filter by Site</label>
+                <select id="filterSite">
+                    <option value="">All Sites</option>
+                    </select>
+            </div>
+            <div class="input-group">
+                <label for="sortOption">Sort By</label>
+                <select id="sortOption">
+                    <option value="default">Default</option>
+                    <option value="highestRated">Highest Rated</option>
+                    <option value="mostExperienced">Most Experienced</option>
+                    <option value="lowestWages">Lowest Daily Wages</option>
+                    <option value="highestWages">Highest Daily Wages</option>
+                </select>
+            </div>
+            <div class="input-group range-group">
+                <label>Daily Wages</label>
+                <input type="number" id="minWage" placeholder="Min" min="0">
+                <span style="color: var(--text-color);">-</span>
+                <input type="number" id="maxWage" placeholder="Max" min="0">
+            </div>
+            <div class="input-group range-group">
+                <label>Ratings</label>
+                <input type="number" id="minRating" placeholder="Min" min="0" max="5">
+                <span style="color: var(--text-color);">-</span>
+                <input type="number" id="maxRating" placeholder="Max" min="0" max="5">
+            </div>
+            <div class="buttons-group">
+                <button class="primary" onclick="applyFiltersAndSort()">Apply Filters & Sort</button>
+                <button class="primary" onclick="resetFiltersAndSort()">Reset</button>
+            </div>
+        </div>
+
+        <div class="worker-list" id="workerList">
+            </div>
+    </div>
+
+    <div id="workerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="modalContent">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        let workers = [
+            {
+                id: 1,
+                name: "Ramesh Kumar",
+                profession: "Labour",
+                dailyWages: 600,
+                experience: 24, // months
+                ratings: 4.5,
+                assignedSite: "Site A - Commercial Complex",
+                contactInfo: "9876543210"
+            },
+            {
+                id: 2,
+                name: "Suresh Sharma",
+                profession: "Mason",
+                dailyWages: 850,
+                experience: 60,
+                ratings: 4.8,
+                assignedSite: "Site B - Residential Towers",
+                contactInfo: "9988776655"
+            },
+            {
+                id: 3,
+                name: "Priya Singh",
+                profession: "Painter",
+                dailyWages: 700,
+                experience: 36,
+                ratings: 4.2,
+                assignedSite: "Site A - Commercial Complex",
+                contactInfo: "9123456789"
+            },
+            {
+                id: 4,
+                name: "Amit Patel",
+                profession: "Electrician",
+                dailyWages: 950,
+                experience: 72,
+                ratings: 4.9,
+                assignedSite: "Site C - Industrial Park",
+                contactInfo: ""
+            },
+            {
+                id: 5,
+                name: "Deepak Yadav",
+                profession: "Labour",
+                dailyWages: 550,
+                experience: 12,
+                ratings: 3.9,
+                assignedSite: "Site B - Residential Towers",
+                contactInfo: "9876123450"
+            },
+            {
+                id: 6,
+                name: "Geeta Devi",
+                profession: "Mason",
+                dailyWages: 800,
+                experience: 48,
+                ratings: 4.7,
+                assignedSite: "Site A - Commercial Complex",
+                contactInfo: "9000111222"
+            },
+            {
+                id: 7,
+                name: "Vikas Kumar",
+                profession: "Plumber",
+                dailyWages: 750,
+                experience: 30,
+                ratings: 4.3,
+                assignedSite: "Site C - Industrial Park",
+                contactInfo: ""
+            },
+            {
+                id: 8,
+                name: "Anjali Gupta",
+                profession: "Painter",
+                dailyWages: 680,
+                experience: 20,
+                ratings: 4.0,
+                assignedSite: "Site B - Residential Towers",
+                contactInfo: "9765432109"
+            },
+            {
+                id: 9,
+                name: "Rajesh Mishra",
+                profession: "Carpenter",
+                dailyWages: 900,
+                experience: 55,
+                ratings: 4.6,
+                assignedSite: "Site A - Commercial Complex",
+                contactInfo: "9555444333"
+            },
+            {
+                id: 10,
+                name: "Sunita Reddy",
+                profession: "Labour",
+                dailyWages: 580,
+                experience: 18,
+                ratings: 4.1,
+                assignedSite: "Site C - Industrial Park",
+                contactInfo: "9234567890"
+            }
+        ];
+
+        // Dynamically get unique sites from the mock data
+        let availableSites = Array.from(new Set(workers.map(worker => worker.assignedSite))).filter(site => site);
+
+        const workerListDiv = document.getElementById('workerList');
+        const workerModal = document.getElementById('workerModal');
+        const closeModalBtn = document.querySelector('.close-button');
+        const modalContentDiv = document.getElementById('modalContent');
+        const filterSiteSelect = document.getElementById('filterSite');
+
+        /**
+         * Renders the list of workers in the UI.
+         * @param {Array} workerArray - The array of worker objects to display.
+         */
+        function displayWorkers(workerArray) {
+            workerListDiv.innerHTML = ''; // Clear existing worker cards
+            if (workerArray.length === 0) {
+                workerListDiv.innerHTML = '<p style="text-align: center; color: #777; font-size: 1.1em; padding: 20px;">No workers found matching your criteria. 😔</p>';
+                return;
+            }
+            workerArray.forEach(worker => {
+                const workerCard = document.createElement('div');
+                workerCard.classList.add('worker-card');
+                workerCard.innerHTML = `
+                    <h3>${worker.name}</h3>
+                    <p><strong>Profession:</strong> ${worker.profession}</p>
+                    <p><strong>Daily Wages:</strong> ₹${worker.dailyWages}</p>
+                    <p><strong>Experience:</strong> ${formatExperience(worker.experience)}</p>
+                    <p class="rating"><strong>Ratings:</strong> ${'⭐'.repeat(Math.floor(worker.ratings))} ${worker.ratings % 1 !== 0 ? '⭐' : ''} (${worker.ratings}/5)</p>
+                    <p><strong>Assigned Site:</strong> ${worker.assignedSite || 'N/A'}</p>
+                    <div class="actions">
+                        <button class="view-btn" onclick="viewFullProfile(${worker.id})">View Full Profile</button>
+                    </div>
+                `;
+                workerListDiv.appendChild(workerCard);
+            });
+        }
+
+        /**
+         * Converts experience from months into a human-readable string (e.g., "2 years 6 months").
+         * @param {number} months - Experience in months.
+         * @returns {string} Formatted experience string.
+         */
+        function formatExperience(months) {
+            const years = Math.floor(months / 12);
+            const remainingMonths = months % 12;
+            let experienceString = "";
+            if (years > 0) {
+                experienceString += `${years} year${years > 1 ? 's' : ''}`;
+            }
+            if (remainingMonths > 0) {
+                if (years > 0) experienceString += " ";
+                experienceString += `${remainingMonths} month${remainingMonths > 1 ? 's' : ''}`;
+            }
+            return experienceString || "Less than a month";
+        }
+
+        /**
+         * Populates the 'Filter by Site' dropdown with unique site names.
+         */
+        function populateSiteFilters() {
+            filterSiteSelect.innerHTML = '<option value="">All Sites</option>';
+            availableSites.forEach(site => {
+                const option = document.createElement('option');
+                option.value = site;
+                option.textContent = site;
+                filterSiteSelect.appendChild(option);
+            });
+        }
+
+        /**
+         * Displays a worker's full profile in a READ-ONLY modal.
+         * The contact information is intentionally omitted from this view.
+         * @param {number} id - The ID of the worker to view.
+         */
+        function viewFullProfile(id) {
+            const worker = workers.find(w => w.id === id);
+            if (!worker) return;
+
+            modalContentDiv.innerHTML = `
+                <h2>${worker.name}'s Full Profile</h2>
+                <div class="modal-view-profile">
+                    <p><strong>Profession:</strong> ${worker.profession}</p>
+                    <p><strong>Daily Wages:</strong> ₹${worker.dailyWages}</p>
+                    <p><strong>Experience:</strong> ${formatExperience(worker.experience)}</p>
+                    <p class="rating"><strong>Ratings:</strong> ${'⭐'.repeat(Math.floor(worker.ratings))} ${worker.ratings % 1 !== 0 ? '⭐' : ''} (${worker.ratings}/5)</p>
+                    <p><strong>Assigned Site:</strong> ${worker.assignedSite || 'N/A'}</p>
+                    </div>
+            `;
+            workerModal.style.display = 'flex';
+        }
+
+        /**
+         * Closes the worker modal.
+         */
+        function closeModal() {
+            workerModal.style.display = 'none';
+        }
+
+        // Event listeners for modal close
+        closeModalBtn.addEventListener('click', closeModal);
+        window.addEventListener('click', (event) => {
+            if (event.target === workerModal) {
+                closeModal();
+            }
+        });
+
+        // Debounce for search input to improve performance
+        let searchTimeout;
+        document.getElementById('searchName').addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                applyFiltersAndSort();
+            }, 300); // Wait for 300ms after typing stops
+        });
+
+
+        /**
+         * Applies filters and sorting options to the worker list and updates the display.
+         */
+        function applyFiltersAndSort() {
+            let filteredWorkers = [...workers]; // Create a shallow copy to avoid modifying original array directly
+
+            // Search by Name
+            const searchTerm = document.getElementById('searchName').value.toLowerCase();
+            if (searchTerm) {
+                filteredWorkers = filteredWorkers.filter(worker =>
+                    worker.name.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            // Filter by Profession
+            const professionFilter = document.getElementById('filterProfession').value;
+            if (professionFilter) {
+                filteredWorkers = filteredWorkers.filter(worker =>
+                    worker.profession === professionFilter
+                );
+            }
+
+            // Filter by Site
+            const siteFilter = document.getElementById('filterSite').value;
+            if (siteFilter) {
+                filteredWorkers = filteredWorkers.filter(worker =>
+                    worker.assignedSite === siteFilter
+                );
+            }
+
+            // Filter by Daily Wages Range
+            const minWage = parseFloat(document.getElementById('minWage').value);
+            const maxWage = parseFloat(document.getElementById('maxWage').value);
+            if (!isNaN(minWage)) {
+                filteredWorkers = filteredWorkers.filter(worker => worker.dailyWages >= minWage);
+            }
+            if (!isNaN(maxWage)) {
+                filteredWorkers = filteredWorkers.filter(worker => worker.dailyWages <= maxWage);
+            }
+
+            // Filter by Ratings Range
+            const minRating = parseFloat(document.getElementById('minRating').value);
+            const maxRating = parseFloat(document.getElementById('maxRating').value);
+            if (!isNaN(minRating)) {
+                filteredWorkers = filteredWorkers.filter(worker => worker.ratings >= minRating);
+            }
+            if (!isNaN(maxRating)) {
+                filteredWorkers = filteredWorkers.filter(worker => worker.ratings <= maxRating);
+            }
+
+            // Sorting
+            const sortOption = document.getElementById('sortOption').value;
+            if (sortOption === 'highestRated') {
+                filteredWorkers.sort((a, b) => b.ratings - a.ratings);
+            } else if (sortOption === 'mostExperienced') {
+                filteredWorkers.sort((a, b) => b.experience - a.experience);
+            } else if (sortOption === 'lowestWages') {
+                filteredWorkers.sort((a, b) => a.dailyWages - b.dailyWages);
+            } else if (sortOption === 'highestWages') {
+                filteredWorkers.sort((a, b) => b.dailyWages - a.dailyWages);
+            }
+            // 'default' option means no specific sort is applied, maintaining order based on filters
+
+            displayWorkers(filteredWorkers);
+        }
+
+        /**
+         * Resets all filter and sort selections and re-displays the full worker list.
+         */
+        function resetFiltersAndSort() {
+            document.getElementById('searchName').value = '';
+            document.getElementById('filterProfession').value = '';
+            document.getElementById('filterSite').value = '';
+            document.getElementById('minWage').value = '';
+            document.getElementById('maxWage').value = '';
+            document.getElementById('minRating').value = '';
+            document.getElementById('maxRating').value = '';
+            document.getElementById('sortOption').value = 'default';
+            applyFiltersAndSort(); // Re-apply with empty filters
+        }
+
+        // Initial load: Populate site filters and display all workers
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSiteFilters();
+            displayWorkers(workers);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Labour Performance Ratings</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f1f1f1;
+    }
+    .ratings-container {
+      max-width: 450px; /* Slightly wider for new content */
+      margin: 30px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .ratings-header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .ratings-header h2 {
+      color: #075e54;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .ratings-header p {
+        margin-top: 10px;
+        color: #555;
+    }
+
+    /* General section styling */
+    .ratings-section {
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      margin-bottom: 20px; /* Spacing between sections */
+    }
+    .ratings-section:last-of-type {
+      margin-bottom: 0;
+    }
+    .ratings-section h3 {
+      color: #075e54;
+      margin-top: 0;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    /* Overall performance styles */
+    .average-rating-summary {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .average-rating-score {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+    }
+    .star-rating {
+      color: #ffc107; /* Gold color for stars */
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+    .star-rating .fa-regular.fa-star-half-stroke {
+        color: #ffc107;
+    }
+    .star-rating .fa-solid.fa-star {
+        color: #ffc107;
+    }
+    .star-rating .fa-regular.fa-star {
+        color: #ddd; /* Light gray for empty stars */
+    }
+    .total-reviews {
+        font-size: 0.95em;
+        color: #777;
+    }
+
+    /* Rating breakdown styles */
+    .rating-breakdown-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 0.9em;
+    }
+    .rating-breakdown-item .stars-label {
+        width: 60px; /* Space for "5 Star" */
+        flex-shrink: 0;
+        text-align: right;
+        padding-right: 10px;
+        color: #555;
+    }
+    .rating-breakdown-item .progress-bar-wrap {
+        flex-grow: 1;
+        background-color: #e0e0e0;
+        border-radius: 5px;
+        height: 8px;
+        overflow: hidden;
+    }
+    .rating-breakdown-item .progress-bar-fill {
+        background-color: #25d366; /* Green for fill */
+        height: 100%;
+        width: 0%; /* Initial width for animation */
+        border-radius: 5px;
+        transition: width 0.5s ease-out;
+    }
+    .rating-breakdown-item .count {
+        width: 40px; /* Space for count */
+        flex-shrink: 0;
+        text-align: right;
+        padding-left: 10px;
+        color: #333;
+        font-weight: bold;
+    }
+
+
+    /* Project ratings list styles */
+    .project-ratings-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .project-ratings-list li {
+      padding: 15px 0;
+      border-bottom: 1px dashed #eee;
+    }
+    .project-ratings-list li:last-child {
+      border-bottom: none;
+    }
+    .project-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+    .project-name {
+      font-weight: bold;
+      color: #075e54;
+      font-size: 1.05em;
+    }
+    .review-date {
+        font-size: 0.85em;
+        color: #777;
+    }
+    .project-rating-stars {
+        display: block;
+        margin-bottom: 8px;
+    }
+    .project-rating-stars .star-rating {
+        font-size: 18px; /* Smaller stars for individual projects */
+    }
+    .client-comment {
+        font-size: 0.9em;
+        color: #444;
+        background-color: #f0f0f0;
+        padding: 10px;
+        border-radius: 5px;
+        border-left: 3px solid #25d366;
+        margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="ratings-container">
+    <div class="ratings-header">
+      <h2><i class="fa-solid fa-star"></i>  Performance Ratings</h2>
+      <p>Ratings for: <strong id="labourNameDisplay">Ram Kumar</strong> (ID: <span id="labourIdDisplay">SOG-L-001</span>)</p>
+    </div>
+
+    <div class="ratings-section">
+      <h3>Overall Performance Summary</h3>
+      <div class="average-rating-summary">
+        <div class="average-rating-score"><span id="averageScore">0</span>/5</div>
+        <div id="averageStars" class="star-rating"></div>
+        <div class="total-reviews"><span id="totalReviewsCount">0</span> Total Reviews</div>
+      </div>
+
+      <h4>Rating Distribution</h4>
+      <div id="ratingBreakdown">
+        </div>
+    </div>
+
+    <div class="ratings-section">
+      <h3>Detailed Project Reviews</h3>
+      <ul id="projectRatingsList" class="project-ratings-list">
+        </ul>
+    </div>
+  </div>
+
+  <script>
+    // Dummy data for project ratings (this would typically come from an API/database)
+    const labourRatingsData = {
+      id: "SOG-L-001",
+      name: "Ram Kumar",
+      projects: [
+        { project: "Home Wiring Installation", rating: 4.5, date: "2024-03-10", comment: "Excellent work, very professional and efficient. Highly recommend!" },
+        { project: "Office AC Repair", rating: 3.0, date: "2023-11-20", comment: "Did the job well, but took a bit longer than expected to complete. Decent communication." },
+        { project: "Shop Lighting Setup", rating: 5.0, date: "2024-05-15", comment: "Outstanding! Completed everything perfectly and on time. A true expert in his field." },
+        { project: "Apartment Plumbing Fix", rating: 4.0, date: "2024-01-25", comment: "Good quality repair, friendly service. There was a minor delay in arrival, but overall satisfied." },
+        { project: "New Construction Work", rating: 3.5, date: "2023-09-01", comment: "Competent work on the construction phase, but communication could be improved. Finished the main tasks as per agreement." },
+        { project: "Water Heater Installation", rating: 5.0, date: "2024-06-01", comment: "Installed a new water heater quickly and cleanly. Very knowledgeable and polite." },
+        { project: "Ceiling Fan Repair", rating: 4.0, date: "2024-02-18", comment: "Fixed the fan issue promptly. Fair pricing and good service." }
+      ]
+    };
+
+    // Function to generate star icons based on a rating score
+    function displayStars(rating, size = 24) { // Added size parameter for flexibility
+      let starsHtml = '';
+      const fullStars = Math.floor(rating);
+      const hasHalfStar = rating % 1 !== 0;
+
+      for (let i = 0; i < fullStars; i++) {
+        starsHtml += '<i class="fa-solid fa-star"></i>';
+      }
+
+      if (hasHalfStar) {
+        starsHtml += '<i class="fa-solid fa-star-half-stroke"></i>';
+      }
+
+      const emptyStars = 5 - Math.ceil(rating);
+      for (let i = 0; i < emptyStars; i++) {
+        starsHtml += '<i class="fa-regular fa-star"></i>';
+      }
+
+      return starsHtml;
+    }
+
+    // Function to calculate and display all ratings details
+    function calculateAndDisplayRatings() {
+      document.getElementById('labourNameDisplay').textContent = labourRatingsData.name;
+      document.getElementById('labourIdDisplay').textContent = labourRatingsData.id;
+
+      const totalReviews = labourRatingsData.projects.length;
+      document.getElementById('totalReviewsCount').textContent = totalReviews;
+
+      if (totalReviews === 0) {
+        document.getElementById('averageScore').textContent = 'N/A';
+        document.getElementById('averageStars').innerHTML = displayStars(0);
+        document.getElementById('projectRatingsList').innerHTML = '<li>No project ratings yet.</li>';
+        document.getElementById('ratingBreakdown').innerHTML = '<p style="text-align: center; color: #777;">No rating distribution available.</p>';
+        return;
+      }
+
+      const sumOfRatings = labourRatingsData.projects.reduce((sum, item) => sum + item.rating, 0);
+      const averageRating = sumOfRatings / totalReviews;
+
+      document.getElementById('averageScore').textContent = averageRating.toFixed(1);
+      document.getElementById('averageStars').innerHTML = displayStars(averageRating);
+
+
+      // --- Display Rating Distribution ---
+      const ratingCounts = { '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 };
+      labourRatingsData.projects.forEach(item => {
+          const roundedRating = Math.round(item.rating); // Round to nearest whole star for distribution
+          if (ratingCounts[roundedRating]) {
+              ratingCounts[roundedRating]++;
+          } else {
+              // Handle half stars if they result in a rounded 0 (e.g., 0.5 rounds to 1)
+              // Or just ignore if below 1 star, depends on desired granularity.
+              // For simplicity, we'll map all ratings to 1-5.
+              if (roundedRating > 0) ratingCounts[roundedRating]++;
+          }
+      });
+
+      const ratingBreakdownDiv = document.getElementById('ratingBreakdown');
+      ratingBreakdownDiv.innerHTML = ''; // Clear previous
+
+      for (let i = 5; i >= 1; i--) { // Loop from 5 stars down to 1 star
+          const count = ratingCounts[i] || 0;
+          const percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
+          const breakdownItem = document.createElement('div');
+          breakdownItem.classList.add('rating-breakdown-item');
+          breakdownItem.innerHTML = `
+              <span class="stars-label">${i} Star</span>
+              <div class="progress-bar-wrap">
+                  <div class="progress-bar-fill" style="width: ${percentage.toFixed(0)}%;"></div>
+              </div>
+              <span class="count">${count}</span>
+          `;
+          ratingBreakdownDiv.appendChild(breakdownItem);
+      }
+
+
+      // --- Display Detailed Project Reviews ---
+      const projectList = document.getElementById('projectRatingsList');
+      projectList.innerHTML = ''; // Clear previous list
+
+      labourRatingsData.projects.forEach(item => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+          <div class="project-info">
+            <span class="project-name">${item.project}</span>
+            <span class="review-date">${formatDate(item.date)}</span>
+          </div>
+          <span class="project-rating-stars">
+            <span class="star-rating">${displayStars(item.rating, 18)}</span> (${item.rating}/5)
+          </span>
+          <div class="client-comment">
+            "${item.comment}"
+          </div>
+        `;
+        projectList.appendChild(listItem);
+      });
+    }
+
+    // Helper function to format date
+    function formatDate(dateString) {
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('en-US', options); // e.g., "Jan 1, 2024"
+    }
+
+    // Call the function to display ratings when the page loads
+    document.addEventListener('DOMContentLoaded', calculateAndDisplayRatings);
+  </script>
+</body>
+</html>

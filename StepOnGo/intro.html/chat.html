@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StepOnGo Labour Chat Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50; /* Green, similar to Zomato/Zepto success colors */
+            --primary-dark: #388E3C;
+            --secondary-color: #f0f2f5; /* Light gray for background */
+            --bubble-user: #e3f2fd; /* Light blue for user messages */
+            --bubble-bot: #ffffff; /* White for bot messages */
+            --text-color: #333;
+            --text-light: #666;
+            --border-color: #ddd;
+            --shadow-light: rgba(0, 0, 0, 0.05);
+            --font-family: 'Inter', sans-serif;
+            --button-danger: #f44336; /* Red for urgent actions like 'End Chat' or 'Disconnect' */
+            --button-info: #2196F3; /* Blue for 'Live Agent' */
+            --button-success: #8BC34A; /* Light green for 'Toll Free' */
+        }
+
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            box-sizing: border-box;
+        }
+
+        .chat-container {
+            background-color: var(--bubble-bot);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-light);
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 420px; /* Standard mobile width */
+            height: 90vh; /* Occupy most of the viewport height */
+            max-height: 700px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chat-header {
+            background-color: var(--primary-color);
+            color: var(--bubble-bot);
+            padding: 15px 20px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 1.1em;
+            box-shadow: 0 2px 8px var(--shadow-light);
+            z-index: 10;
+        }
+
+        .chat-header i {
+            font-size: 1.3em;
+        }
+
+        .chat-history {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) var(--secondary-color);
+        }
+
+        .chat-history::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-history::-webkit-scrollbar-track {
+            background: var(--secondary-color);
+            border-radius: 10px;
+        }
+
+        .chat-history::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 10px;
+            border: 2px solid var(--secondary-color);
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            line-height: 1.4;
+            position: relative;
+            word-wrap: break-word;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .message-bubble.user {
+            background-color: var(--bubble-user);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-bubble.bot {
+            background-color: var(--bubble-bot);
+            align-self: flex-start;
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-timestamp {
+            font-size: 0.7em;
+            color: var(--text-light);
+            margin-top: 5px;
+            display: block;
+            text-align: right;
+        }
+
+        .message-bubble.bot .message-timestamp {
+            text-align: left;
+        }
+
+        .quick-replies {
+            padding: 10px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bubble-bot);
+        }
+
+        .quick-reply-btn {
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-reply-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--bubble-bot);
+            box-shadow: 0 2px 6px var(--shadow-light);
+        }
+
+        .contact-options {
+            padding: 10px 20px 15px; /* Added more bottom padding */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-top: 1px solid var(--border-color); /* Separator */
+            background-color: var(--bubble-bot);
+            justify-content: center; /* Center the buttons */
+            font-size: 0.9em;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .contact-options p {
+            width: 100%;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .contact-btn {
+            padding: 10px 18px;
+            border-radius: 25px; /* More rounded */
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 6px var(--shadow-light);
+            text-decoration: none; /* For potential links */
+        }
+
+        .contact-btn.live-agent {
+            background-color: var(--button-info);
+            color: var(--bubble-bot);
+            border: 1px solid var(--button-info);
+        }
+
+        .contact-btn.live-agent:hover {
+            background-color: #1976D2; /* Darker blue */
+            border-color: #1976D2;
+            transform: translateY(-1px);
+        }
+
+        .contact-btn.toll-free {
+            background-color: var(--button-success);
+            color: var(--bubble-bot);
+            border: 1px solid var(--button-success);
+        }
+
+        .contact-btn.toll-free:hover {
+            background-color: #689F38; /* Darker green */
+            border-color: #689F38;
+            transform: translateY(-1px);
+        }
+
+
+        .chat-input-area {
+            display: flex;
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bubble-bot);
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-input-area input[type="text"] {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .chat-input-area input[type="text"]:focus {
+            border-color: var(--primary-color);
+        }
+
+        .send-button {
+            background-color: var(--primary-color);
+            color: var(--bubble-bot);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 8px var(--shadow-light);
+        }
+
+        .send-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .typing-indicator {
+            font-size: 0.85em;
+            color: var(--text-light);
+            padding: 5px 20px 10px;
+            font-style: italic;
+            display: none; /* Hidden by default, shown with JS */
+            align-self: flex-start;
+        }
+
+        .typing-indicator.visible {
+            display: block;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .chat-container {
+                max-width: 480px; /* Slightly wider for desktop */
+                height: 80vh;
+                max-height: 750px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <i class="fas fa-hard-hat"></i>
+            <span>StepOnGo Labour Support</span>
+        </div>
+
+        <div class="chat-history" id="chat-history">
+            </div>
+
+        <div class="typing-indicator" id="typing-indicator">AI is typing...</div>
+
+        <div class="quick-replies">
+            <button class="quick-reply-btn" data-message="Check attendance">Check attendance</button>
+            <button class="quick-reply-btn" data-message="View my tasks">View my tasks</button>
+            <button class="quick-reply-btn" data-message="Report an issue">Report an issue</button>
+            <button class="quick-reply-btn" data-message="My payments">My payments</button>
+        </div>
+
+        <div class="contact-options">
+            <p>Need more help? Connect with us:</p>
+            <button class="contact-btn live-agent" id="live-agent-btn">
+                <i class="fas fa-headset"></i> Live Agent
+            </button>
+            <button class="contact-btn toll-free" id="toll-free-btn">
+                <i class="fas fa-phone-alt"></i> Toll Free
+            </button>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button class="send-button" id="send-button">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const chatHistory = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const quickReplyButtons = document.querySelectorAll('.quick-reply-btn');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const liveAgentButton = document.getElementById('live-agent-btn');
+        const tollFreeButton = document.getElementById('toll-free-btn');
+
+        let welcomeMessageSent = false;
+
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const formattedHours = hours % 12 || 12;
+            const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+            return `${formattedHours}:${formattedMinutes} ${ampm}`;
+        }
+
+        function addMessage(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message-bubble', sender);
+            messageElement.innerHTML = `${message}<span class="message-timestamp">${sender === 'user' ? 'You' : 'AI'} - ${getCurrentTime()}</span>`;
+            chatHistory.appendChild(messageElement);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function simulateBotResponse(userMessage) {
+            if (!welcomeMessageSent) {
+                typingIndicator.classList.add('visible');
+                setTimeout(() => {
+                    typingIndicator.classList.remove('visible');
+                    addMessage('bot', "Hello! I'm your StepOnGo Labour Assistant. How can I assist you with your work-related queries today?");
+                    welcomeMessageSent = true;
+                    processUserMessage(userMessage);
+                }, 1000);
+            } else {
+                processUserMessage(userMessage);
+            }
+        }
+
+        function processUserMessage(userMessage) {
+            typingIndicator.classList.add('visible');
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            setTimeout(() => {
+                let botReply = "I'm not sure how to respond to that. Can you please rephrase or choose from the quick options?";
+                const lowerCaseMessage = userMessage.toLowerCase();
+
+                if (lowerCaseMessage.includes("hi") || lowerCaseMessage.includes("hello")) {
+                    botReply = "Hello there! How can I help you today with your work?";
+                } else if (lowerCaseMessage.includes("check attendance")) {
+                    botReply = "To check attendance, please provide your Labour ID or full name. I can then show your recent attendance record.";
+                } else if (lowerCaseMessage.includes("view my tasks") || lowerCaseMessage.includes("my tasks")) {
+                    botReply = "To view your tasks, please confirm your Labour ID. I can then list your assigned tasks for today or a specific date.";
+                } else if (lowerCaseMessage.includes("report an issue") || lowerCaseMessage.includes("issue")) {
+                    botReply = "Please describe the issue you are facing (e.g., equipment problem, safety concern, site issue). I will forward it to the supervisor.";
+                } else if (lowerCaseMessage.includes("my payments") || lowerCaseMessage.includes("payment")) {
+                    botReply = "To check your payment status, please provide your Labour ID. I can show you your last payment and upcoming schedule.";
+                } else if (lowerCaseMessage.includes("thank you") || lowerCaseMessage.includes("thanks")) {
+                    botReply = "You're welcome! Feel free to ask if you need more help.";
+                }
+
+                typingIndicator.classList.remove('visible');
+                addMessage('bot', botReply);
+            }, 1000);
+        }
+
+        sendButton.addEventListener('click', () => {
+            const message = userInput.value.trim();
+            if (message) {
+                addMessage('user', message);
+                simulateBotResponse(message);
+                userInput.value = '';
+            }
+        });
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+
+        quickReplyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const message = button.dataset.message;
+                addMessage('user', message);
+                simulateBotResponse(message);
+            });
+        });
+
+        liveAgentButton.addEventListener('click', () => {
+            addMessage('user', "Connect to Live Agent");
+            typingIndicator.classList.add('visible');
+            setTimeout(() => {
+                typingIndicator.classList.remove('visible');
+                addMessage('bot', "Connecting you to a live agent. Please wait a moment. You may experience a short delay during peak hours.");
+                alert("Simulating connection to Live Agent...");
+            }, 1000);
+        });
+
+        tollFreeButton.addEventListener('click', () => {
+            addMessage('user', "Call Toll Free");
+            typingIndicator.classList.add('visible');
+            setTimeout(() => {
+                typingIndicator.classList.remove('visible');
+                addMessage('bot', "Please call our toll-free number: 1800-XXX-XXXX. Our support team is ready to assist you.");
+                alert("Simulating call to Toll Free: 1800-XXX-XXXX. (In a real app, this would initiate a phone call)");
+            }, 1000);
+        });
+
+        // Clear initial placeholder messages on load to ensure a clean start
+        window.addEventListener('DOMContentLoaded', () => {
+            chatHistory.innerHTML = '';
+        });
+    </script>
+</body>
+</html>

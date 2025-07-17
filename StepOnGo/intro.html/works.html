@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StepOnGo - Labour Work Panel</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: #f0f2f5;
+      padding: 20px;
+    }
+
+    .panel {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h2 {
+      color: #1d3557;
+    }
+
+    .section {
+      margin-bottom: 25px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #1d3557;
+      border-left: 4px solid #457b9d;
+      padding-left: 10px;
+    }
+
+    .info-box {
+      background: #f1faee;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .progress-bar {
+      background: #ddd;
+      border-radius: 20px;
+      overflow: hidden;
+      height: 20px;
+      margin-top: 5px;
+    }
+
+    .progress {
+      background: #2a9d8f;
+      height: 100%;
+      width: 65%;
+      transition: width 0.3s ease;
+    }
+
+    .attendance {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .att-item {
+      background: #a8dadc;
+      border-radius: 10px;
+      padding: 15px;
+      flex: 1 1 45%;
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    .att-item h3 {
+      color: #1d3557;
+    }
+
+    .controls {
+      margin-top: 15px;
+    }
+
+    .controls input[type="range"] {
+      width: 100%;
+    }
+
+    .btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      border: none;
+      background: #457b9d;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .notification-box {
+      background: #ffe0b2;
+      border-left: 6px solid #ff9800;
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+
+    #date-display {
+      text-align: right;
+      font-size: 14px;
+      color: gray;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .att-item {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <div id="date-display"></div>
+    <div class="header">
+      <h2> StepOnGo - Labour Work Panel</h2>
+    </div>
+
+    <div class="section">
+      <div class="section-title">👤 Profile Info</div>
+      <div class="info-box">
+        <p><strong>Name:</strong> Ramesh Yadav</p>
+        <p><strong>Skill:</strong> Mason</p>
+        <p><strong>Location:</strong> Kolkata, WB</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">🏗 Current Project</div>
+      <div class="info-box">
+        <p><strong>Project Name:</strong> Greenfield Apartment</p>
+        <p><strong>Location:</strong> Rajarhat, Kolkata</p>
+        <p><strong>Supervisor:</strong> Mr. Arvind Kumar</p>
+        <p><strong>Deadline:</strong> 30th June 2025</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">📊 Today's Task & Progress</div>
+      <div class="info-box">
+        <p><strong>Task:</strong> Brickwork in Tower B</p>
+        <p><strong>Status:</strong> In Progress</p>
+        <div class="progress-bar">
+          <div class="progress" id="progressBar"></div>
+        </div>
+        <p id="progressText">65% Completed</p>
+
+        <div class="controls">
+          <input type="range" min="0" max="100" value="65" id="progressRange" />
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">📅 Attendance Overview</div>
+      <div class="attendance">
+        <div class="att-item">
+          <h3 id="presentDays">24 Days</h3>
+          <p>Present This Month</p>
+        </div>
+        <div class="att-item">
+          <h3 id="absentDays">3 Days</h3>
+          <p>Absent This Month</p>
+        </div>
+      </div>
+      <button class="btn" onclick="markPresent()">✔ Mark Present</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">🔔 Notifications</div>
+      <div class="notification-box">
+        <p>Next safety training on <strong>10th June at 10:00 AM</strong>. Attendance mandatory.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Display current date
+    const dateDisplay = document.getElementById('date-display');
+    const today = new Date();
+    dateDisplay.innerText = 📅 ${today.toDateString()};
+
+    // Progress updater
+    const progressRange = document.getElementById('progressRange');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+
+    progressRange.addEventListener('input', () => {
+      const val = progressRange.value;
+      progressBar.style.width = val + '%';
+      progressText.innerText = val + '% Completed';
+    });
+
+    // Attendance logic
+    let present = 24;
+    let absent = 3;
+
+    function markPresent() {
+      present += 1;
+      document.getElementById('presentDays').innerText = present + ' Days';
+      alert('✅ Attendance marked for today!');
+    }
+  </script>
+</body>
+</html>

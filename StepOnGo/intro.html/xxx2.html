@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StepOnGo Business Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    .card-equal-height {
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .text-light-blue {
+      color: #60a5fa; /* Example light blue, adjust if needed */
+    }
+    .bottom-nav .nav-item.active {
+      color: #2563eb;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-900 font-sans">
+
+  <div class="flex justify-between items-center p-4 border-b shadow-sm relative">
+    <div>
+      <h1 class="text-3xl font-bold text-blue-900">StepOnGo</h1>
+        <p class="text-sm text-gray-600 uppercase font-medium">BUILD PROJECT ON TIME EVERY TIME</p>
+    </div>
+    
+    <div class="flex items-center space-x-4">
+      <div class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer relative" id="notificationIcon">
+        <i class="fas fa-bell text-xl text-gray-700"></i>
+        <div id="notificationDropdown" class="hidden absolute right-0 mt-14 w-64 bg-white border shadow-md rounded-lg z-50">
+          <ul class="p-2 text-sm text-gray-700">
+            <li class="py-1 border-b">New attendance marked</li>
+            <li class="py-1 border-b">Payment received</li>
+            <li class="py-1">Project deadline approaching</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="relative">
+        <img id="profileIcon" src="https://randomuser.me/api/portraits/men/75.jpg" alt="Profile" class="w-12 h-12 rounded-full border cursor-pointer" />
+        <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-40 bg-white border shadow-md rounded-lg z-50">
+          <ul class="p-2 text-sm text-gray-700">
+            <li class="py-1 border-b"><a href="Developer_dp_profile_button.html">View Profile</a></li>
+            <li class="py-1"><a href="login.html">Logout</a></li> </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="main-content" class="p-4 text-center mb-20">
+    <h2 class="text-3xl font-semibold">Welcome, Developer</h2>
+    <div class="grid grid-cols-2 gap-4 px-4 py-3">
+
+      <a href="Developer_attendance_button.html" class="bg-blue-50 border rounded-xl p-4 shadow hover:shadow-md transition-transform hover:scale-105 block card-equal-height">
+        <div class="flex items-center gap-2 mb-2">
+          <svg class="w-6 h-6 text-light-blue" fill="currentColor" viewBox="0 0 20 20"><path d="M5 2a1 1 0 000 2h10a1 1 0 100-2H5zM3 6a1 1 0 011-1h12a1 1 0 011 1v10a2 2 0 01-2 2H5a2 2 0 01-2-2V6z" /></svg>
+          <h3 class="text-sm font-bold">Labour Attendance List</h3>
+        </div>
+        <p class="text-sm text-gray-600">Mark check-in/check-out and view attendance history</p>
+      </a>
+
+      <a href="Developer_payment_button.html" class="bg-green-50 border rounded-xl p-4 shadow hover:shadow-md transition-transform hover:scale-105 block card-equal-height">
+        <div class="flex items-center gap-2 mb-2">
+          <svg class="w-6 h-6 text-light-blue" fill="currentColor" viewBox="0 0 20 20"><path d="M17 9V7H3v2h14zm0 2H3v2h14v-2zM3 5h14a2 2 0 012 2v6a2 2 0 01-2 2H3a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg>
+          <h3 class="text-sm font-bold">Payments</h3>
+        </div>
+        <p class="text-sm text-gray-600">Track billing, clearance, and wage payments</p>
+      </a>
+
+      <a href="developer project.html" class="bg-yellow-50 border rounded-xl p-4 shadow hover:shadow-md transition-transform hover:scale-105 block card-equal-height">
+        <div class="flex items-center gap-2 mb-2">
+          <svg class="w-6 h-6 text-light-blue" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 00-1 1v1H5a1 1 0 00-1 1v12h12V5a1 1 0 00-1-1h-4V3a1 1 0 00-1-1z"/></svg>
+          <h3 class="text-sm font-bold">Projects</h3>
+        </div>
+        <p class="text-sm text-gray-600">Track live sites, timelines, and contractor activity</p>
+      </a>
+
+      <a href="Developer_Rating.html" class="bg-purple-50 border rounded-xl p-4 shadow hover:shadow-md transition-transform hover:scale-105 block card-equal-height">
+        <div class="flex items-center gap-2 mb-2">
+          <svg class="w-6 h-6 text-light-blue" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927C9.329 2.38 10.67 2.38 10.951 2.927L12.627 6.17l3.694.535c.643.093.9.884.435 1.337l-2.673 2.606.63 3.675c.11.643-.57 1.13-1.145.828L10 13.347l-3.298 1.73c-.576.303-1.255-.185-1.145-.828l.63-3.675-2.673-2.606c-.465-.453-.208-1.244.435-1.337l3.694-.535 1.676-3.243z"/></svg>
+          <h3 class="text-sm font-bold">Rating</h3>
+        </div>
+        <p class="text-sm text-gray-600">Evaluate worker performance</p>
+      </a>
+
+      <a href="Developer_labour_database.html" class="bg-pink-50 border rounded-xl p-4 shadow hover:shadow-md transition-transform hover:scale-105 block card-equal-height">
+        <div class="flex items-center gap-2 mb-2">
+          <svg class="w-6 h-6 text-light-blue" fill="currentColor" viewBox="0 0 20 20"><path d="M10 10a4 4 0 100-8 4 4 0 000 8zM4 18a6 6 0 0112 0H4z"/></svg>
+          <h3 class="text-sm font-bold">Labour Database</h3>
+        </div>
+        <p class="text-sm text-gray-600">Manage labor profiles and details</p>
+      </a>
+
+      <a href="Developer_upload_project.html" class="bg-teal-50 border rounded-xl p-4 shadow hover:shadow-md transition-transform hover:scale-105 block card-equal-height">
+        <div class="flex items-center gap-2 mb-2">
+        
+          <i class="fa-solid fa-diagram-project" style="color: #60a5fa;"></i> <h3 class="text-sm font-bold">Upload Project</h3>
+        </div>
+        <p class="text-sm text-gray-600">Create and view new project</p>
+      </a>
+
+      <a href="Developer_inventory_button.html" class="bg-red-50 border rounded-xl p-4 shadow hover:shadow-md transition-transform hover:scale-105 block card-equal-height">
+        <div class="flex items-center gap-2 mb-2">
+          
+          <i class="fa-solid fa-boxes-stacked" style="color: #60a5fa;"></i> <h3 class="text-sm font-bold">Inventory</h3>
+        </div>
+        <p class="text-sm text-gray-600">Check material inventory</p>
+      </a>
+
+      <a href="Developer_support_button.html" class="bg-indigo-50 border rounded-xl p-4 shadow hover:shadow-md transition-transform hover:scale-105 block card-equal-height">
+        <div class="flex items-center gap-2 mb-2">
+          
+          <i class="fa-solid fa-headset" style="color: #60a5fa;"></i> <h3 class="text-sm font-bold">Support</h3>
+        </div>
+        <p class="text-sm text-gray-600">Contact StepOnGo team</p>
+      </a>
+    </div>
+  </div>
+
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-md flex justify-around p-2 text-gray-700 bottom-nav">
+    <a href="business_dashboard.html" class="flex flex-col items-center nav-item active text-blue-600">
+      <i class="fas fa-home text-2xl"></i>
+      <span class="text-xs">Home</span>
+    </a>
+    <a href="works_page.html" class="flex flex-col items-center nav-item">
+      <i class="fas fa-briefcase text-2xl"></i>
+      <span class="text-xs">Works</span>
+    </a>
+    
+    <a href="Developer_attendance_button.html" class="flex flex-col items-center nav-item">
+      <i class="fas fa-calendar-check text-2xl"></i>
+      <span class="text-xs">Attendance</span>
+    </a>
+    <a href="Developer_chat_page.html" class="flex flex-col items-center nav-item">
+      <i class="fas fa-comment-dots text-2xl"></i>
+      <span class="text-xs">Chat</span>
+    </a>
+    <a href="Developer_profile_button.html" class="flex flex-col items-center nav-item">
+      <i class="fas fa-user text-2xl"></i>
+      <span class="text-xs">Profile</span>
+    </a>
+  </div>
+
+  <script>
+    document.getElementById('notificationIcon').addEventListener('click', function (e) {
+      e.stopPropagation();
+      document.getElementById('notificationDropdown').classList.toggle('hidden');
+      document.getElementById('profileDropdown').classList.add('hidden');
+    });
+
+    document.getElementById('profileIcon').addEventListener('click', function (e) {
+      e.stopPropagation();
+      document.getElementById('profileDropdown').classList.toggle('hidden');
+      document.getElementById('notificationDropdown').classList.add('hidden');
+    });
+
+    window.addEventListener('click', function () {
+      document.getElementById('notificationDropdown').classList.add('hidden');
+      document.getElementById('profileDropdown').classList.add('hidden');
+    });
+
+    // New JavaScript for dynamic content loading and active state management
+    document.addEventListener('DOMContentLoaded', () => {
+        const mainContentDiv = document.getElementById('main-content');
+        const navItems = document.querySelectorAll('.bottom-nav .nav-item');
+
+        // Function to load content
+        async function loadContent(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const html = await response.text();
+
+                // Create a temporary div to parse the fetched HTML
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+
+                // Find the relevant content from the fetched page
+                // For simplicity, let's assume the main content is within the <body> tag,
+                // and we'll extract everything *between* the header and footer.
+                // This will require careful design of your other HTML files.
+                // A more robust approach would be to ensure the content you want to load
+                // is wrapped in a specific div (e.g., <div id="page-content">...</div>)
+                // in each of your separate HTML files.
+                const newContent = tempDiv.querySelector('#main-content') || tempDiv.querySelector('body'); 
+
+                if (newContent) {
+                    // Clear existing content and append new content
+                    mainContentDiv.innerHTML = newContent.innerHTML;
+                } else {
+                    mainContentDiv.innerHTML = "<p>Content not found for this page.</p>";
+                }
+
+            } catch (error) {
+                console.error('Error loading page content:', error);
+                mainContentDiv.innerHTML = "<p>Failed to load content.</p>";
+            }
+        }
+
+        // Function to update active state of navigation
+        function updateActiveNav(clickedItem) {
+            navItems.forEach(item => item.classList.remove('active', 'text-blue-600'));
+            clickedItem.classList.add('active', 'text-blue-600'); // Add Tailwind CSS color class
+        }
+
+        // Add click listeners to bottom navigation items
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent default link behavior (full page reload)
+                const href = item.getAttribute('href');
+                if (href) {
+                    loadContent(href);
+                    updateActiveNav(item);
+                    history.pushState(null, '', href); // Update URL in browser history
+                }
+            });
+        });
+
+        // Handle initial load: set active class based on current URL
+        const currentPath = window.location.pathname.split('/').pop();
+        navItems.forEach(item => {
+            if (item.getAttribute('href') === currentPath || (currentPath === '' && item.getAttribute('href') === 'business_dashboard.html')) {
+                updateActiveNav(item);
+            }
+        });
+
+        // You might also want to handle the clicks on the cards within the main content area
+        // This will require a similar approach:
+        const cardLinks = document.querySelectorAll('#main-content a[href]');
+        cardLinks.forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = card.getAttribute('href');
+                if (href) {
+                    loadContent(href);
+                    history.pushState(null, '', href);
+                    // Note: You'll need logic here to set the active state of bottom nav
+                    // if a card click should correspond to a bottom nav item.
+                    // For example, if "Labour Attendance List" card goes to "Developer_attendance_button.html",
+                    // you'd then want to activate the "Attendance" bottom nav item.
+                    // This will require mapping or checking the href.
+                    navItems.forEach(navItem => {
+                        if (navItem.getAttribute('href') === href) {
+                            updateActiveNav(navItem);
+                        }
+                    });
+                }
+            });
+        });
+
+        // If you want to enable browser back/forward buttons to change content
+        window.addEventListener('popstate', () => {
+            const path = window.location.pathname.split('/').pop();
+            if (path) {
+                loadContent(path);
+                navItems.forEach(item => {
+                    if (item.getAttribute('href') === path) {
+                        updateActiveNav(item);
+                    }
+                });
+            }
+        });
+    });
+  </script>
+
+</body>
+</html>

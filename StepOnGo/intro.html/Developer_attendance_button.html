@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StepOnGo - Developer Labour Attendance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #28a745; /* Green */
+            --secondary-color: #007bff; /* Blue */
+            --accent-color: #ffc107; /* Yellow */
+            --danger-color: #dc3545; /* Red */
+            --light-bg: #f8f9fa;
+            --dark-bg: #343a40;
+            --text-color: #333;
+            --light-text-color: #fff;
+            --border-color: #dee2e6;
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--light-text-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        h1, h2 {
+            color: var(--dark-bg);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Header and Navigation */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            color: var(--primary-color);
+        }
+
+        .header .current-date-time {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        /* Filters */
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .filters label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .filters select,
+        .filters input[type="date"],
+        .filters input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-align: center;
+            text-decoration: none; /* For link-like buttons */
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--light-text-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--light-text-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background-color: var(--accent-color);
+            color: var(--dark-bg);
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: var(--light-text-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: var(--light-text-color);
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+            transform: translateY(-2px);
+        }
+
+        /* Attendance List Table */
+        .attendance-table-container {
+            overflow-x: auto;
+            margin-bottom: 25px;
+        }
+
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background-color: var(--light-text-color);
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            overflow: hidden; /* Ensures rounded corners apply to content */
+        }
+
+        .attendance-table th,
+        .attendance-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .attendance-table th {
+            background-color: var(--secondary-color);
+            color: var(--light-text-color);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        .attendance-table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .attendance-table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .status {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .status.present {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status.checked-out {
+            background-color: #ffeeba;
+            color: #856404;
+        }
+
+        .status.absent {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status.pending {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .status.break {
+            background-color: #dae8fc;
+            color: #0f366e;
+        }
+
+        /* Check-in/Check-out buttons within table - REMOVED, but keeping class for potential future use or to avoid errors */
+        .table-actions .btn {
+            padding: 8px 12px;
+            font-size: 0.85em;
+            margin-right: 5px;
+        }
+
+        .table-actions .btn:last-child {
+            margin-right: 0;
+        }
+
+        /* Modals (Hidden by default) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--light-text-color);
+            margin: auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            width: 80%; /* Could be adjusted */
+            max-width: 600px;
+            position: relative;
+        }
+
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            color: var(--dark-bg);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-body {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px; /* For scrollbar */
+        }
+
+        .modal-body p {
+            margin-bottom: 10px;
+        }
+
+        .modal-body ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .modal-body ul li {
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .modal-body ul li:last-child {
+            border-bottom: none;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header h1 {
+                margin-bottom: 10px;
+                font-size: 1.5em;
+            }
+
+            .filters {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 10px; /* Space out buttons on small screens */
+            }
+
+            .attendance-table th,
+            .attendance-table td {
+                padding: 8px 10px;
+                font-size: 0.9em;
+            }
+
+            .status {
+                padding: 3px 6px;
+                font-size: 0.8em;
+                min-width: 60px;
+            }
+
+            /* .table-actions .btn { // This rule is now less relevant as buttons are removed
+                padding: 6px 8px;
+                font-size: 0.75em;
+                margin-right: 3px;
+            } */
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.3em;
+            }
+            .header .current-date-time {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>StepOnGo - Labour Attendance Panel 👷‍♂️</h1>
+            <div class="current-date-time" id="currentDateTime"></div>
+        </div>
+
+        <hr>
+
+        <div class="filters">
+            <div class="form-group">
+                <label for="siteFilter">Filter by Site:</label>
+                <select id="siteFilter">
+                    <option value="">All Sites</option>
+                    <option value="Site A">Site A</option>
+                    <option value="Site B">Site B</option>
+                    <option value="Site C">Site C</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="dateFilter">Filter by Date:</label>
+                <input type="date" id="dateFilter">
+            </div>
+            <div class="form-group">
+                <label for="workerNameFilter">Filter by Worker Name:</label>
+                <input type="text" id="workerNameFilter" placeholder="Enter worker name">
+            </div>
+            <div class="form-group">
+                <label for="statusFilter">Filter by Status:</label>
+                <select id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <option value="Present">Present</option>
+                    <option value="Absent">Absent</option>
+                    <option value="Checked-out">Checked-out</option>
+                    <option value="Break">Break</option>
+                    <option value="Pending">Pending</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="generateDailyAttendanceReport()">Generate Daily Report 📊</button>
+            <button class="btn btn-info" onclick="openAttendanceHistoryModal()">View Full Attendance History 📜</button>
+            <button class="btn btn-warning" onclick="resetFilters()">Reset Filters 🔄</button>
+        </div>
+
+        <hr>
+
+        <h2>Labour Attendance List</h2>
+        <div class="attendance-table-container">
+            <table class="attendance-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Site</th>
+                        <th>Status</th>
+                        <th>Check-in Time</th>
+                        <th>Check-out Time</th>
+                        </tr>
+                </thead>
+                <tbody id="attendanceListBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="attendanceHistoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeAttendanceHistoryModal()">&times;</span>
+            <h2>Full Attendance History</h2>
+            <div class="modal-body">
+                <ul id="historyList">
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock Data for demonstration
+        let labourers = [
+            { id: 'L001', name: 'Ramesh Singh', role: 'Mason', site: 'Site A', status: 'Present', checkIn: '08:00 AM', checkOut: null },
+            { id: 'L002', name: 'Priya Sharma', role: 'Carpenter', site: 'Site B', status: 'Checked-out', checkIn: '08:15 AM', checkOut: '05:00 PM' },
+            { id: 'L003', name: 'Amit Kumar', role: 'Electrician', site: 'Site A', status: 'Absent', checkIn: null, checkOut: null },
+            { id: 'L004', name: 'Geeta Devi', role: 'Painter', site: 'Site C', status: 'Present', checkIn: '08:30 AM', checkOut: null },
+            { id: 'L005', name: 'Sunil Verma', role: 'Plumber', site: 'Site B', status: 'Break', checkIn: '08:05 AM', checkOut: null },
+            { id: 'L006', name: 'Nisha Kumari', role: 'Welder', site: 'Site A', status: 'Present', checkIn: '08:10 AM', checkOut: null },
+            { id: 'L007', name: 'Rajesh Gupta', role: 'Foreman', site: 'Site C', status: 'Checked-out', checkIn: '07:45 AM', checkOut: '04:30 PM' },
+            { id: 'L008', name: 'Deepak Yadav', role: 'Helper', site: 'Site A', status: 'Present', checkIn: '08:20 AM', checkOut: null },
+            { id: 'L009', name: 'Sarita Rani', role: 'Mason', site: 'Site B', status: 'Absent', checkIn: null, checkOut: null },
+            { id: 'L010', name: 'Vikram Singh', role: 'Driver', site: 'Site C', status: 'Present', checkIn: '07:30 AM', checkOut: null },
+        ];
+
+        // Mock Attendance History (more detailed, per day)
+        let attendanceHistory = [
+            { workerId: 'L001', name: 'Ramesh Singh', date: '2025-06-16', status: 'Present', checkIn: '08:00 AM', checkOut: '05:00 PM', site: 'Site A' },
+            { workerId: 'L002', name: 'Priya Sharma', date: '2025-06-16', status: 'Checked-out', checkIn: '08:15 AM', checkOut: '05:00 PM', site: 'Site B' },
+            { workerId: 'L003', name: 'Amit Kumar', date: '2025-06-16', status: 'Absent', checkIn: null, checkOut: null, site: 'Site A' },
+            { workerId: 'L001', name: 'Ramesh Singh', date: '2025-06-15', status: 'Present', checkIn: '07:55 AM', checkOut: '04:50 PM', site: 'Site A' },
+            { workerId: 'L004', name: 'Geeta Devi', date: '2025-06-16', status: 'Present', checkIn: '08:30 AM', checkOut: '05:30 PM', site: 'Site C' },
+            { workerId: 'L005', name: 'Sunil Verma', date: '2025-06-16', status: 'Present', checkIn: '08:05 AM', checkOut: '04:45 PM', site: 'Site B' },
+            { workerId: 'L003', name: 'Amit Kumar', date: '2025-06-15', status: 'Present', checkIn: '08:00 AM', checkOut: '04:55 PM', site: 'Site A' },
+            // Add more history entries as needed
+        ];
+
+
+        const attendanceListBody = document.getElementById('attendanceListBody');
+        const siteFilter = document.getElementById('siteFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const workerNameFilter = document.getElementById('workerNameFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        const currentDateTimeDisplay = document.getElementById('currentDateTime');
+
+        // Modals
+        const attendanceHistoryModal = document.getElementById('attendanceHistoryModal');
+        const historyList = document.getElementById('historyList');
+
+        // Function to display current date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            currentDateTimeDisplay.textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        // Initial call and set interval for real-time update
+        updateDateTime();
+        setInterval(updateDateTime, 1000); // Update every second
+
+        // Function to render the attendance list
+        function renderAttendanceList() {
+            attendanceListBody.innerHTML = ''; // Clear existing list
+
+            const selectedSite = siteFilter.value;
+            const selectedDate = dateFilter.value; //YYYY-MM-DD
+            const workerName = workerNameFilter.value.toLowerCase();
+            const selectedStatus = statusFilter.value;
+
+            // Group labourers by site if "All Sites" is selected, otherwise filter by selected site
+            let labourersToDisplay = [];
+            if (selectedSite) {
+                // If a specific site is selected, filter by that site
+                labourersToDisplay = labourers.filter(labourer => labourer.site === selectedSite);
+            } else {
+                // If "All Sites" is selected, group by site and display
+                const sites = [...new Set(labourers.map(l => l.site))].sort(); // Get unique sorted sites
+                sites.forEach(site => {
+                    labourersToDisplay.push({ type: 'siteHeader', site: site }); // Add a header for each site
+                    labourers.filter(labourer => labourer.site === site).forEach(labourer => {
+                        labourersToDisplay.push(labourer);
+                    });
+                });
+            }
+
+            // Apply other filters (date, worker name, status)
+            const filteredLabourers = labourersToDisplay.filter(item => {
+                if (item.type === 'siteHeader') return true; // Always include site headers
+
+                const matchesName = !workerName || item.name.toLowerCase().includes(workerName);
+                const matchesStatus = !selectedStatus || item.status === selectedStatus;
+
+                // Date filter primarily applies to historical view, but for the main list,
+                // we're showing current status. If you want to show historical data in the main table,
+                // the `labourers` array would need to change based on the date filter,
+                // which would imply fetching data for that date (not implemented in this frontend-only demo).
+                const matchesDate = !selectedDate; // Always true for current 'labourers' data
+
+                return matchesName && matchesStatus && matchesDate;
+            });
+
+            if (filteredLabourers.length === 0) {
+                // Adjusted colspan for 7 columns (ID, Name, Role, Site, Status, Check-in, Check-out)
+                attendanceListBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">No labourers found for the selected filters.</td></tr>';
+                return;
+            }
+
+            filteredLabourers.forEach(item => {
+                if (item.type === 'siteHeader') {
+                    const row = attendanceListBody.insertRow();
+                    row.className = 'site-header-row';
+                    // Adjusted colspan for 7 columns
+                    row.innerHTML = `<td colspan="7" style="background-color: var(--dark-bg); color: var(--light-text-color); font-weight: bold; text-align: center; padding: 10px;">${item.site}</td>`;
+                } else {
+                    const labourer = item;
+                    const row = attendanceListBody.insertRow();
+                    row.innerHTML = `
+                        <td>${labourer.id}</td>
+                        <td>${labourer.name}</td>
+                        <td>${labourer.role}</td>
+                        <td>${labourer.site}</td>
+                        <td><span class="status ${labourer.status.toLowerCase().replace('-', '')}">${labourer.status}</span></td>
+                        <td>${labourer.checkIn || '-'}</td>
+                        <td>${labourer.checkOut || '-'}</td>
+                        `;
+                }
+            });
+        }
+
+        // Event Listeners for Filters
+        siteFilter.addEventListener('change', renderAttendanceList);
+        dateFilter.addEventListener('change', renderAttendanceList);
+        workerNameFilter.addEventListener('input', renderAttendanceList);
+        statusFilter.addEventListener('change', renderAttendanceList);
+
+        // --- ATTENTION: Check-in, Check-out, Toggle Break functions are no longer directly used from the table.
+        // If you need to manage attendance (check-in/out) without buttons in the table,
+        // you would need a separate interface (e.g., a form, or supervisor panel).
+        // I've kept them here, but they are not called by the table.
+        function checkIn(id) {
+            const labourer = labourers.find(l => l.id === id);
+            if (labourer) {
+                labourer.status = 'Present';
+                labourer.checkIn = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                labourer.checkOut = null; // Clear checkout if re-checking in
+                alert(`${labourer.name} checked in successfully!`);
+                renderAttendanceList();
+                // Add to history (for today's date if not already there, or update existing)
+                updateAttendanceHistory(id, 'Present', labourer.checkIn, null);
+            }
+        }
+
+        function checkOut(id) {
+            const labourer = labourers.find(l => l.id === id);
+            if (labourer && (labourer.status === 'Present' || labourer.status === 'Break')) {
+                labourer.status = 'Checked-out';
+                labourer.checkOut = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                alert(`${labourer.name} checked out successfully!`);
+                renderAttendanceList();
+                // Update history with checkout time
+                updateAttendanceHistory(id, 'Checked-out', labourer.checkIn, labourer.checkOut);
+            } else if (labourer && labourer.status === 'Checked-out') {
+                alert(`${labourer.name} is already checked out.`);
+            }
+        }
+
+        function toggleBreak(id) {
+            const labourer = labourers.find(l => l.id === id);
+            if (labourer) {
+                if (labourer.status === 'Present') {
+                    labourer.status = 'Break';
+                    alert(`${labourer.name} is now on break.`);
+                } else if (labourer.status === 'Break') {
+                    labourer.status = 'Present';
+                    alert(`${labourer.name} has ended their break.`);
+                }
+                renderAttendanceList();
+                // Update history as well if you want break status reflected there
+                // For simplicity, we are not adding break status to history here, only present/absent/checked-out.
+            }
+        }
+        // --- END: Check-in, Check-out, Toggle Break functions ---
+
+        async function generateDailyAttendanceReport() {
+            // Ensure jsPDF and autoTable are loaded
+            if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
+                alert('jsPDF library not loaded. Please check your internet connection or CDN link.');
+                return;
+            }
+            if (typeof window.jspdf.AcroForm === 'undefined' && typeof window.jspdf.autoTable === 'undefined') { // A quick check for autoTable presence
+                 alert('jsPDF-AutoTable plugin not loaded. Please check your internet connection or CDN link.');
+                 return;
+            }
+
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            const currentTime = new Date().toLocaleTimeString('en-US');
+
+            let yOffset = 20; // Initial Y position for text
+
+            doc.setFontSize(20);
+            doc.text("Daily Labour Attendance Report", 105, yOffset, { align: 'center' });
+            yOffset += 10;
+
+            doc.setFontSize(12);
+            doc.text(`Date: ${today}`, 10, yOffset);
+            doc.text(`Generated At: ${currentTime}`, 10, yOffset + 7);
+            yOffset += 20;
+
+            // Define table headers
+            const headers = ["ID", "Name", "Role", "Site", "Status", "Check-in", "Check-out"];
+
+            // Prepare data for autoTable
+            const data = labourers.map(labourer => [
+                labourer.id,
+                labourer.name,
+                labourer.role,
+                labourer.site,
+                labourer.status,
+                labourer.checkIn || 'N/A',
+                labourer.checkOut || 'N/A'
+            ]);
+
+            // Add table to PDF using autoTable plugin
+            doc.autoTable({
+                startY: yOffset,
+                head: [headers],
+                body: data,
+                theme: 'striped', // 'striped', 'grid', 'plain'
+                styles: {
+                    fontSize: 10,
+                    cellPadding: 3,
+                    valign: 'middle',
+                    overflow: 'linebreak'
+                },
+                headStyles: {
+                    fillColor: [0, 123, 255], // Bootstrap primary blue
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold'
+                },
+                columnStyles: {
+                    0: { cellWidth: 15 }, // ID
+                    1: { cellWidth: 40 }, // Name
+                    2: { cellWidth: 30 }, // Role
+                    3: { cellWidth: 25 }, // Site
+                    4: { cellWidth: 25 }, // Status
+                    5: { cellWidth: 25 }, // Check-in
+                    6: { cellWidth: 25 }, // Check-out
+                },
+                didDrawPage: function (data) {
+                    // Footer
+                    doc.setFontSize(10);
+                    const pageCount = doc.internal.getNumberOfPages();
+                    doc.text('Page ' + data.pageNumber + ' of ' + pageCount, data.settings.margin.left, doc.internal.pageSize.height - 10);
+                    doc.text('Generated by StepOnGo Attendance System', doc.internal.pageSize.width - data.settings.margin.right, doc.internal.pageSize.height - 10, { align: 'right' });
+                }
+            });
+
+            // Save the PDF
+            doc.save(`Daily_Attendance_Report_${new Date().toISOString().slice(0, 10)}.pdf`);
+            alert('Daily Attendance Report Generated as PDF! (Check your downloads)');
+        }
+
+
+        function openAttendanceHistoryModal() {
+            historyList.innerHTML = ''; // Clear previous history
+
+            // Filter history based on general site/worker filters if applied on main page
+            const selectedSite = siteFilter.value;
+            const workerName = workerNameFilter.value.toLowerCase();
+
+            const filteredHistory = attendanceHistory.filter(entry => {
+                const matchesSite = !selectedSite || entry.site === selectedSite;
+                const matchesName = !workerName || entry.name.toLowerCase().includes(workerName);
+                return matchesSite && matchesName;
+            }).sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date, newest first
+
+            if (filteredHistory.length === 0) {
+                historyList.innerHTML = '<li>No attendance history found for the selected filters.</li>';
+            } else {
+                filteredHistory.forEach(entry => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <strong>${entry.name}</strong> (${entry.id}) - Site: ${entry.site} <br>
+                        Date: ${entry.date}, Status: <span class="status ${entry.status.toLowerCase().replace('-', '')}">${entry.status}</span> <br>
+                        Check-in: ${entry.checkIn || 'N/A'}, Check-out: ${entry.checkOut || 'N/A'}
+                    `;
+                    historyList.appendChild(li);
+                });
+            }
+            attendanceHistoryModal.style.display = 'flex';
+        }
+
+        function closeAttendanceHistoryModal() {
+            attendanceHistoryModal.style.display = 'none';
+        }
+
+        function resetFilters() {
+            siteFilter.value = '';
+            dateFilter.value = '';
+            workerNameFilter.value = '';
+            statusFilter.value = '';
+            renderAttendanceList();
+        }
+
+        // Helper function to update/add to attendance history
+        function updateAttendanceHistory(workerId, status, checkInTime, checkOutTime) {
+            const today = new Date().toISOString().slice(0, 10);
+            const existingEntryIndex = attendanceHistory.findIndex(entry =>
+                entry.workerId === workerId && entry.date === today
+            );
+
+            const labourer = labourers.find(l => l.id === workerId);
+
+            if (existingEntryIndex !== -1) {
+                // Update existing entry for today
+                attendanceHistory[existingEntryIndex].status = status;
+                if (checkInTime) attendanceHistory[existingEntryIndex].checkIn = checkInTime;
+                if (checkOutTime) attendanceHistory[existingEntryIndex].checkOut = checkOutTime;
+            } else {
+                // Add new entry for today
+                attendanceHistory.push({
+                    workerId: workerId,
+                    name: labourer.name,
+                    date: today,
+                    status: status,
+                    checkIn: checkInTime,
+                    checkOut: checkOutTime,
+                    site: labourer.site
+                });
+            }
+        }
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', renderAttendanceList);
+    </script>
+</body>
+</html>

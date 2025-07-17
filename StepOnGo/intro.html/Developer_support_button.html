@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StepOnGo Developer Support Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4CAF50; /* Green */
+            --primary-dark: #388E3C;
+            --secondary-color: #2196F3; /* Blue */
+            --accent-color: #FFC107; /* Amber */
+            --background-light: #f4f7f6;
+            --text-dark: #333;
+            --text-light: #fff;
+            --border-color: #ddd;
+            --card-background: #ffffff;
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--background-light);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+            padding: 20px;
+            background: var(--background-light);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr 3fr;
+            }
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            grid-column: 1 / -1;
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .panel-section {
+            background: var(--card-background);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            font-weight: 700;
+            font-size: 1.8em;
+        }
+
+        /* Support Request Form */
+        .support-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 400;
+            color: var(--text-dark);
+        }
+
+        .support-form input[type="text"],
+        .support-form input[type="email"],
+        .support-form input[type="tel"],
+        .support-form select,
+        .support-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .support-form input:focus,
+        .support-form select:focus,
+        .support-form textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .support-form textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .support-form button {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 700;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        .support-form button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .file-upload-container {
+            margin-bottom: 15px;
+        }
+
+        .file-upload-container input[type="file"] {
+            border: 1px dashed var(--border-color);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .urgency-selection label {
+            margin-right: 15px;
+            font-weight: 400;
+        }
+
+        .urgency-selection input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        .connect-button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .connect-button {
+            background-color: var(--secondary-color);
+            color: var(--text-light);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 700;
+            transition: background-color 0.3s ease;
+        }
+
+        .connect-button:hover {
+            background-color: #1976D2; /* Darker blue */
+        }
+
+        #connection-status {
+            margin-top: 10px;
+            font-style: italic;
+            color: var(--primary-dark);
+        }
+
+        /* FAQs Section */
+        .faq-item {
+            margin-bottom: 15px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .faq-question {
+            font-weight: 700;
+            color: var(--primary-dark);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+        }
+
+        .faq-question::after {
+            content: '+';
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-question.active::after {
+            content: '-';
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding-top: 5px;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        .faq-answer.open {
+            max-height: 200px; /* Adjust as needed for content */
+            transition: max-height 0.5s ease-in;
+        }
+
+        /* Ticket Tracking */
+        .ticket-list {
+            margin-top: 15px;
+        }
+
+        .ticket-item {
+            background-color: #f9f9f9;
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .ticket-item strong {
+            color: var(--primary-dark);
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .ticket-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 0.9em;
+            color: var(--text-light);
+            text-transform: uppercase;
+        }
+
+        .status-open { background-color: var(--secondary-color); }
+        .status-in-progress { background-color: var(--accent-color); color: var(--text-dark);}
+        .status-resolved { background-color: var(--primary-color); }
+
+        .ticket-date {
+            font-size: 0.8em;
+            color: #777;
+            margin-left: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .ticket-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .ticket-date {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+        }
+
+        /* Optional Features */
+        .live-chat-placeholder {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-style: italic;
+            color: var(--primary-dark);
+            margin-top: 20px;
+        }
+
+        .optional-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .optional-buttons button {
+            flex: 1;
+            min-width: 150px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 700;
+            transition: background-color 0.3s ease;
+        }
+
+        .optional-buttons .voice-request {
+            background-color: #FF5722; /* Deep Orange */
+            color: var(--text-light);
+        }
+
+        .optional-buttons .voice-request:hover {
+            background-color: #E64A19;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .container {
+                padding: 10px;
+                grid-template-columns: 1fr;
+            }
+
+            .panel-section {
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            .support-form button,
+            .connect-button {
+                padding: 10px 15px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>StepOnGo Business App – Developer Support Panel 🚀</h1>
+            <p>Your direct line to our support team.</p>
+        </header>
+
+        <aside class="panel-section">
+            <h2>Quick Actions & Info</h2>
+            <div class="connect-button-container">
+                <button class="connect-button" onclick="connectToSupport()">Connect to Support</button>
+                <p id="connection-status"></p>
+            </div>
+
+            <div class="live-chat-placeholder">
+                <p>💬 Live Chat is currently unavailable. Our team responds quickly to support requests!</p>
+            </div>
+
+            <div class="optional-buttons">
+                <button class="voice-request" onclick="requestCallback()">📞 Request Call Back</button>
+            </div>
+            
+            <h2 style="margin-top: 30px;">Your Support Tickets</h2>
+            <div class="ticket-list" id="ticket-list">
+                <div class="ticket-item">
+                    <strong>Ticket #12345: Login Issue</strong>
+                    <span class="ticket-status status-resolved">Resolved</span>
+                    <span class="ticket-date">2025-06-10</span>
+                </div>
+                <div class="ticket-item">
+                    <strong>Ticket #12346: API Integration Help</strong>
+                    <span class="ticket-status status-in-progress">In Progress</span>
+                    <span class="ticket-date">2025-06-15</span>
+                </div>
+                <div class="ticket-item">
+                    <strong>Ticket #12347: Payment Gateway Error</strong>
+                    <span class="ticket-status status-open">Open</span>
+                    <span class="ticket-date">2025-06-16</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="panel-section">
+            <h2>Submit a Support Request 📧</h2>
+            <form class="support-form" id="support-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="contact">Email or Phone:</label>
+                <input type="text" id="contact" name="contact" required>
+
+                <label for="issue-type">Issue Type:</label>
+                <select id="issue-type" name="issueType" required>
+                    <option value="">Select an issue type</option>
+                    <option value="Technical">Technical</option>
+                    <option value="Payment">Payment</option>
+                    <option value="Attendance">Attendance</option>
+                    <option value="Feature Request">Feature Request</option>
+                    <option value="Bug Report">Bug Report</option>
+                    <option value="Others">Others</option>
+                </select>
+
+                <div class="urgency-selection">
+                    <label>Urgency Level:</label>
+                    <input type="radio" id="urgency-low" name="urgency" value="Low" checked>
+                    <label for="urgency-low">Low</label>
+                    <input type="radio" id="urgency-medium" name="urgency" value="Medium">
+                    <label for="urgency-medium">Medium</label>
+                    <input type="radio" id="urgency-high" name="urgency" value="High">
+                    <label for="urgency-high">High</label>
+                </div>
+
+                <label for="message">Message/Description:</label>
+                <textarea id="message" name="message" rows="5" required></textarea>
+
+                <div class="file-upload-container">
+                    <label for="screenshot">Upload Screenshot (Optional):</label>
+                    <input type="file" id="screenshot" name="screenshot" accept="image/*">
+                </div>
+
+                <button type="submit">Submit Request</button>
+            </form>
+
+            <hr style="margin: 40px 0; border: none; border-top: 1px dashed var(--border-color);">
+
+            <h2>FAQs & Quick Help 📚</h2>
+            <div class="faq-section" id="faq-section">
+                <div class="faq-item">
+                    <div class="faq-question">How do I reset my API key?</div>
+                    <div class="faq-answer">You can reset your API key from the "Developer Settings" section within your StepOnGo Business App dashboard. Look for the "API Key Management" option.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">What are the common error codes for payment processing?</div>
+                    <div class="faq-answer">Common payment error codes include: <ul><li><strong>400 Bad Request:</strong> Invalid payment details.</li><li><strong>401 Unauthorized:</strong> API key missing or invalid.</li><li><strong>402 Payment Required:</strong> Transaction declined by bank.</li><li><strong>500 Internal Server Error:</strong> Issue on our end, please try again later or contact support.</li></ul></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">How can I integrate the attendance module with my existing HR system?</div>
+                    <div class="faq-answer">The attendance module offers a comprehensive API for integration. Please refer to our <a href="#">Developer Documentation (Attendance API)</a> for detailed endpoints and examples.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Where can I find the latest documentation for StepOnGo APIs?</div>
+                    <div class="faq-answer">Our most up-to-date API documentation is available at <a href="#">docs.stepongo.com/api</a>. We regularly update it with new features and changes.</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Simulate form submission
+        document.getElementById('support-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const contact = document.getElementById('contact').value;
+            const issueType = document.getElementById('issue-type').value;
+            const message = document.getElementById('message').value;
+            const urgency = document.querySelector('input[name="urgency"]:checked').value;
+            const screenshot = document.getElementById('screenshot').files[0];
+
+            if (!name || !contact || !issueType || !message) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            let submissionDetails = `Thank you for your request, ${name}! We have received your submission regarding "${issueType}". Your urgency is "${urgency}".`;
+
+            if (screenshot) {
+                submissionDetails += ` We've also received your attached screenshot.`;
+            }
+
+            submissionDetails += ` Our team will review it and get back to you shortly at ${contact}. Your ticket ID is #${Math.floor(Math.random() * 100000) + 10000}.`;
+
+            alert(submissionDetails);
+
+            // In a real application, you would send this data to a backend.
+            console.log("Form Submitted:", { name, contact, issueType, message, urgency, screenshot: screenshot ? screenshot.name : 'N/A' });
+
+            // Clear the form
+            document.getElementById('support-form').reset();
+        });
+
+        // Connect to Support Simulation
+        function connectToSupport() {
+            const statusDiv = document.getElementById('connection-status');
+            statusDiv.textContent = "Connecting to support, please wait...";
+            statusDiv.style.color = "var(--secondary-color)";
+
+            setTimeout(() => {
+                statusDiv.textContent = "Our team will reach out shortly via your registered contact method!";
+                statusDiv.style.color = "var(--primary-dark)";
+            }, 3000);
+        }
+
+        // Request Call Back Simulation
+        function requestCallback() {
+            alert("Call back request received! Our team will contact you soon.");
+        }
+
+        // FAQ Toggle Functionality
+        document.querySelectorAll('.faq-question').forEach(item => {
+            item.addEventListener('click', event => {
+                const faqAnswer = item.nextElementSibling;
+                item.classList.toggle('active');
+                if (faqAnswer.classList.contains('open')) {
+                    faqAnswer.classList.remove('open');
+                    faqAnswer.style.maxHeight = null;
+                } else {
+                    faqAnswer.classList.add('open');
+                    faqAnswer.style.maxHeight = faqAnswer.scrollHeight + "px";
+                }
+            });
+        });
+
+        // Set initial max-height for FAQ answers (if any are pre-opened or for dynamic content)
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.faq-answer').forEach(answer => {
+                if (answer.classList.contains('open')) {
+                    answer.style.maxHeight = answer.scrollHeight + "px";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

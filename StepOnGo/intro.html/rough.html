@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StepOnGo Developer Project Upload Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3f51b5; /* Indigo */
+            --secondary-color: #009688; /* Teal */
+            --accent-color: #ff9800; /* Orange */
+            --text-color: #333;
+            --light-gray: #f8f8f8;
+            --dark-gray: #555;
+            --border-color: #e0e0e0;
+            --success-color: #4CAF50;
+            --danger-color: #f44336;
+            --info-color: #2196F3; /* Blue for info */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-gray);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1, h2 {
+            color: var(--dark-gray);
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            color: var(--primary-color);
+        }
+
+        h2 {
+            font-size: 2em;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        /* --- Form Styling --- */
+        .project-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="date"],
+        .form-group input[type="email"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+            color: var(--text-color);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group input[type="date"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(63, 81, 181, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input[type="file"] {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group.full-width.google-maps {
+            min-height: 250px;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-gray);
+            border: 1px dashed var(--border-color);
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+        .form-group.full-width.google-maps label {
+             margin-bottom: 10px;
+             font-weight: bold;
+        }
+
+        /* Dynamic Requirements Section */
+        .requirement-section {
+            grid-column: 1 / -1;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fafafa;
+            margin-top: 10px;
+        }
+
+        .requirement-section h3 {
+            margin-bottom: 15px;
+            color: var(--dark-gray);
+            font-size: 1.3em;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .requirement-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+
+        .requirement-item select,
+        .requirement-item input[type="number"],
+        .requirement-item input[type="text"] {
+            flex-grow: 1;
+            min-width: 120px; /* Minimum width for select/input */
+        }
+
+        .requirement-item .remove-btn {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .requirement-item .remove-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .add-requirement-btn {
+            background-color: var(--info-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .add-requirement-btn:hover {
+            background-color: #1976D2;
+        }
+
+        .other-requirement-input {
+            margin-left: 10px; /* Space from the select dropdown */
+            flex-grow: 2; /* Allow it to take more space */
+            display: none; /* Hidden by default */
+        }
+
+        .submit-btn {
+            grid-column: 1 / -1;
+            padding: 15px 30px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .submit-btn:hover {
+            background-color: #303f9f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Project List Styling --- */
+        .project-list-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            background-color: #f0f4f8;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .project-list-controls input[type="text"],
+        .project-list-controls select {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 0.95em;
+            flex-grow: 1;
+            max-width: 250px;
+            min-width: 180px;
+        }
+
+        .project-list-controls button {
+            padding: 10px 18px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        .project-list-controls button:hover {
+            background-color: #00796b;
+        }
+
+        .project-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .project-table thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .project-table th,
+        .project-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .project-table tbody tr:nth-child(even) {
+            background-color: #fdfdfd;
+        }
+
+        .project-table tbody tr:hover {
+            background-color: #eef5ff;
+        }
+
+        .project-table .actions button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-right: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .project-table .actions .edit-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .project-table .actions .edit-btn:hover {
+            background-color: #fb8c00;
+            transform: translateY(-1px);
+        }
+
+        .project-table .actions .delete-btn {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .project-table .actions .delete-btn:hover {
+            background-color: #d32f2f;
+            transform: translateY(-1px);
+        }
+
+        .project-table .actions .view-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .project-table .actions .view-btn:hover {
+            background-color: #00796b;
+            transform: translateY(-1px);
+        }
+
+        .info-message {
+            background-color: #e3f2fd;
+            color: #1e88e5;
+            border: 1px solid #90caf9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+
+            .project-form {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+
+            .form-group.full-width {
+                grid-column: auto;
+            }
+
+            .project-list-controls {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 10px;
+            }
+
+            .project-list-controls input,
+            .project-list-controls select,
+            .project-list-controls button {
+                width: 100%;
+                max-width: none;
+            }
+
+            .project-table, .project-table thead, .project-table tbody, .project-table th, .project-table td, .project-table tr {
+                display: block;
+            }
+
+            .project-table thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            .project-table tr {
+                margin-bottom: 15px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            }
+
+            .project-table td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+                text-align: right;
+                word-wrap: break-word;
+            }
+
+            .project-table td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                width: calc(50% - 20px);
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: bold;
+                color: var(--dark-gray);
+            }
+
+            .project-table .actions {
+                text-align: center;
+                padding-left: 0;
+                border-top: 1px solid var(--border-color);
+                padding-top: 10px;
+                margin-top: 10px;
+            }
+
+            .project-table .actions button {
+                width: auto;
+                margin: 5px;
+            }
+
+            .requirement-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .requirement-item select,
+            .requirement-item input {
+                width: 100%;
+                min-width: unset;
+            }
+            .other-requirement-input {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>StepOnGo Developer Project Panel</h1>
+        <p style="text-align: center; margin-bottom: 40px; color: var(--dark-gray); font-size: 1.1em;">
+            Efficiently create, view, and manage your construction and real estate development projects.
+        </p>
+
+        <hr>
+
+        <div class="info-message">
+            <i class="fas fa-info-circle"></i>
+            Please note: All buttons and dynamic features (like adding requirements, search, filter, edit, delete, view details) are visually represented in this HTML/CSS only. Their full functionality requires JavaScript implementation.
+        </div>
+
+        <h2>Upload New Project</h2>
+        <form class="project-form">
+            <div class="form-group">
+                <label for="projectName"><i class="fas fa-file-signature"></i> Project Name</label>
+                <input type="text" id="projectName" placeholder="e.g., Grand Urban Redevelopment" required>
+            </div>
+
+            <div class="form-group">
+                <label for="projectType"><i class="fas fa-building"></i> Project Type</label>
+                <select id="projectType" required>
+                    <option value="">Select Type</option>
+                    <option value="residential">Residential</option>
+                    <option value="commercial">Commercial</option>
+                    <option value="industrial">Industrial</option>
+                    <option value="infrastructure">Infrastructure</option>
+                    <option value="mixed-use">Mixed-Use</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="estimatedStartDate"><i class="fas fa-calendar-alt"></i> Estimated Start Date</label>
+                <input type="date" id="estimatedStartDate" required>
+            </div>
+
+            <div class="form-group">
+                <label for="estimatedEndDate"><i class="fas fa-calendar-alt"></i> Estimated End Date</label>
+                <input type="date" id="estimatedEndDate" required>
+            </div>
+
+            <div class="form-group">
+                <label for="contactPersonName"><i class="fas fa-user-tie"></i> Contact Person Name</label>
+                <input type="text" id="contactPersonName" placeholder="e.g., Jane Smith" required>
+            </div>
+
+            <div class="form-group">
+                <label for="contactPersonEmail"><i class="fas fa-envelope"></i> Contact Person Email</label>
+                <input type="email" id="contactPersonEmail" placeholder="e.g., jane.smith@company.com" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="projectDescription"><i class="fas fa-align-left"></i> Project Description</label>
+                <textarea id="projectDescription" placeholder="Provide a detailed description of the project, including its objectives, scope, and key deliverables." required></textarea>
+            </div>
+
+            <div class="form-group full-width google-maps">
+                <label><i class="fas fa-map-marker-alt"></i> Project Location (Google Maps Integration Placeholder)</label>
+                <p>An interactive map will be integrated here to select or display the project's geographic location.</p>
+            </div>
+
+            <div class="requirement-section">
+                <h3><i class="fas fa-list-alt"></i> Project Requirements</h3>
+                <div id="requirementsList">
+                    <div class="requirement-item">
+                        <select class="requirement-type">
+                            <option value="">Select Type</option>
+                            <option value="labour-skilled">Labour (Skilled)</option>
+                            <option value="labour-unskilled">Labour (Unskilled)</option>
+                            <option value="mason">Mason</option>
+                            <option value="painter">Painter</option>
+                            <option value="carpenter">Carpenter</option>
+                            <option value="plumber">Plumber</option>
+                            <option value="tiles">Tiles</option>
+                            <option value="shuttering">Shuttering</option>
+                            <option value="excavation">Excavation</option>
+                            <option value="others">Other</option>
+                        </select>
+                        <input type="number" class="requirement-quantity" placeholder="Quantity/Units" min="1">
+                        <input type="number" class="daily-wages" placeholder="Daily Wages per Person (INR)" min="0">
+                        <input type="text" class="other-requirement-input" placeholder="Specify Other (e.g., Electrical Works, Glass)" style="display: none;">
+                        <button type="button" class="remove-btn"><i class="fas fa-minus-circle"></i> Remove</button>
+                    </div>
+                </div>
+                <button type="button" class="add-requirement-btn" id="addRequirementBtn">
+                    <i class="fas fa-plus-circle"></i> Add Requirement
+                </button>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="projectImages"><i class="fas fa-upload"></i> Project Images/Documents</label>
+                <input type="file" id="projectImages" multiple accept="image/*, application/pdf, .doc, .docx">
+                <small style="color: var(--dark-gray);">Upload relevant project images, blueprints, permits, or other supporting documents.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="projectStatus"><i class="fas fa-chart-line"></i> Status</label>
+                <select id="projectStatus" required>
+                    <option value="active">Active</option>
+                    <option value="in-progress">In-progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="on-hold">On-Hold</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-cloud-upload-alt"></i> Upload Project
+            </button>
+        </form>
+
+        <hr>
+
+        <h2>View Uploaded Projects</h2>
+        <div class="project-list-controls">
+            <input type="text" id="projectSearch" placeholder="Search by project name or type...">
+            <select id="filterStatus">
+                <option value="">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="in-progress">In-progress</option>
+                <option value="completed">Completed</option>
+                <option value="on-hold">On-Hold</option>
+                <option value="cancelled">Cancelled</option>
+            </select>
+            <select id="filterType">
+                <option value="">All Types</option>
+                <option value="residential">Residential</option>
+                <option value="commercial">Commercial</option>
+                <option value="industrial">Industrial</option>
+                <option value="infrastructure">Infrastructure</option>
+                <option value="mixed-use">Mixed-use</option>
+                <option value="other">Other</option>
+            </select>
+            <button id="applyFilters"><i class="fas fa-filter"></i> Apply Filters</button>
+        </div>
+
+        <table class="project-table">
+            <thead>
+                <tr>
+                    <th>Project Name</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Start Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td data-label="Project Name">Central Business District Towers</td>
+                    <td data-label="Type">Commercial</td>
+                    <td data-label="Status">In-progress</td>
+                    <td data-label="Start Date">2025-03-01</td>
+                    <td data-label="Actions" class="actions">
+                        <button class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="delete-btn"><i class="fas fa-trash-alt"></i> Delete</button>
+                        <button class="view-btn"><i class="fas fa-eye"></i> View</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td data-label="Project Name">Riverside Residential Community</td>
+                    <td data-label="Type">Residential</td>
+                    <td data-label="Status">Active</td>
+                    <td data-label="Start Date">2024-11-20</td>
+                    <td data-label="Actions" class="actions">
+                        <button class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="delete-btn"><i class="fas fa-trash-alt"></i> Delete</button>
+                        <button class="view-btn"><i class="fas fa-eye"></i> View</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td data-label="Project Name">Port Logistics Hub</td>
+                    <td data-label="Type">Industrial</td>
+                    <td data-label="Status">Completed</td>
+                    <td data-label="Start Date">2023-08-15</td>
+                    <td data-label="Actions" class="actions">
+                        <button class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="delete-btn"><i class="fas fa-trash-alt"></i> Delete</button>
+                        <button class="view-btn"><i class="fas fa-eye"></i> View</button>
+                    </td>
+                </tr>
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const requirementsList = document.getElementById('requirementsList');
+            const addRequirementBtn = document.getElementById('addRequirementBtn');
+
+            // Function to add a new requirement item
+            function addRequirementItem() {
+                const div = document.createElement('div');
+                div.classList.add('requirement-item');
+                div.innerHTML = `
+                    <select class="requirement-type">
+                        <option value="">Select Type</option>
+                        <option value="labour-skilled">Labour (Skilled)</option>
+                        <option value="labour-unskilled">Labour (Unskilled)</option>
+                        <option value="mason">Mason</option>
+                        <option value="painter">Painter</option>
+                        <option value="carpenter">Carpenter</option>
+                        <option value="plumber">Plumber</option>
+                        <option value="tiles">Tiles</option>
+                        <option value="shuttering">Shuttering</option>
+                        <option value="excavation">Excavation</option>
+                        <option value="others">Other</option>
+                    </select>
+                    <input type="number" class="requirement-quantity" placeholder="Quantity/Units" min="1">
+                    <input type="number" class="daily-wages" placeholder="Daily Wages per Person (INR)" min="0">
+                    <input type="text" class="other-requirement-input" placeholder="Specify Other (e.g., Electrical Works, Glass)" style="display: none;">
+                    <button type="button" class="remove-btn"><i class="fas fa-minus-circle"></i> Remove</button>
+                `;
+                requirementsList.appendChild(div);
+
+                // Add event listeners for the new item
+                addEventListenersToRequirementItem(div);
+            }
+
+            // Function to add event listeners to a specific requirement item (for 'Other' and 'Remove')
+            function addEventListenersToRequirementItem(item) {
+                const typeSelect = item.querySelector('.requirement-type');
+                const otherInput = item.querySelector('.other-requirement-input');
+                const removeBtn = item.querySelector('.remove-btn');
+
+                typeSelect.addEventListener('change', function() {
+                    if (this.value === 'others') {
+                        otherInput.style.display = 'block';
+                        otherInput.setAttribute('required', 'true');
+                    } else {
+                        otherInput.style.display = 'none';
+                        otherInput.removeAttribute('required');
+                        otherInput.value = ''; // Clear value when hidden
+                    }
+                });
+
+                removeBtn.addEventListener('click', function() {
+                    item.remove();
+                });
+            }
+
+            // Initial setup for existing item (if any)
+            document.querySelectorAll('.requirement-item').forEach(addEventListenersToRequirementItem);
+
+            // Add event listener for the main "Add Requirement" button
+            addRequirementBtn.addEventListener('click', addRequirementItem);
+
+            // Important: Add a general click listener to the table to show that buttons are not fully functional
+            document.querySelector('.project-table').addEventListener('click', function(event) {
+                if (event.target.closest('button')) {
+                    alert('This button is visually functional. Its actual action (Edit, Delete, View) requires JavaScript and a backend system.');
+                }
+            });
+
+             // Important: Add a general click listener to the form submission button
+             document.querySelector('.submit-btn').addEventListener('click', function(event) {
+                // Prevent default form submission for demonstration purposes (so page doesn't reload)
+                event.preventDefault();
+                alert('Project Upload button is visually functional. Data submission requires JavaScript and a backend system.');
+             });
+
+             // Important: Add a general click listener to filter button
+             document.getElementById('applyFilters').addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent any default action
+                alert('Apply Filters button is visually functional. Filtering projects requires JavaScript.');
+             });
+        });
+    </script>
+</body>
+</html>

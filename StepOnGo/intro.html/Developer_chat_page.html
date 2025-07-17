@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StepOnGo Developer Chat Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50; /* Green, similar to Zomato/Zepto success colors */
+            --primary-dark: #388E3C;
+            --secondary-color: #f0f2f5; /* Light gray for background */
+            --bubble-user: #e3f2fd; /* Light blue for user messages */
+            --bubble-bot: #ffffff; /* White for bot messages */
+            --text-color: #333;
+            --text-light: #666;
+            --border-color: #ddd;
+            --shadow-light: rgba(0, 0, 0, 0.05);
+            --font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            box-sizing: border-box;
+        }
+
+        .chat-container {
+            background-color: var(--bubble-bot);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-light);
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 420px; /* Standard mobile width */
+            height: 90vh; /* Occupy most of the viewport height */
+            max-height: 700px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chat-header {
+            background-color: var(--primary-color);
+            color: var(--bubble-bot);
+            padding: 15px 20px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 1.1em;
+            box-shadow: 0 2px 8px var(--shadow-light);
+            z-index: 10;
+        }
+
+        .chat-header i {
+            font-size: 1.3em;
+        }
+
+        .chat-history {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) var(--secondary-color);
+        }
+
+        .chat-history::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-history::-webkit-scrollbar-track {
+            background: var(--secondary-color);
+            border-radius: 10px;
+        }
+
+        .chat-history::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 10px;
+            border: 2px solid var(--secondary-color);
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            line-height: 1.4;
+            position: relative;
+            word-wrap: break-word;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .message-bubble.user {
+            background-color: var(--bubble-user);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-bubble.bot {
+            background-color: var(--bubble-bot);
+            align-self: flex-start;
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-timestamp {
+            font-size: 0.7em;
+            color: var(--text-light);
+            margin-top: 5px;
+            display: block;
+            text-align: right;
+        }
+
+        .message-bubble.bot .message-timestamp {
+            text-align: left;
+        }
+
+        .quick-replies {
+            padding: 10px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bubble-bot);
+        }
+
+        .quick-reply-btn {
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-reply-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--bubble-bot);
+            box-shadow: 0 2px 6px var(--shadow-light);
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bubble-bot);
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-input-area input[type="text"] {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .chat-input-area input[type="text"]:focus {
+            border-color: var(--primary-color);
+        }
+
+        .send-button {
+            background-color: var(--primary-color);
+            color: var(--bubble-bot);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 8px var(--shadow-light);
+        }
+
+        .send-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .typing-indicator {
+            font-size: 0.85em;
+            color: var(--text-light);
+            padding: 5px 20px 10px;
+            font-style: italic;
+            display: none; /* Hidden by default, shown with JS */
+            align-self: flex-start;
+        }
+
+        .typing-indicator.visible {
+            display: block;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .chat-container {
+                max-width: 480px; /* Slightly wider for desktop */
+                height: 80vh;
+                max-height: 750px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <i class="fas fa-robot"></i>
+            <span>StepOnGo AI Support</span>
+        </div>
+
+        <div class="chat-history" id="chat-history">
+            <div class="message-bubble bot">
+                Hello there! I'm your StepOnGo AI Assistant. How can I help you today?
+                <span class="message-timestamp">AI - 10:00 AM</span>
+            </div>
+            <div class="message-bubble user">
+                Hi, I need to know the status of Project Alpha.
+                <span class="message-timestamp">You - 10:02 AM</span>
+            </div>
+            <div class="message-bubble bot">
+                Project Alpha is currently in the testing phase and is on track for completion by next Friday.
+                <span class="message-timestamp">AI - 10:03 AM</span>
+            </div>
+            <div class="message-bubble user">
+                Can you help me update the labour information for Site 3?
+                <span class="message-timestamp">You - 10:05 AM</span>
+            </div>
+            <div class="message-bubble bot">
+                Certainly! Please provide the specific labour ID or name, and the details you wish to update (e.g., contact, role, availability).
+                <span class="message-timestamp">AI - 10:06 AM</span>
+            </div>
+            <div class="message-bubble user">
+                I'm experiencing an issue with the deployment script.
+                <span class="message-timestamp">You - 10:08 AM</span>
+            </div>
+            <div class="message-bubble bot">
+                I understand. Could you please describe the error message you're receiving or the exact point where the script fails? This will help me diagnose the problem.
+                <span class="message-timestamp">AI - 10:09 AM</span>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typing-indicator">AI is typing...</div>
+
+        <div class="quick-replies">
+            <button class="quick-reply-btn" data-message="Project status">Project status</button>
+            <button class="quick-reply-btn" data-message="Update labour info">Update labour info</button>
+            <button class="quick-reply-btn" data-message="Raise issue">Raise issue</button>
+            <button class="quick-reply-btn" data-message="Developer guide">Developer guide</button>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button class="send-button" id="send-button">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const chatHistory = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const quickReplyButtons = document.querySelectorAll('.quick-reply-btn');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        // Flag to check if the welcome message has been sent
+        let welcomeMessageSent = false;
+
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const formattedHours = hours % 12 || 12;
+            const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+            return `${formattedHours}:${formattedMinutes} ${ampm}`;
+        }
+
+        function addMessage(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message-bubble', sender);
+            messageElement.innerHTML = `${message}<span class="message-timestamp">${sender === 'user' ? 'You' : 'AI'} - ${getCurrentTime()}</span>`;
+            chatHistory.appendChild(messageElement);
+            chatHistory.scrollTop = chatHistory.scrollHeight; // Auto-scroll to bottom
+        }
+
+        function simulateBotResponse(userMessage) {
+            // Send welcome message only once, after the first user input
+            if (!welcomeMessageSent) {
+                typingIndicator.classList.add('visible');
+                setTimeout(() => {
+                    typingIndicator.classList.remove('visible');
+                    addMessage('bot', "Hello there! I'm your StepOnGo AI Assistant. How can I help you today?");
+                    welcomeMessageSent = true;
+                    // Then process the user's actual message
+                    processUserMessage(userMessage);
+                }, 1000);
+            } else {
+                processUserMessage(userMessage);
+            }
+        }
+
+        function processUserMessage(userMessage) {
+            typingIndicator.classList.add('visible');
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            setTimeout(() => {
+                let botReply = "I'm not sure how to respond to that. Can you please rephrase or choose from the quick options?";
+                const lowerCaseMessage = userMessage.toLowerCase();
+
+                if (lowerCaseMessage.includes("hi") || lowerCaseMessage.includes("hello")) {
+                    botReply = "Hi there! How can I assist you with your developer queries today?";
+                } else if (lowerCaseMessage.includes("project status")) {
+                    botReply = "To check project status, please provide the project name or ID. For example: 'Project Alpha status'.";
+                } else if (lowerCaseMessage.includes("update labour info")) {
+                    botReply = "To update labour information, please tell me the labour's name/ID and what information needs updating.";
+                } else if (lowerCaseMessage.includes("raise issue") || lowerCaseMessage.includes("issue")) {
+                    botReply = "Please describe the issue in detail, including any error messages or steps to reproduce it. I will log it for our support team.";
+                } else if (lowerCaseMessage.includes("developer guide") || lowerCaseMessage.includes("guide")) {
+                    botReply = "You can find the comprehensive developer guide in our documentation portal under the 'Resources' section. Would you like a direct link?";
+                } else if (lowerCaseMessage.includes("thank you") || lowerCaseMessage.includes("thanks")) {
+                    botReply = "You're welcome! Glad I could help.";
+                }
+
+                typingIndicator.classList.remove('visible');
+                addMessage('bot', botReply);
+            }, 1000); // Simulate network delay
+        }
+
+        sendButton.addEventListener('click', () => {
+            const message = userInput.value.trim();
+            if (message) {
+                addMessage('user', message);
+                simulateBotResponse(message);
+                userInput.value = '';
+            }
+        });
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+
+        quickReplyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const message = button.dataset.message;
+                addMessage('user', message);
+                simulateBotResponse(message);
+            });
+        });
+
+        // Clear initial placeholder messages on load to ensure a clean start
+        window.addEventListener('DOMContentLoaded', () => {
+            chatHistory.innerHTML = ''; // Remove all initial messages
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StepOnGo Payment Summary</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f4f8; padding: 20px; }
+    .container { max-width: 500px; margin: auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 20px; }
+    .header { text-align: center; }
+    .header img { width: 60px; margin-bottom: 10px; }
+    .labour-id { font-size: 16px; font-weight: bold; color: #555; margin-top: 5px; }
+    .label { font-size: 18px; color: #666; }
+    .balance { font-size: 28px; font-weight: bold; margin: 5px 0; }
+    .date { font-size: 14px; color: #888; margin-bottom: 20px; }
+    .btn-summary, .download-btn { width: 100%; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; margin: 10px 0; }
+    .btn-summary { background: #007bff; color: white; border: none; }
+    .btn-summary.active { background: #28a745; }
+    .activity-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+    .activity { display: flex; justify-content: space-between; border-top: 1px solid #eee; padding: 12px 0; }
+    .amount-positive { color: green; font-weight: bold; }
+    .amount-negative { color: red; font-weight: bold; }
+    .payment-summary { display: none; margin-top: 20px; }
+    .section { margin-top: 15px; }
+    .section h3 { margin-bottom: 10px; color: #333; }
+    .row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .status.paid { background: #d4edda; color: #155724; padding: 5px 10px; border-radius: 6px; font-weight: bold; }
+    #pdfContent { background: white; padding: 20px; color: black; font-size: 14px; border: 1px solid #ddd; border-radius: 8px; margin-left: 3px; margin-right: 3px; }
+    .pdf-header { text-align: center; }
+    .pdf-footer { text-align: right; margin-top: 20px; font-size: 10pt; color: #666; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <img src="https://img.icons8.com/ios/100/worker-male--v1.png" alt="Worker Icon"/>
+    <div class="labour-id">Labour ID: LBR-2025-001</div>
+    <div class="label">Your Total Earning</div>
+    <div class="balance">₹10,500</div>
+    <div class="date" id="date"></div>
+  </div>
+
+  <button class="btn-summary" id="toggleButton" onclick="toggleSummary()">View Payment Summary</button>
+
+  <div class="activity-title">Recent Activity</div>
+  <div class="activity"><div>Masonry Work (Apr 23)</div><div class="amount-negative">- ₹400</div></div>
+  <div class="activity"><div>Landscaping (Apr 21)</div><div class="amount-positive">+ ₹6,600</div></div>
+  <div class="activity"><div>Overtime (Apr 20)</div><div class="amount-positive">+ ₹550</div></div>
+  <div class="activity"><div>Material (Apr 19)</div><div class="amount-negative">- ₹120</div></div>
+
+  <div class="payment-summary" id="paymentSummary">
+    <div id="pdfContent">
+      <div class="pdf-header">
+        <h2>StepOnGo Pvt. Ltd.</h2>
+        <div>Labour Payment Summary Report</div>
+        <hr>
+      </div>
+      <div class="section">
+        <h3>Work Summary</h3>
+        <div class="row"><strong>Month:</strong><span id="summaryMonth"></span></div>
+        <div class="row"><span>Days Worked:</span><span>26 Days</span></div>
+        <div class="row"><span>Wage Rate:</span><span>₹500/day</span></div>
+      </div>
+      <div class="section">
+        <h3>Payment Breakdown</h3>
+        <div class="row"><span>Gross Earnings:</span><span>₹13,000</span></div>
+        <div class="row"><span>Advance Deducted:</span><span>₹2,000</span></div>
+        <div class="row"><span>PF Deduction:</span><span>₹500</span></div>
+        <div class="row"><strong>Net Payable:</strong><span>₹10,500</span></div>
+      </div>
+      <div class="section">
+        <h3>Payment Info</h3>
+        <div class="row"><span>Method:</span><span>Bank Transfer (**1243)</span></div>
+        <div class="row"><span>Date:</span><span>03 May 2025</span></div>
+        <div class="row"><span>Status:</span><span class="status paid">Paid</span></div>
+      </div>
+      <div class="section">
+        <h3>Remarks</h3>
+        <p>Includes 2 days overtime payment.</p>
+      </div>
+      <div class="pdf-footer">
+        Labour ID: LBR-2025-001<br>
+        <span id="downloadTime"></span>
+      </div>
+    </div>
+    <button class="download-btn" onclick="downloadPDF()">Download PDF</button>
+  </div>
+</div>
+
+<!-- Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  // Set visible date
+  document.getElementById("date").textContent = "Til Date: " + new Date().toLocaleDateString('en-IN', {
+    year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  // Set month in summary
+  document.getElementById("summaryMonth").textContent = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
+
+  function toggleSummary() {
+    const summary = document.getElementById("paymentSummary");
+    const button = document.getElementById("toggleButton");
+    const isHidden = summary.style.display === "none" || summary.style.display === "";
+    summary.style.display = isHidden ? "block" : "none";
+    button.textContent = isHidden ? "Hide Payment Summary" : "View Payment Summary";
+    button.classList.toggle("active", isHidden);
+  }
+
+  function downloadPDF() {
+    // Add current date/time in footer
+    const now = new Date();
+    const formatted = now.toLocaleString('en-IN', {
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+    document.getElementById("downloadTime").textContent = "Downloaded on: " + formatted;
+
+    window.scrollTo(0, 0); // Prevent PDF cut
+
+    const element = document.getElementById("pdfContent");
+
+    html2pdf().set({
+      margin: 8,
+      filename: 'StepOnGo_Payment_Summary.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, scrollY: 0, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(element).save();
+  }
+</script>
+</body>
+</html>

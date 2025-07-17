@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StepOnGo Developer Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f7f6; /* Lighter, modern background */
+            color: #333;
+        }
+        .profile-container {
+            max-width: 500px; /* Slightly wider for better content distribution */
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 16px; /* More rounded corners */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Softer, more pronounced shadow */
+            border: 1px solid #e0e0e0; /* Subtle border */
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .profile-header h2 {
+            color: #007bff; /* Primary blue for headings */
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+        .verified-badge {
+            color: #28a745; /* Green for verified */
+            font-size: 1.3em;
+        }
+
+        .profile-picture-section {
+            text-align: center; /* This centers the inline-flex label below the profile image */
+            margin-top: 15px;
+            margin-bottom: 30px;
+        }
+        .profile-picture-section .profile-img {
+            width: 130px; /* Slightly larger image */
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #007bff; /* Border matching primary blue */
+            background-color: #e9ecef;
+            display: inline-flex; /* Allows centering */
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 3em; /* Icon size */
+            overflow: hidden; /* Ensure image fits */
+        }
+        .profile-picture-section .profile-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-picture-section label {
+            display: block; /* Change to block to make it take full width and move below */
+            margin: 12px auto 0; /* Center horizontally with auto margins, add top margin */
+            color: #007bff;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95em;
+            gap: 5px;
+            transition: color 0.2s ease;
+            width: fit-content; /* Ensure the label's width is only its content for centering */
+        }
+        .profile-picture-section label:hover {
+            color: #0056b3;
+        }
+        .profile-picture-section input[type="file"] {
+            display: none;
+        }
+
+        /* Labour ID section */
+        .labour-id-section {
+            text-align: center;
+            margin-top: 25px;
+            margin-bottom: 30px;
+            padding: 12px;
+            background-color: #eaf3ff; /* Light blue background */
+            border-radius: 10px;
+            border: 1px solid #cce0ff;
+        }
+        .labour-id-section p {
+            margin: 0;
+            font-size: 16px;
+            color: #0056b3; /* Darker blue for text */
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .labour-id-section span {
+            font-size: 19px;
+            color: #007bff;
+            font-weight: 700;
+            margin-left: 5px;
+        }
+
+        /* Profile Completeness Indicator */
+        .completeness-section {
+            margin-top: 25px;
+            margin-bottom: 35px;
+            text-align: center;
+            padding: 15px;
+            background-color: #f8f9fa; /* Light grey background */
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+        .completeness-section p {
+            margin-bottom: 10px;
+            color: #555;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            height: 12px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #28a745; /* Green for progress */
+            border-radius: 12px;
+            transition: width 0.6s ease-in-out;
+        }
+
+        .profile-fields {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* Increased gap for better spacing */
+        }
+        .profile-field-wrapper {
+            display: flex;
+            align-items: flex-start; /* Align icon to top of multiline input */
+            gap: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0; /* Lighter border */
+        }
+        .profile-field-wrapper:last-child {
+            border-bottom: none;
+        }
+        .field-icon {
+            font-size: 22px; /* Slightly larger icons */
+            color: #007bff;
+            width: 30px; /* Consistent width for icons */
+            text-align: center;
+            flex-shrink: 0;
+            padding-top: 4px; /* Adjust alignment for icons */
+        }
+        .field-content {
+            flex-grow: 1;
+        }
+        .field-content label {
+            font-size: 14px;
+            color: #666; /* Subtler label color */
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .field-value-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .profile-fields input,
+        .profile-fields textarea,
+        .profile-fields select {
+            padding: 8px 0; /* More padding */
+            border: none;
+            background: none;
+            color: #333;
+            font-size: 16px; /* Larger font size for inputs */
+            width: 100%;
+            resize: vertical;
+            min-height: 30px; /* Minimum height for textareas */
+            box-sizing: border-box; /* Include padding in width */
+        }
+        .profile-fields input:focus,
+        .profile-fields textarea:focus,
+        .profile-fields select:focus {
+            outline: none;
+            /* Add a subtle visual cue for focus if needed, e.g., border-bottom: 1px solid #007bff; */
+        }
+        .profile-fields input:disabled,
+        .profile-fields textarea:disabled,
+        .profile-fields select:disabled {
+            background-color: transparent;
+            color: #333;
+            cursor: default;
+            opacity: 1; /* Ensure disabled text is fully visible */
+        }
+        .edit-icon {
+            cursor: pointer;
+            font-size: 15px; /* Smaller edit text */
+            color: #007bff;
+            margin-left: 10px;
+            flex-shrink: 0;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+        .edit-icon:hover {
+            color: #0056b3;
+        }
+
+        .profile-fields button {
+            margin-top: 25px;
+            padding: 14px;
+            background: #28a745; /* Green save button */
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .profile-fields button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        .profile-fields button:active {
+            transform: translateY(0);
+        }
+
+        .password-toggle {
+            margin-top: 30px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px;
+            background: #f0f8ff; /* Light blue background for toggle */
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            color: #007bff;
+            border: 1px solid #cce0ff;
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        .password-toggle:hover {
+            background: #e6f2ff;
+            color: #0056b3;
+            border-color: #aaddff;
+        }
+
+        .password-section {
+            margin-top: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 15px; /* Increased gap */
+            padding: 15px;
+            background-color: #fcfcfc; /* Very light background */
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+        .password-section label {
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: -5px; /* Pull label closer to input */
+        }
+        .password-section input {
+            padding: 12px; /* More padding */
+            border: 1px solid #ddd; /* Lighter border */
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #fff;
+            color: #333;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+        }
+        .password-section input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+        .password-section button {
+            background-color: #007bff; /* Blue update button */
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .password-section button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .password-section button:active {
+            transform: translateY(0);
+        }
+
+        /* Developer Website Section */
+        .developer-website-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+            text-align: center;
+        }
+        .developer-website-section h3 {
+            color: #007bff;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .developer-website-section a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #6f42c1; /* A purple tone for developer link */
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            gap: 10px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .developer-website-section a:hover {
+            background-color: #5936a0;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-header">
+            <h2> Your  StepOnGo Profile <span class="verified-badge" title="Profile Verified"><i class="fa-solid fa-circle-check"></i></span></h2>
+        </div>
+        <div class="profile-picture-section">
+            <div class="profile-img" id="profileImg">
+                <i class="fa-solid fa-hard-hat"></i>
+            </div>
+            <label for="uploadImg"><i class="fa-regular fa-image"></i> Change Photo</label>
+            <input type="file" id="uploadImg" accept="image/*" />
+        </div>
+
+        <div class="labour-id-section">
+            <p>Labour ID: <span id="labourId">SOG-L-001</span></p>
+        </div>
+
+        <div class="completeness-section">
+            <p>Profile Completeness: <span id="completenessPercentage">0%</span></p>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="completenessBar"></div>
+            </div>
+        </div>
+
+        <div class="profile-fields">
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-user"></i></span>
+                <div class="field-content">
+                    <label for="name">Full Name</label>
+                    <div class="field-value-wrapper">
+                        <input type="text" id="name" value="Your Name" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('name', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-phone"></i></span>
+                <div class="field-content">
+                    <label for="phone">Phone</label>
+                    <div class="field-value-wrapper">
+                        <input type="tel" id="phone" value="+91 98765 43210" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('phone', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-envelope"></i></span>
+                <div class="field-content">
+                    <label for="email">Email</label>
+                    <div class="field-value-wrapper">
+                        <input type="email" id="email" value="ram.plumber@example.com" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('email', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-code"></i></span>
+                <div class="field-content">
+                    <label for="developerWebsite">Developer's Website (Optional)</label>
+                    <div class="field-value-wrapper">
+                        <input type="url" id="developerWebsite" value="https://yourdeveloperwebsite.com" disabled />
+                        <span class="edit-icon" onclick="window.toggleEditSave('developerWebsite', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-field-wrapper">
+                <span class="field-icon"><i class="fa-solid fa-circle-info"></i></span>
+                <div class="field-content">
+                    <label for="about">About Me</label>
+                    <div class="field-value-wrapper">
+                        <textarea id="about" rows="3" disabled>I am a highly skilled and experienced plumber with 10 years of experience in residential and commercial projects. I specialize in pipe fitting, leak detection, and new installation. I am committed to delivering high-quality work and ensuring customer satisfaction.</textarea>
+                        <span class="edit-icon" onclick="window.toggleEditSave('about', this)">Edit</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="window.saveAllFields()">
+                <i class="fa-solid fa-floppy-disk"></i>
+                Save All Changes
+            </button>
+        </div>
+
+        <div class="password-toggle" onclick="window.togglePasswordSection()">
+            <i class="fa-solid fa-lock"></i> Change Password
+        </div>
+
+        <div id="password-section" class="password-section">
+            <label for="oldPass">Old Password</label>
+            <input type="password" id="oldPass" placeholder="Enter old password" />
+            <label for="newPass">New Password</label>
+            <input type="password" id="newPass" placeholder="Enter new password" />
+            <label for="confirmPass">Confirm Password</label>
+            <input type="password" id="confirmPass" placeholder="Confirm new password" />
+            <button onclick="window.changePassword()">
+                <i class="fa-solid fa-arrows-rotate"></i> Update Password
+            </button>
+        </div>
+    </div>
+
+    <script>
+        (function() { // IIFE for scope
+            const uploadInput = document.getElementById("uploadImg");
+            const profileImgDiv = document.getElementById("profileImg");
+
+            // List of all editable fields for completeness calculation (updated for simplified fields)
+            const editableFields = [
+                "name", "phone", "email", "developerWebsite", "about" // Added developerWebsite
+            ];
+
+            // Pre-fill values for demonstration
+            function initializeProfileData() {
+                document.getElementById("labourId").textContent = "SOG-L-001";
+                document.getElementById("name").value = "Ram Kumar";
+                document.getElementById("phone").value = "+91 98765 43210";
+                document.getElementById("email").value = "ram.plumber@example.com";
+                document.getElementById("about").value = "we are reputed company";
+                document.getElementById("developerWebsite").value = "https://yourdeveloperwebsite.com"; // Set a default for developer website
+
+
+                // Update completeness on load
+                updateProfileCompleteness();
+            }
+
+            uploadInput.addEventListener("change", function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        profileImgDiv.innerHTML = ""; // Clear existing content (icon)
+                        const img = document.createElement("img");
+                        img.src = event.target.result;
+                        profileImgDiv.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Make functions globally accessible for inline onclick attributes
+            window.toggleEditSave = function(fieldId, iconElement) {
+                const inputField = document.getElementById(fieldId);
+
+                if (inputField.disabled) {
+                    inputField.disabled = false;
+                    inputField.focus();
+                    iconElement.textContent = 'Save';
+                    iconElement.style.color = '#dc3545'; // Indicate saving state
+                } else {
+                    inputField.disabled = true;
+                    iconElement.textContent = 'Edit';
+                    iconElement.style.color = '#007bff'; // Revert to edit color
+                    alert(`Changes to ${fieldId.charAt(0).toUpperCase() + fieldId.slice(1)} saved! (For demo only)`);
+                    updateProfileCompleteness();
+                }
+            };
+
+            window.saveAllFields = function() {
+                editableFields.forEach(fieldId => {
+                    const inputField = document.getElementById(fieldId);
+                    const iconElement = inputField.closest('.field-value-wrapper')?.querySelector('.edit-icon');
+
+                    if (!inputField.disabled) {
+                        inputField.disabled = true;
+                        if (iconElement) {
+                            iconElement.textContent = 'Edit';
+                            iconElement.style.color = '#007bff';
+                        }
+                    }
+                });
+                alert("All profile changes saved! (For demo only)");
+                updateProfileCompleteness();
+            };
+
+            function updateProfileCompleteness() {
+                let filledFields = 0;
+                editableFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    // Check if field exists and has a non-empty value (excluding initial placeholders)
+                    if (field) {
+                        let fieldValue = field.value.trim();
+                        let isDefaultValue = false;
+
+                        // Check against known initial placeholder values
+                        if (fieldId === "name" && fieldValue === "Your Name") isDefaultValue = true;
+                        if (fieldId === "developerWebsite" && fieldValue === "https://yourdeveloperwebsite.com") isDefaultValue = true;
+                        // Add more checks for other default values if necessary
+
+                        if (fieldValue !== '' && !isDefaultValue) {
+                            filledFields++;
+                        }
+                    }
+                });
+
+                const completenessPercentage = (filledFields / editableFields.length) * 100;
+                document.getElementById('completenessPercentage').textContent = `${completenessPercentage.toFixed(0)}%`;
+                document.getElementById('completenessBar').style.width = `${completenessPercentage}%`;
+            }
+
+            window.togglePasswordSection = function() {
+                const section = document.getElementById("password-section");
+                section.style.display = section.style.display === "flex" ? "none" : "flex";
+            };
+
+            window.changePassword = function() {
+                const oldP = document.getElementById("oldPass").value;
+                const newP = document.getElementById("newPass").value;
+                const confirmP = document.getElementById("confirmPass").value;
+
+                if (!oldP || !newP || !confirmP) {
+                    alert("Please fill all password fields.");
+                    return;
+                }
+                if (newP !== confirmP) {
+                    alert("❌ New passwords do not match.");
+                    return;
+                }
+                if (newP.length < 6) { // Example: enforce minimum password length
+                    alert("New password must be at least 6 characters long.");
+                    return;
+                }
+
+                alert("🔁 Password updated! (For demo only)");
+                document.getElementById("oldPass").value = "";
+                document.getElementById("newPass").value = "";
+                document.getElementById("confirmPass").value = "";
+                document.getElementById("password-section").style.display = "none"; // Hide after success
+            };
+
+            // Call functions to display data when the page loads
+            document.addEventListener('DOMContentLoaded', initializeProfileData);
+        })(); // End of IIFE
+    </script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StepOnGo Labour Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    /* Basic style for demonstration - You can adjust Tailwind classes */
+    .dropdown-menu {
+      min-width: 120px; /* Adjust as needed */
+    }
+
+    /* Key changes for responsiveness and scrolling */
+    html, body {
+      height: 100%; /* Make html and body take full viewport height */
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      display: flex;
+      flex-direction: column; /* Arrange header, main content, and footer vertically */
+    }
+
+    /* Updated mainContentArea styles */
+    #mainContentArea {
+      flex-grow: 1; /* Allow main content to grow and take available space */
+      overflow-y: auto; /* Allow scrolling within this container */
+      
+      /* Adjust padding properties individually */
+      padding-top: 0;
+      padding-right: 24px;
+      padding-bottom: 70px; /* Adjusted to make space for footer */
+      padding-left: 24px;
+      box-sizing: border-box; /* Include padding in height calculation */
+      background-color: #F8F8F8; /* Changed to a very light gray/off-white for the 'jar' */
+      border: 1px solid #e2e8f0; /* Light border (Tailwind's border-200) */
+      border-radius: 1rem; /* Rounded corners for the 'jar' (Tailwind's rounded-xl) */
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Subtle shadow (Tailwind's shadow-md) */
+      margin: 12px; /* REDUCED MARGIN */
+    }
+    
+    .fixed.bottom-0 { /* Ensure footer has a defined height */
+      height: 60px; /* Adjust this based on your footer's actual height */
+      flex-shrink: 0; /* Prevent footer from shrinking */
+    }
+
+    /* Styles for active navigation button */
+    .nav-button.active {
+      color: #1E3A8A; /* Tailwind's blue-900 */
+    }
+
+    /* Added specific style for grid items to ensure background is behind content */
+    .grid-item-card {
+      padding: 1rem; /* p-4 in Tailwind */
+      border-radius: 0.5rem; /* rounded-lg in Tailwind */
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md in Tailwind */
+      transition: background-color 0.2s ease-in-out; /* transition for hover */
+      height: 125px; /* Adjusted to 125px */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+  </style>
+</head>
+<body class="bg-cream text-gray-900 font-sans">
+  <div id="mainContentArea">
+    <div class="flex justify-between items-center bg-blue-50 py-2 px-6 rounded-lg shadow-sm">
+      <div class="text-left flex-grow">
+        <h1 class="text-3xl font-bold text-blue-900">StepOnGo</h1>
+        <p class="text-sm text-gray-600 uppercase font-medium">CONNECTING WORKFORCE TO WORK</p>
+      </div>
+      <div class="flex items-center space-x-4 flex-shrink-0">
+        <div class="relative">
+          <div id="notificationIcon" class="bg-gray-200 rounded-full w-12 h-12 flex items-center justify-center cursor-pointer">
+            <i class="fas fa-bell text-gray-600 text-xl"></i>
+          </div>
+          <div id="notificationDropdown" class="dropdown-menu absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg py-1 z-10 hidden">
+            <h3 class="px-4 py-2 text-sm font-bold text-gray-700">Notifications</h3>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">New attendance marked</a>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Payment received</a>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Project deadline approaching</a>
+          </div>
+        </div>
+        <div class="relative">
+          <img src="https://img.icons8.com/color/96/worker-male.png" alt="User" class="w-12 h-12 rounded-full cursor-pointer border-2 border-blue-500" id="profileDropdownToggle"/>
+          <div id="profileDropdown" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden">
+            <a href="profile_page.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">View Profile</a>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="text-center text-4xl font-bold text-gray-800 my-4">Welcome, Labour</h2>
+
+    <div class="grid grid-cols-2 gap-4">
+      <a href="attendance.html" class="grid-item-card bg-blue-50 hover:bg-blue-100">
+        <div class="flex items-center space-x-4">
+          <img src="https://img.icons8.com/ios-filled/50/1E3A8A/edit-calendar.png" class="w-8 h-8"/>
+          <div>
+            <h2 class="font-bold text-lg">Attendance</h2>
+            <p class="text-sm text-gray-600">Check in and view history</p>
+          </div>
+        </div>
+      </a>
+      <a href="payments.html" class="grid-item-card bg-green-50 hover:bg-green-100">
+        <div class="flex items-center space-x-4">
+          <img src="https://img.icons8.com/ios-filled/50/1E3A8A/money.png" class="w-8 h-8"/>
+          <div>
+            <h2 class="font-bold text-lg">Payments</h2>
+            <p class="text-sm text-gray-600">Track wages and dates</p>
+          </div>
+        </div>
+      </a>
+      <a href="projects.html" class="grid-item-card bg-yellow-50 hover:bg-yellow-100">
+        <div class="flex items-center space-x-4">
+          <img src="https://img.icons8.com/ios-filled/50/1E3A8A/engineering.png" class="w-8 h-8"/>
+          <div>
+            <h2 class="font-bold text-lg">Projects</h2>
+            <p class="text-sm text-gray-600">View ongoing assignments</p>
+          </div>
+        </div>
+      </a>
+      <a href="ratings.html" class="grid-item-card bg-red-50 hover:bg-red-100">
+        <div class="flex items-center space-x-4">
+          <img src="https://img.icons8.com/ios-filled/50/1E3A8A/calendar--v1.png" class="w-8 h-8"/>
+          <div>
+            <h2 class="font-bold text-lg">Ratings</h2>
+            <p class="text-sm text-gray-600">See your performance</p>
+          </div>
+        </div>
+      </a>
+      <a href="schedule.html" class="grid-item-card bg-purple-50 hover:bg-purple-100">
+        <div class="flex items-center space-x-4">
+          <i class="fa-solid fa-calendar-days text-2xl" style="color: #1e3a8a;"></i>
+          <div>
+            <h2 class="font-bold text-lg">Schedule</h2>
+            <p class="text-sm text-gray-600">View your upcoming jobs</p>
+          </div>
+        </div>
+      </a>
+      <a href="documents.html" class="grid-item-card bg-orange-50 hover:bg-orange-100">
+        <div class="flex items-center space-x-4">
+          <img src="https://img.icons8.com/ios-filled/50/1E3A8A/document.png" class="w-8 h-8"/>
+          <div>
+            <h2 class="font-bold text-lg">Documents</h2>
+            <p class="text-sm text-gray-600">Access your files</p>
+          </div>
+        </div>
+      </a>
+      <a href="safety_guidelines.html" class="grid-item-card bg-teal-50 hover:bg-teal-100">
+        <div class="flex items-center space-x-4">
+          <i class="fa-solid fa-helmet-safety text-2xl" style="color: #1e3a8a;"></i>
+          <div>
+            <h2 class="font-bold text-lg">Safety Guidelines</h2>
+            <p class="text-sm text-gray-600">Review safe work practices</p>
+          </div>
+        </div>
+      </a>
+      <a href="store.html" class="grid-item-card bg-pink-50 hover:bg-pink-100">
+        <div class="flex items-center space-x-4">
+          <img src="https://img.icons8.com/ios-filled/50/1E3A8A/shop.png" class="w-8 h-8"/>
+          <div>
+            <h2 class="font-bold text-lg">Store</h2>
+            <p class="text-sm text-gray-600">Shop for tools and gear</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2">
+    <a href="index.html" class="nav-button flex flex-col items-center text-sm active text-blue-900">
+      <img src="https://img.icons8.com/ios-filled/24/1E3A8A/home.png" alt="Home" class="nav-icon"/>
+      Home
+    </a>
+    <a href="works.html" class="nav-button flex flex-col items-center text-sm text-gray-700">
+      <img src="https://img.icons8.com/ios-filled/24/707070/briefcase.png" alt="Works" class="nav-icon"/>
+      Works
+    </a>
+    <a href="payments.html" class="nav-button flex flex-col items-center text-sm text-gray-700">
+      <img src="https://img.icons8.com/ios-filled/24/707070/wallet.png" alt="Payments" class="nav-icon"/>
+      Payments
+    </a>
+    <a href="chat.html" class="nav-button flex flex-col items-center text-sm text-gray-700">
+      <img src="https://img.icons8.com/ios-filled/24/707070/chat.png" alt="Chat" class="nav-icon"/>
+      Chat
+    </a>
+    <a href="profile.html" class="nav-button flex flex-col items-center text-sm text-gray-700">
+      <img src="https://img.icons8.com/ios-filled/24/707070/user.png" alt="Profile" class="nav-icon"/>
+      Profile
+    </a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const profileDropdownToggle = document.getElementById('profileDropdownToggle');
+      const profileDropdown = document.getElementById('profileDropdown');
+      const notificationIcon = document.getElementById('notificationIcon');
+      const notificationDropdown = document.getElementById('notificationDropdown');
+
+      profileDropdownToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('hidden');
+      });
+
+      notificationIcon.addEventListener('click', function(e) {
+        e.stopPropagation();
+        notificationDropdown.classList.toggle('hidden');
+      });
+
+      // Close the dropdowns if the user clicks outside of them
+      window.addEventListener('click', function(event) {
+        if (!profileDropdownToggle.contains(event.target) && !profileDropdown.contains(event.target)) {
+          profileDropdown.classList.add('hidden');
+        }
+        if (!notificationDropdown.classList.contains('hidden') && !notificationIcon.contains(event.target) && !notificationDropdown.contains(event.target)) {
+          notificationDropdown.classList.add('hidden');
+        }
+      });
+
+      // --- New JavaScript for dynamic nav button coloring ---
+      const navButtons = document.querySelectorAll('.nav-button');
+      const BLUE_ICON_COLOR = '1E3A8A'; // Corresponds to blue-900
+      const GRAY_ICON_COLOR = '707070'; // Your chosen gray
+
+      navButtons.forEach(button => {
+        // Check if the current page's URL matches the button's href
+        if (button.href === window.location.href) {
+            button.classList.add('active', 'text-blue-900');
+            button.classList.remove('text-gray-700');
+            const icon = button.querySelector('.nav-icon');
+            if (icon) {
+                const currentSrc = icon.src;
+                icon.src = currentSrc.replace(GRAY_ICON_COLOR, BLUE_ICON_COLOR);
+            }
+        } else {
+            button.classList.remove('active', 'text-blue-900');
+            button.classList.add('text-gray-700');
+            const icon = button.querySelector('.nav-icon');
+            if (icon) {
+                const currentSrc = icon.src;
+                icon.src = currentSrc.replace(BLUE_ICON_COLOR, GRAY_ICON_COLOR);
+            }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

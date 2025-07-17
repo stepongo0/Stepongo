@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Labour Schedule</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f1f1f1;
+        }
+        .schedule-container {
+            max-width: 550px; /* Slightly wider for better content display */
+            margin: 30px auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .schedule-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .schedule-header h2 {
+            color: #075e54;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .schedule-header p {
+            margin-top: 10px;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        /* Filters and Search */
+        .filter-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #eaf7ed;
+            border-radius: 8px;
+            border: 1px solid #c8e6c9;
+        }
+        .schedule-filters {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .schedule-filters button {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            background-color: #25d366;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .schedule-filters button:hover {
+            background-color: #1ebc5d;
+        }
+        .schedule-filters button.active {
+            background-color: #075e54;
+            font-weight: bold;
+        }
+        .search-bar {
+            display: flex;
+            gap: 10px;
+        }
+        .search-bar input {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+        .search-bar button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            background-color: #075e54;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .search-bar button:hover {
+            background-color: #064e46;
+        }
+
+        /* Schedule List */
+        .schedule-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .schedule-item {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 5px solid; /* For status/type color */
+        }
+        .schedule-item.type-job { border-left-color: #075e54; } /* Dark green for Jobs */
+        .schedule-item.type-meeting { border-left-color: #2196f3; } /* Blue for Meetings */
+        .schedule-item.type-availability { border-left-color: #ffc107; } /* Orange for Availability */
+
+        .schedule-item-icon {
+            font-size: 24px;
+            color: #555; /* Default icon color */
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+        /* Specific icon colors if needed */
+        .schedule-item.type-job .schedule-item-icon { color: #075e54; }
+        .schedule-item.type-meeting .schedule-item-icon { color: #2196f3; }
+        .schedule-item.type-availability .schedule-item-icon { color: #e0a800; }
+
+
+        .schedule-item-details {
+            flex-grow: 1;
+        }
+        .schedule-item-details h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 1.1em;
+        }
+        .schedule-item-details .client-name {
+            font-weight: 600;
+            color: #444;
+            font-size: 0.95em;
+            margin-bottom: 5px;
+        }
+        .schedule-item-details p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.4;
+        }
+        .schedule-item-details .location,
+        .schedule-item-details .time {
+            font-weight: 500;
+            color: #075e54;
+            margin-top: 5px;
+        }
+        .schedule-item-details .notes {
+            font-style: italic;
+            color: #888;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #eee;
+        }
+        .schedule-item-actions {
+            display: flex;
+            flex-wrap: wrap; /* Allow buttons to wrap */
+            gap: 8px;
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        .schedule-item-actions button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.2s ease;
+        }
+        .schedule-item-actions .complete-btn {
+            background-color: #25d366;
+            color: white;
+        }
+        .schedule-item-actions .complete-btn:hover {
+            background-color: #1ebc5d;
+        }
+        .schedule-item-actions .reschedule-btn {
+            background-color: #ffc107;
+            color: #333;
+        }
+        .schedule-item-actions .reschedule-btn:hover {
+            background-color: #e0a800;
+        }
+        .schedule-item-actions .contact-btn {
+            background-color: #075e54;
+            color: white;
+        }
+        .schedule-item-actions .contact-btn:hover {
+            background-color: #064e46;
+        }
+
+
+        .no-schedule-message {
+            text-align: center;
+            color: #777;
+            padding: 30px;
+            background-color: #f0f8ff;
+            border: 1px dashed #cceeff;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .no-schedule-message i {
+            margin-bottom: 15px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="schedule-container">
+        <div class="schedule-header">
+            <h2><i class="fa-solid fa-calendar-alt"></i> My Work Schedule</h2>
+            <p>Manage your upcoming appointments and tasks.</p>
+            <p>For: <strong id="labourNameDisplay">Ram Kumar</strong> (ID: <span id="labourIdDisplay">SOG-L-001</span>)</p>
+        </div>
+
+        <div class="filter-section">
+            <div class="schedule-filters">
+                <button id="todayBtn" class="active">Today</button>
+                <button id="upcomingBtn">Upcoming</button>
+                <button id="pastBtn">Past</button>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search by job, client, location..." />
+                <button id="searchBtn"><i class="fa-solid fa-search"></i> Search</button>
+            </div>
+        </div>
+
+        <ul id="scheduleList" class="schedule-list">
+        </ul>
+    </div>
+
+    <script>
+        const labourData = {
+            id: "SOG-L-001",
+            name: "Ram Kumar"
+        };
+
+        // Dummy schedule data - Adjust dates relative to current date for testing
+        // Using 2025-06-11 as "today" for consistent demo purposes
+        const allScheduleItems = [
+            { id: 1, type: "Job", title: "Plumbing Repair - Kitchen Sink", client: "Mr. Sharma", agentContact: "+919876511111", date: "2025-06-11", time: "10:00 AM - 12:00 PM", location: "A-201, Green Apartments, New Town", notes: "Requires leak detection and pipe replacement. Confirm materials." },
+            { id: 2, type: "Meeting", title: "Site Survey - Office Renovation", client: "ABC Corp.", agentContact: "+919876522222", date: "2025-06-11", time: "02:00 PM - 03:00 PM", location: "ABC Corp Office, Salt Lake Sector 5", notes: "Discuss electrical layouts and scope of work." },
+            { id: 3, type: "Availability", title: "On-Call - New Town Area", client: null, agentContact: null, date: "2025-06-11", time: "04:00 PM - 06:00 PM", location: "New Town Area", notes: "Available for urgent calls/short jobs." },
+            { id: 4, type: "Job", title: "Electrical Wiring Inspection", client: "Ms. Das", agentContact: "+919876533333", date: "2025-06-12", time: "09:30 AM - 11:30 AM", location: "B-502, City Heights, Salt Lake", notes: "Pre-installation inspection for new apartment. Bring multimeter." },
+            { id: 5, type: "Job", title: "Masonry Work - Boundary Wall", client: "Builder XYZ", agentContact: "+919876544444", date: "2025-06-15", time: "09:00 AM - 05:00 PM", location: "Upcoming Housing Project, Rajarhat", notes: "Construction of boundary wall for plot 10. All materials delivered." },
+            { id: 6, type: "Job", title: "AC Servicing - Residential", client: "Mr. Gupta", agentContact: "+919876555555", date: "2025-06-10", time: "11:00 AM - 01:00 PM", location: "C-301, Lake View Residency", notes: "Routine AC maintenance. Filter cleaning required." },
+            { id: 7, type: "Meeting", title: "Team Briefing", client: "Internal", agentContact: null, date: "2025-06-09", time: "09:00 AM - 10:00 AM", location: "Office", notes: "Weekly team update and project assignments." },
+            { id: 8, type: "Job", title: "Water Heater Installation", client: "Mrs. Khan", agentContact: "+919876577777", date: "2025-06-07", time: "02:30 PM - 04:30 PM", location: "E-405, Harmony Towers", notes: "New electric water heater installation. Check water pressure." },
+            { id: 9, type: "Job", title: "Ceiling Fan Repair", client: "Mr. Reddy", agentContact: "+919876588888", date: "2025-06-06", time: "09:00 AM - 10:30 AM", location: "F-101, Serene Homes", notes: "Fan making noise, checking motor and wiring." }
+        ];
+
+        // Helper function to get today's date string (YYYY-MM-DD)
+        function getTodayDateString() {
+            // For consistency with dummy data, let's hardcode a "current" date for the demo
+            // In a real app, you'd use the actual new Date().toISOString().split('T')[0];
+            return "2025-06-11"; // For consistent demo, treat this date as "today"
+        }
+
+        // Function to classify an item's date relative to today
+        function classifyDate(itemDateString) {
+            const todayString = getTodayDateString();
+            const itemDate = new Date(itemDateString);
+            const todayDate = new Date(todayString);
+
+            // Reset time for accurate date comparison
+            itemDate.setHours(0, 0, 0, 0);
+            todayDate.setHours(0, 0, 0, 0);
+
+            if (itemDate.getTime() === todayDate.getTime()) {
+                return "Today";
+            } else if (itemDate.getTime() > todayDate.getTime()) {
+                return "Upcoming";
+            } else {
+                return "Past";
+            }
+        }
+
+        // Function to display schedule items based on filter and search
+        function displaySchedule(filter = 'Today', searchTerm = '') {
+            const scheduleList = document.getElementById('scheduleList');
+            scheduleList.innerHTML = ''; // Clear current list
+
+            let filteredItems = allScheduleItems.filter(item => {
+                const itemClassification = classifyDate(item.date);
+                return itemClassification === filter;
+            });
+
+            // Apply search filter if a search term is provided
+            if (searchTerm) {
+                const lowerCaseSearchTerm = searchTerm.toLowerCase();
+                filteredItems = filteredItems.filter(item =>
+                    item.title.toLowerCase().includes(lowerCaseSearchTerm) ||
+                    (item.client && item.client.toLowerCase().includes(lowerCaseSearchTerm)) ||
+                    item.location.toLowerCase().includes(lowerCaseSearchTerm) ||
+                    (item.notes && item.notes.toLowerCase().includes(lowerCaseSearchTerm))
+                );
+            }
+
+            if (filteredItems.length === 0) {
+                scheduleList.innerHTML = `
+                    <div class="no-schedule-message">
+                        <i class="fa-solid fa-calendar-check fa-3x" style="color: #ccc; margin-bottom: 15px;"></i>
+                        <p>No ${filter.toLowerCase()} schedule items found ${searchTerm ? 'matching "' + searchTerm + '"' : ''}.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort items by time for Today/Upcoming, and by date (desc) then time for Past
+            filteredItems.sort((a, b) => {
+                if (filter === 'Past') {
+                    const dateA = new Date(a.date);
+                    const dateB = new Date(b.date);
+                    if (dateA.getTime() !== dateB.getTime()) {
+                        return dateB.getTime() - dateA.getTime(); // Latest past date first
+                    }
+                }
+                // Then sort by time
+                const timeA = a.time; // Assuming HH:MM AM/PM for simple string comparison
+                const timeB = b.time;
+                return timeA.localeCompare(timeB);
+            });
+
+
+            filteredItems.forEach(item => {
+                const listItem = document.createElement('li');
+                // Corrected: Use template literal for class name
+                listItem.classList.add('schedule-item', `type-${item.type.toLowerCase()}`);
+
+                let iconClass = '';
+                if (item.type === "Job") {
+                    iconClass = 'fa-briefcase';
+                } else if (item.type === "Meeting") {
+                    iconClass = 'fa-handshake';
+                } else if (item.type === "Availability") {
+                    iconClass = 'fa-clock';
+                } else {
+                    iconClass = 'fa-calendar-check'; // Default
+                }
+
+                // Corrected: Use template literal for the entire innerHTML
+                listItem.innerHTML = `
+                    <div class="schedule-item-icon">
+                        <i class="fa-solid ${iconClass}"></i>
+                    </div>
+                    <div class="schedule-item-details">
+                        <h4>${item.title}</h4>
+                        ${item.client ? `<p class="client-name"><i class="fa-solid fa-user"></i> Client: ${item.client}</p>` : ''}
+                        <p><i class="fa-solid fa-calendar-day"></i> ${formatDate(item.date)}</p>
+                        <p class="time"><i class="fa-solid fa-clock"></i> ${item.time}</p>
+                        <p class="location"><i class="fa-solid fa-location-dot"></i> ${item.location}</p>
+                        ${item.notes ? `<p class="notes"><i class="fa-solid fa-info-circle"></i> Notes: ${item.notes}</p>` : ''}
+                        <div class="schedule-item-actions">
+                            <button class="complete-btn" onclick="markComplete(${item.id})"><i class="fa-solid fa-check-circle"></i> Complete</button>
+                            <button class="reschedule-btn" onclick="rescheduleItem(${item.id})"><i class="fa-solid fa-sync-alt"></i> Reschedule</button>
+                            ${item.agentContact ? `<button class="contact-btn" onclick="callAgent('${item.agentContact}')"><i class="fa-solid fa-headset"></i> Call Agent</button>` : ''}
+                        </div>
+                    </div>
+                `;
+                scheduleList.appendChild(listItem);
+            });
+        }
+
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+
+        function markComplete(id) {
+            alert(`Item ${id} marked as complete! (Action for demo only)`);
+            // In a real app, you'd update data in backend and re-render the list for the current filter.
+        }
+
+        function rescheduleItem(id) {
+            alert(`Item ${id} selected for reschedule. (Action for demo only)`);
+            // In a real app, this would open a reschedule form/modal.
+        }
+
+        function callAgent(phoneNumber) {
+            alert(`Calling agent at ${phoneNumber}... (Action for demo only)`);
+            // In a real app, you could use window.location.href = 'tel:' + phoneNumber;
+        }
+
+        // State variable for current filter and search
+        let currentFilter = 'Today';
+        let currentSearchTerm = '';
+
+        // Initialize display and filter buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('labourNameDisplay').textContent = labourData.name;
+            document.getElementById('labourIdDisplay').textContent = labourData.id;
+
+            const todayBtn = document.getElementById('todayBtn');
+            const upcomingBtn = document.getElementById('upcomingBtn');
+            const pastBtn = document.getElementById('pastBtn');
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+
+            function setActiveButton(button) {
+                [todayBtn, upcomingBtn, pastBtn].forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+            }
+
+            todayBtn.addEventListener('click', () => {
+                currentFilter = 'Today';
+                setActiveButton(todayBtn);
+                displaySchedule(currentFilter, currentSearchTerm);
+            });
+
+            upcomingBtn.addEventListener('click', () => {
+                currentFilter = 'Upcoming';
+                setActiveButton(upcomingBtn);
+                displaySchedule(currentFilter, currentSearchTerm);
+            });
+
+            pastBtn.addEventListener('click', () => {
+                currentFilter = 'Past';
+                setActiveButton(pastBtn);
+                displaySchedule(currentFilter, currentSearchTerm);
+            });
+
+            searchBtn.addEventListener('click', () => {
+                currentSearchTerm = searchInput.value.trim();
+                displaySchedule(currentFilter, currentSearchTerm);
+            });
+
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    currentSearchTerm = searchInput.value.trim();
+                    displaySchedule(currentFilter, currentSearchTerm);
+                }
+            });
+
+            // Display 'Today's' schedule by default on load
+            displaySchedule(currentFilter, currentSearchTerm);
+        });
+    </script>
+</body>
+</html>

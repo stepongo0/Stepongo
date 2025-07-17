@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StepOnGo Developer Portal - Ratings Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* CSS Variables for easy theme management */
+        :root {
+            --primary-color: #4CAF50; /* Green for StepOnGo */
+            --primary-dark: #388E3C;
+            --secondary-color: #2196F3; /* Blue for highlights */
+            --background-light: #f4f7f6;
+            --card-background: #ffffff;
+            --text-dark: #333;
+            --text-light: #666;
+            --border-color: #e0e0e0;
+            --shadow-light: rgba(0, 0, 0, 0.08);
+            --star-filled: #FFD700; /* Gold */
+            --star-empty: #ccc;
+        }
+
+        /* Basic Reset & Body Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Main Container */
+        .container {
+            flex-grow: 1;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Header Styling */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px var(--shadow-light);
+            text-align: center;
+        }
+
+        header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        header p {
+            margin-top: 5px;
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        /* Dashboard Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Single column on small screens */
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 2fr 1fr; /* Two columns (main content, sidebar) on larger screens */
+            }
+        }
+
+        /* Panel Styling */
+        .panel {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px var(--shadow-light);
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .panel:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .panel h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5em;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form Elements (Dropdowns, Inputs, Textareas) */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .form-group select,
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: 'Roboto', sans-serif;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: white; /* Ensure consistent background */
+        }
+
+        .form-group select:focus,
+        .form-group input[type="text"]:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* Labourer List Display */
+        .labourer-list {
+            max-height: 400px; /* Fixed height with scroll */
+            overflow-y: auto;
+            padding-right: 10px; /* Space for scrollbar */
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Spacing between cards */
+        }
+
+        /* Scrollbar styles (Webkit browsers) */
+        .labourer-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .labourer-list::-webkit-scrollbar-track {
+            background: var(--background-light);
+            border-radius: 10px;
+        }
+        .labourer-list::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+        .labourer-list::-webkit-scrollbar-thumb:hover {
+            background: var(--text-light);
+        }
+
+        /* Labourer Card */
+        .labourer-card {
+            background-color: var(--background-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .labourer-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .labourer-info h3 {
+            font-size: 1.2em;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+        }
+
+        .labourer-info h3 span {
+            font-weight: normal;
+            color: var(--text-light);
+            font-size: 0.8em;
+        }
+
+        .labourer-info p {
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-bottom: 3px;
+        }
+
+        /* Star Rating System */
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            font-size: 1.5em; /* Larger stars */
+            color: var(--star-empty);
+            cursor: pointer;
+            user-select: none; /* Prevent text selection on stars */
+        }
+
+        .star-rating .star {
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .star-rating .star:hover {
+            transform: scale(1.1);
+            color: var(--star-filled); /* Highlight on hover even if not filled */
+        }
+
+        .star-rating .star.filled {
+            color: var(--star-filled);
+        }
+
+        /* Buttons */
+        .button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center; /* Center content in button */
+            text-decoration: none; /* For potential links styled as buttons */
+        }
+
+        .button i {
+            font-size: 1.1em;
+        }
+
+        .button-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .button-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .button-secondary:hover {
+            background-color: #1976D2; /* Darker blue */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            gap: 10px;
+            flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+        }
+
+        /* Previous Ratings Section */
+        .rating-history-item {
+            background-color: var(--background-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .rating-history-item:hover {
+            border-color: var(--secondary-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .rating-history-item h4 {
+            font-size: 1.1em;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+
+        .rating-history-item p {
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-bottom: 3px;
+        }
+
+        .rating-history-item .rating-stars {
+            color: var(--star-filled);
+            margin-top: 5px;
+            font-size: 1.2em;
+        }
+
+        /* Search and Filter Section */
+        .search-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* Allow filters to wrap */
+        }
+
+        .search-filter input,
+        .search-filter select {
+            flex-grow: 1;
+            min-width: 150px; /* Ensure inputs don't become too small */
+        }
+
+        /* Empty state messages */
+        .empty-state {
+            text-align: center;
+            color: var(--text-light);
+            padding: 20px;
+            font-style: italic;
+            background-color: var(--background-light);
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.95em;
+        }
+        .empty-state p {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 767px) {
+            .container {
+                padding: 10px;
+                margin: 10px auto;
+            }
+
+            .panel {
+                padding: 15px;
+            }
+
+            header h1 {
+                font-size: 1.5em;
+                flex-direction: column; /* Stack icon and text */
+            }
+
+            .labourer-list {
+                max-height: 300px; /* Reduce height on smaller screens */
+            }
+
+            .search-filter {
+                flex-direction: column; /* Stack filters vertically */
+            }
+
+            .button-group {
+                flex-direction: column; /* Stack buttons vertically */
+                gap: 10px;
+            }
+
+            .button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-building"></i> StepOnGo Developer Portal</h1>
+            <p>Ratings Panel - Evaluate Labourer Performance</p>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="panel">
+                <h2><i class="fas fa-star-half-alt"></i> Rate Labourers</h2>
+
+                <div class="form-group">
+                    <label for="site-select"><i class="fas fa-map-marker-alt"></i> Select Construction Site:</label>
+                    <select id="site-select">
+                        <option value="">-- Select a Site --</option>
+                        <option value="site1">Green Valley Towers</option>
+                        <option value="site2">Sunshine Apartments</option>
+                        <option value="site3">Smart City Infrastructure</option>
+                        <option value="site4">Riverside Commercial Hub</option>
+                    </select>
+                </div>
+
+                <div class="search-filter">
+                    <input type="text" id="search-labourer" placeholder="Search by name..." aria-label="Search Labourers">
+                    <select id="filter-profession" aria-label="Filter by Profession">
+                        <option value="">All Professions</option>
+                        <option value="Carpenter">Carpenter</option>
+                        <option value="Electrician">Electrician</option>
+                        <option value="Plumber">Plumber</option>
+                        <option value="Mason">Mason</option>
+                        <option value="Painter">Painter</option>
+                        <option value="Welder">Welder</option>
+                    </select>
+                    <select id="filter-rating" aria-label="Filter by Minimum Rating">
+                        <option value="">All Ratings</option>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars & Up</option>
+                        <option value="3">3 Stars & Up</option>
+                        <option value="2">2 Stars & Up</option>
+                        <option value="1">1 Star & Up</option>
+                    </select>
+                </div>
+
+                <div class="labourer-list" id="labourer-list">
+                    <div class="empty-state" id="initial-empty-state">
+                        <p><i class="fas fa-info-circle"></i> Please select a site to view labourers.</p>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="button button-primary" id="submit-all-ratings" style="display: none;"><i class="fas fa-check-double"></i> Submit All Site Ratings</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2><i class="fas fa-history"></i> Rating History</h2>
+                <div class="rating-history" id="rating-history">
+                    <div class="empty-state">
+                        <p><i class="fas fa-archive"></i> No previous ratings available.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Dummy Data (In a real app, this would come from an API) ---
+        const labourersData = {
+            "site1": [
+                { id: "L001", name: "Ramesh Kumar", profession: "Carpenter", currentRating: 0, feedback: "" },
+                { id: "L002", name: "Suresh Singh", profession: "Electrician", currentRating: 0, feedback: "" },
+                { id: "L003", name: "Priya Sharma", profession: "Plumber", currentRating: 0, feedback: "" },
+                { id: "L004", name: "Anil Gupta", profession: "Mason", currentRating: 0, feedback: "" },
+                { id: "L005", name: "Deepak Yadav", profession: "Painter", currentRating: 0, feedback: "" }
+            ],
+            "site2": [
+                { id: "L006", name: "Geeta Devi", profession: "Mason", currentRating: 0, feedback: "" },
+                { id: "L007", name: "Vijay Sharma", profession: "Carpenter", currentRating: 0, feedback: "" },
+                { id: "L008", name: "Kiran Singh", profession: "Electrician", currentRating: 0, feedback: "" }
+            ],
+            "site3": [
+                { id: "L009", name: "Manoj Kumar", profession: "Welder", currentRating: 0, feedback: "" },
+                { id: "L010", name: "Sunita Devi", profession: "Painter", currentRating: 0, feedback: "" },
+                { id: "L011", name: "Rajesh Paswan", profession: "Plumber", currentRating: 0, feedback: "" },
+                { id: "L012", name: "Pooja Kumari", profession: "Mason", currentRating: 0, feedback: "" }
+            ],
+            "site4": [
+                { id: "L013", name: "Amit Singh", profession: "Electrician", currentRating: 0, feedback: "" },
+                { id: "L014", name: "Neha Kumari", profession: "Carpenter", currentRating: 0, feedback: "" }
+            ]
+        };
+
+        // Dummy Data for previous ratings (could be fetched from an API)
+        const previousRatingsData = [
+            { id: "PR001", labourerId: "L001", name: "Ramesh Kumar", site: "Green Valley Towers", rating: 4, feedback: "Good work, needs to improve punctuality.", date: "2025-05-20" },
+            { id: "PR002", labourerId: "L006", name: "Geeta Devi", site: "Sunshine Apartments", rating: 5, feedback: "Excellent mason, highly recommended!", date: "2025-06-01" },
+            { id: "PR003", labourerId: "L002", name: "Suresh Singh", site: "Green Valley Towers", rating: 3, feedback: "Average performance, some wiring issues found.", date: "2025-05-25" }
+        ];
+
+        let currentLabourers = []; // Stores labourers for the currently selected site, including their live rating/feedback
+
+        // --- DOM Element References ---
+        const siteSelect = document.getElementById('site-select');
+        const labourerListDiv = document.getElementById('labourer-list');
+        const submitAllRatingsBtn = document.getElementById('submit-all-ratings');
+        const ratingHistoryDiv = document.getElementById('rating-history');
+        const searchLabourerInput = document.getElementById('search-labourer');
+        const filterProfessionSelect = document.getElementById('filter-profession');
+        const filterRatingSelect = document.getElementById('filter-rating');
+        const initialEmptyState = document.getElementById('initial-empty-state'); // Reference to the initial message
+
+        // --- Helper Functions ---
+
+        /**
+         * Renders star icons based on a given rating.
+         * @param {number} rating - The current rating (1-5).
+         * @param {string} labourerId - The ID of the labourer (for data attributes).
+         * @returns {string} HTML string of star icons.
+         */
+        function renderStars(rating, labourerId) {
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                const filledClass = i <= rating ? 'filled' : '';
+                starsHtml += `<span class="star ${filledClass}" data-value="${i}" data-labourer-id="${labourerId || ''}"><i class="fas fa-star"></i></span>`;
+            }
+            return starsHtml;
+        }
+
+        /**
+         * Handles click event on a star to update the rating.
+         * @param {Event} event - The click event object.
+         */
+        function handleStarClick(event) {
+            const clickedStar = event.currentTarget;
+            const value = parseInt(clickedStar.dataset.value);
+            const labourerId = clickedStar.dataset.labourerId;
+
+            // Find the labourer in the currentLabourers array and update their rating
+            const labourer = currentLabourers.find(l => l.id === labourerId);
+            if (labourer) {
+                labourer.currentRating = value;
+                // Re-render stars for this specific labourer card to reflect the change
+                const starContainer = clickedStar.closest('.star-rating');
+                if (starContainer) {
+                    starContainer.innerHTML = renderStars(value, labourerId);
+                }
+            }
+        }
+
+        /**
+         * Attaches event listeners for stars and feedback textareas.
+         * Call this after rendering new labourer cards.
+         */
+        function attachLabourerCardListeners() {
+            document.querySelectorAll('.star-rating .star').forEach(star => {
+                star.addEventListener('click', handleStarClick);
+            });
+
+            document.querySelectorAll('.labourer-card textarea').forEach(textarea => {
+                textarea.addEventListener('input', (event) => {
+                    const labourerId = event.target.dataset.labourerId;
+                    const labourer = currentLabourers.find(l => l.id === labourerId);
+                    if (labourer) {
+                        labourer.feedback = event.target.value;
+                    }
+                });
+            });
+
+            document.querySelectorAll('.submit-individual').forEach(button => {
+                button.addEventListener('click', handleSubmitIndividualRating);
+            });
+        }
+
+        /**
+         * Displays a list of labourers in the UI.
+         * @param {Array} labourersToDisplay - The filtered list of labourers to render.
+         */
+        function displayLabourers(labourersToDisplay) {
+            labourerListDiv.innerHTML = ''; // Clear existing labourers
+
+            if (labourersToDisplay.length === 0) {
+                labourerListDiv.innerHTML = `
+                    <div class="empty-state">
+                        <p><i class="fas fa-search"></i> No labourers match your current filters.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            labourersToDisplay.forEach(labourer => {
+                const labourerCard = document.createElement('div');
+                labourerCard.className = 'labourer-card';
+                // Use data attributes for filtering
+                labourerCard.setAttribute('data-id', labourer.id);
+                labourerCard.setAttribute('data-name', labourer.name.toLowerCase());
+                labourerCard.setAttribute('data-profession', labourer.profession.toLowerCase());
+                labourerCard.setAttribute('data-rating', labourer.currentRating); // Store current rating for filtering
+
+                labourerCard.innerHTML = `
+                    <div class="labourer-info">
+                        <h3>${labourer.name} <span>(${labourer.id})</span></h3>
+                        <p><strong>Profession:</strong> ${labourer.profession}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Rating:</label>
+                        <div class="star-rating" data-labourer-id="${labourer.id}">
+                            ${renderStars(labourer.currentRating, labourer.id)}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedback-${labourer.id}">Feedback (Optional):</label>
+                        <textarea id="feedback-${labourer.id}" placeholder="Enter feedback here..." data-labourer-id="${labourer.id}">${labourer.feedback}</textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="button button-secondary submit-individual" data-labourer-id="${labourer.id}"><i class="fas fa-paper-plane"></i> Submit Individual Rating</button>
+                    </div>
+                `;
+                labourerListDiv.appendChild(labourerCard);
+            });
+
+            attachLabourerCardListeners(); // Attach listeners after rendering cards
+        }
+
+        /**
+         * Loads labourers for the selected construction site.
+         */
+        function loadLabourers() {
+            const selectedSiteKey = siteSelect.value;
+            labourerListDiv.innerHTML = ''; // Clear current display
+            currentLabourers = []; // Reset the list of labourers for the new site
+
+            if (initialEmptyState) {
+                initialEmptyState.style.display = 'none'; // Hide the initial empty state
+            }
+
+            if (selectedSiteKey && labourersData[selectedSiteKey]) {
+                // Create a deep copy of the labourers data to allow independent rating/feedback changes
+                currentLabourers = labourersData[selectedSiteKey].map(lab => ({ ...lab }));
+                submitAllRatingsBtn.style.display = 'block'; // Show the "Submit All" button
+            } else {
+                labourerListDiv.innerHTML = `
+                    <div class="empty-state">
+                        <p><i class="fas fa-exclamation-circle"></i> No labourers found or site not selected.</p>
+                    </div>
+                `;
+                submitAllRatingsBtn.style.display = 'none'; // Hide the "Submit All" button
+            }
+            filterAndDisplayLabourers(); // Apply filters immediately after loading
+        }
+
+        /**
+         * Filters the current labourers list based on search term, profession, and rating.
+         */
+        function filterAndDisplayLabourers() {
+            const searchTerm = searchLabourerInput.value.toLowerCase().trim();
+            const professionFilter = filterProfessionSelect.value.toLowerCase();
+            const ratingFilter = parseInt(filterRatingSelect.value); // Convert to number
+
+            const filteredLabourers = currentLabourers.filter(labourer => {
+                const matchesSearch = labourer.name.toLowerCase().includes(searchTerm) ||
+                                      labourer.profession.toLowerCase().includes(searchTerm);
+                const matchesProfession = professionFilter === "" || labourer.profession.toLowerCase() === professionFilter;
+                // Use isNaN to check if ratingFilter is "All Ratings" (empty string parsed to NaN)
+                const matchesRating = isNaN(ratingFilter) || labourer.currentRating >= ratingFilter;
+
+                return matchesSearch && matchesProfession && matchesRating;
+            });
+            displayLabourers(filteredLabourers);
+        }
+
+        /**
+         * Handles the submission of an individual labourer's rating.
+         * @param {Event} event - The click event object.
+         */
+        async function handleSubmitIndividualRating(event) {
+            const labourerId = event.currentTarget.dataset.labourerId;
+            const labourer = currentLabourers.find(l => l.id === labourerId);
+
+            if (!labourer) {
+                console.error("Labourer not found for ID:", labourerId);
+                return;
+            }
+
+            if (labourer.currentRating === 0) {
+                alert(`Please provide a star rating for ${labourer.name}.`);
+                return;
+            }
+
+            const ratingData = {
+                labourerId: labourer.id,
+                name: labourer.name,
+                profession: labourer.profession,
+                site: siteSelect.options[siteSelect.selectedIndex].text,
+                rating: labourer.currentRating,
+                feedback: labourer.feedback.trim(), // Trim whitespace from feedback
+                date: new Date().toISOString().split('T')[0] // YYYY-MM-DD format
+            };
+
+            console.log("Submitting individual rating:", ratingData);
+            // Simulate API call
+            // try {
+            //     const response = await fetch('/api/submit-rating', {
+            //         method: 'POST',
+            //         headers: { 'Content-Type': 'application/json' },
+            //         body: JSON.stringify(ratingData)
+            //     });
+            //     if (!response.ok) throw new Error('Failed to submit rating');
+            //     const result = await response.json();
+            //     console.log('API response:', result);
+            //     alert(`Rating for ${labourer.name} submitted successfully!`);
+            // } catch (error) {
+            //     console.error('Error submitting rating:', error);
+            //     alert(`Failed to submit rating for ${labourer.name}. Please try again.`);
+            //     return; // Stop if API call fails
+            // }
+
+            alert(`Rating for ${labourer.name} submitted successfully!`); // For demo purposes
+
+            // Add to dummy previous ratings for immediate display
+            previousRatingsData.unshift(ratingData); // Add to the beginning
+            renderRatingHistory();
+
+            // Reset the rating and feedback for the submitted labourer in the UI and data
+            labourer.currentRating = 0;
+            labourer.feedback = "";
+            // Re-render the specific card to show the reset state
+            const labourerCardElement = document.querySelector(`.labourer-card[data-id="${labourerId}"]`);
+            if (labourerCardElement) {
+                const starContainer = labourerCardElement.querySelector('.star-rating');
+                if (starContainer) {
+                    starContainer.innerHTML = renderStars(0, labourerId);
+                }
+                const feedbackTextarea = labourerCardElement.querySelector(`#feedback-${labourerId}`);
+                if (feedbackTextarea) {
+                    feedbackTextarea.value = "";
+                }
+            }
+            filterAndDisplayLabourers(); // Re-apply filters to update the card's data-rating attribute if needed
+        }
+
+        /**
+         * Handles the submission of all labourers' ratings for the selected site.
+         */
+        async function handleSubmitAllRatings() {
+            const siteRatingsToSubmit = [];
+            let unratedCount = 0;
+
+            currentLabourers.forEach(labourer => {
+                if (labourer.currentRating === 0) {
+                    unratedCount++;
+                } else {
+                    siteRatingsToSubmit.push({
+                        labourerId: labourer.id,
+                        name: labourer.name,
+                        profession: labourer.profession,
+                        site: siteSelect.options[siteSelect.selectedIndex].text,
+                        rating: labourer.currentRating,
+                        feedback: labourer.feedback.trim(),
+                        date: new Date().toISOString().split('T')[0]
+                    });
+                }
+            });
+
+            if (unratedCount > 0) {
+                alert(`Please provide ratings for all ${unratedCount} unrated labourers before submitting all site ratings.`);
+                return;
+            }
+
+            if (siteRatingsToSubmit.length === 0) {
+                alert("No labourers with ratings to submit on this site.");
+                return;
+            }
+
+            console.log("Submitting all site ratings:", siteRatingsToSubmit);
+            // Simulate API call for batch submission
+            // try {
+            //     const response = await fetch('/api/submit-all-ratings', {
+            //         method: 'POST',
+            //         headers: { 'Content-Type': 'application/json' },
+            //         body: JSON.stringify({ site: siteSelect.value, ratings: siteRatingsToSubmit })
+            //     });
+            //     if (!response.ok) throw new Error('Failed to submit all ratings');
+            //     const result = await response.json();
+            //     console.log('API batch response:', result);
+            //     alert(`All ${siteRatingsToSubmit.length} ratings for "${siteSelect.options[siteSelect.selectedIndex].text}" submitted successfully!`);
+            // } catch (error) {
+            //     console.error('Error submitting all ratings:', error);
+            //     alert(`Failed to submit all ratings for "${siteSelect.options[siteSelect.selectedIndex].text}". Please try again.`);
+            //     return;
+            // }
+
+            alert(`All ${siteRatingsToSubmit.length} ratings for "${siteSelect.options[siteSelect.selectedIndex].text}" submitted successfully!`); // For demo purposes
+
+            // Add to dummy previous ratings for immediate display
+            previousRatingsData.unshift(...siteRatingsToSubmit); // Add to the beginning
+            renderRatingHistory();
+
+            // Reset all ratings and feedback for the current site in the data model
+            currentLabourers.forEach(labourer => {
+                labourer.currentRating = 0;
+                labourer.feedback = "";
+            });
+            loadLabourers(); // Reload labourers to reflect reset states and re-apply filters
+        }
+
+        /**
+         * Renders the list of previous ratings in the history panel.
+         */
+        function renderRatingHistory() {
+            ratingHistoryDiv.innerHTML = ''; // Clear current history display
+
+            if (previousRatingsData.length === 0) {
+                ratingHistoryDiv.innerHTML = `
+                    <div class="empty-state">
+                        <p><i class="fas fa-archive"></i> No previous ratings available.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by date descending (most recent first)
+            const sortedHistory = [...previousRatingsData].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sortedHistory.forEach(rating => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'rating-history-item';
+                historyItem.innerHTML = `
+                    <h4>${rating.name} (<span style="color: var(--primary-dark);">${rating.profession}</span>) - ${rating.site}</h4>
+                    <p>Rated on: <strong>${rating.date}</strong></p>
+                    <p class="rating-stars">${renderStars(rating.rating, null)}</p>
+                    <p><strong>Feedback:</strong> ${rating.feedback || '<span style="font-style: italic; color: var(--text-light);">No feedback provided.</span>'}</p>
+                `;
+                ratingHistoryDiv.appendChild(historyItem);
+            });
+        }
+
+        // --- Event Listeners ---
+        siteSelect.addEventListener('change', loadLabourers);
+        submitAllRatingsBtn.addEventListener('click', handleSubmitAllRatings);
+        searchLabourerInput.addEventListener('input', filterAndDisplayLabourers); // Use 'input' for real-time filtering
+        filterProfessionSelect.addEventListener('change', filterAndDisplayLabourers);
+        filterRatingSelect.addEventListener('change', filterAndDisplayLabourers);
+
+        // --- Initial Page Load Actions ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRatingHistory(); // Load previous ratings on page load
+            // Display initial message for site selection (it's already in HTML)
+        });
+    </script>
+</body>
+</html>

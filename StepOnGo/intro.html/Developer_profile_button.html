@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StepOnGo Company Profile</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .header {
+      background: #196bd8;
+      color: white;
+      padding: 20px;
+      font-size: 22px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .form-section, .summary-section {
+      padding: 20px 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    .required::after {
+      content: " *";
+      color: red;
+    }
+
+    .file-note-inline {
+      font-size: 12px;
+      color: #666;
+      font-weight: normal;
+      margin-left: 8px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      background: #196bd8;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #145abc;
+    }
+
+    .checkbox-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .checkbox-group label {
+      display: inline-flex;
+      align-items: center;
+      font-weight: normal;
+      margin-bottom: 10px;
+      white-space: nowrap;
+    }
+
+    .checkbox-group input {
+      margin-right: 10px;
+      margin-top: 15px;
+    }
+
+    #other-business-field,
+    #other-company-type-field,
+    #other-labour-field {
+      display: none;
+    }
+
+    .summary-section {
+      display: none; /* Hidden by default */
+      padding: 20px;
+      border-top: 1px solid #eee;
+    }
+
+    .summary-section h3 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #196bd8;
+      font-size: 24px;
+    }
+
+    .summary-group {
+      margin-bottom: 25px;
+      padding: 15px;
+      background: #f8f8f8;
+      border-radius: 10px;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+    }
+
+    .summary-group h4 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #333;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 8px;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      padding-bottom: 5px;
+      border-bottom: 1px dotted #eee;
+    }
+
+    .summary-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .summary-item span:first-child {
+      font-weight: bold;
+      color: #555;
+      flex-basis: 45%;
+    }
+
+    .summary-item span:last-child {
+      color: #333;
+      text-align: right;
+      flex-basis: 55%;
+    }
+
+    .edit-button {
+      background: #6c757d;
+      margin-top: 20px;
+    }
+    .edit-button:hover {
+      background: #5a6268;
+    }
+
+    /* Submission Success Message Styling */
+    .success-message {
+      display: none; /* Hidden by default */
+      text-align: center;
+      padding: 30px;
+      background-color: #d4edda; /* Light green background */
+      color: #155724; /* Dark green text */
+      border: 1px solid #c3e6cb;
+      border-radius: 10px;
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .success-message .fa-circle-check {
+      color: #28a745; /* Green checkmark */
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        margin: 15px;
+      }
+      .summary-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .summary-item span:last-child {
+        text-align: left;
+        margin-top: 2px;
+      }
+      .success-message .fa-circle-check {
+        font-size: 36px;
+      }
+      .success-message {
+        font-size: 16px;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      StepOnGo - Company Profile
+      <i class="fa-solid fa-user" style="color: #ffffff;"></i>
+    </div>
+
+    <form class="form-section" id="companyForm">
+      <label class="required">Company Name</label>
+      <input type="text" id="companyName" required placeholder="ABC Constructions"/>
+
+      <label class="required">Company Logo <span class="file-note-inline">(PDF, MAX 10MB)</span></label>
+      <input type="file" id="companyLogo" accept="image/*" />
+
+      <label class="required">Full Address</label>
+      <input type="text" id="address" required placeholder="Salt Lake, Kolkata"/>
+
+      <label class="required">Primary Work Location</label>
+      <input type="text" id="workLocation" required placeholder="Kolkata"/>
+
+      <label class="required">Contact Person</label>
+      <input type="text" id="contactPerson" required placeholder="Ramesh Singh"/>
+
+      <label>Designation</label>
+      <input type="text" id="designation" placeholder="Project Manager"/>
+
+      <label class="required">Phone Number</label>
+      <input type="text" id="phone" required placeholder="9876543210"/>
+
+      <label class="required">Email</label>
+      <input type="email" id="email" required placeholder="abc@example.com"/>
+
+      <label class="required">Nature of Business</label>
+      <select id="natureOfBusiness" required onchange="toggleOtherField(this)">
+        <option value="">-- Select --</option>
+        <option value="Construction">Construction</option>
+        <option value="Interior Work">Interior Work</option>
+        <option value="Real Estate Developer">Real Estate Developer</option>
+        <option value="Electrical">Electrical</option>
+        <option value="Government Contractor">Government Contractor</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <div id="other-business-field">
+        <label class="required">Please specify your Business</label>
+        <input type="text" id="otherBusiness" placeholder="Your business type">
+      </div>
+
+      <label class="required">Company Type</label>
+      <select id="companyType" required onchange="toggleCompanyTypeOther(this)">
+        <option value="">-- Select --</option>
+        <option>Proprietorship</option>
+        <option>Partnership</option>
+        <option>Private Limited</option>
+        <option>Public Limited</option>
+        <option>LLP</option>
+        <option>Government Contractor</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <div id="other-company-type-field">
+        <label class="required">Please specify Company Type</label>
+        <input type="text" id="otherCompanyType" placeholder="Your company type" />
+      </div>
+
+      <label class="required">Company Registration Number</label>
+      <input type="text" id="regNumber" required placeholder="1234567890ABC"/>
+
+      <label class="required">PAN Number</label>
+      <input type="text" id="pan" required placeholder="ABCDE1234F"/>
+
+      <label class="required">GST Number</label>
+      <input type="text" id="gst" required placeholder="GSTIN"/>
+
+      <label>Active Projects</label>
+      <input type="number" id="activeProjects" placeholder="e.g. 5"/>
+
+      <label class="required">Preferred Labour Types</label>
+      <select id="labourTypes" name="labourTypes" multiple required>
+        <option value="Mason">Mason</option>
+        <option value="Helper">Helper</option>
+        <option value="Electrician">Electrician</option>
+        <option value="Plumber">Plumber</option>
+        <option value="Painter">Painter</option>
+        <option value="Tiler">Tiler</option>
+        <option value="Welder">Welder</option>
+        <option value="Supervisor">Supervisor</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <div id="other-labour-field">
+        <label class="required">Please specify Labour Type</label>
+        <input type="text" id="otherLabour" placeholder="Your labour type"/>
+      </div>
+
+      <label>Average Daily Labour Requirement</label>
+      <input type="number" id="dailyLabourReq" placeholder="e.g. 10"/>
+
+      <label class="required">Wage Offering (₹/day)</label>
+      <input type="text" id="wageOffering" placeholder="₹400 - ₹600"/>
+
+      <label>Preferred Payment Method</label>
+      <select id="paymentMethod">
+        <option value="">Select</option>
+        <option>UPI</option>
+        <option>Bank Transfer</option>
+        <option>Cash</option>
+      </select>
+
+      <label class="required">Payment Cycle</label>
+      <select id="paymentCycle">
+        <option value="">Select</option>
+        <option>Daily</option>
+        <option>Weekly</option>
+        <option>Monthly</option>
+        <option>Project End</option>
+      </select>
+
+      <label>Project Categories</label>
+      <select id="projectCategories" required>
+        <option value="">select Category</option>
+        <option>Residential</option>
+        <option>Commercial</option>
+        <option>Government</option>
+        <option>Industrial</option>
+        <option>Infrastructure</option>
+      </select>
+
+      <hr style="margin: 20px 0"/>
+
+      <label class="required">Upload PAN Card <span class="file-note-inline">(PDF, MAX 10MB)</span></label>
+      <input type="file" id="panCardUpload" required accept=".pdf,.jpg,.png"/>
+
+      <label class="required">Upload GST Certificate <span class="file-note-inline">(PDF, MAX 10MB)</span></label>
+      <input type="file" id="gstCertUpload" required accept=".pdf,.jpg,.png"/>
+
+      <label class="required">Upload Trade License <span class="file-note-inline">(PDF, MAX 10MB)</span></label>
+      <input type="file" id="tradeLicenseUpload" required accept=".pdf,.jpg,.png"/>
+
+      <label class="required">Upload Company Registration Certificate <span class="file-note-inline">(PDF, MAX 10MB)</span></label>
+      <input type="file" id="regCertUpload" required accept=".pdf,.jpg,.png"/>
+
+      <label>Upload Company Profile/Brochure (Optional) <span class="file-note-inline">(PDF, MAX 10MB)</span></label>
+      <input type="file" id="brochureUpload" accept=".pdf"/>
+
+      <div class="checkbox-group">
+        <label><input type="checkbox" id="termsAgree" required /> I agree to StepOnGo Terms & Privacy Policy</label><br>
+        <label><input type="checkbox" id="detailsConfirm" required /> I confirm all details/documents are true</label>
+      </div>
+
+      <button type="submit">Save Profile</button>
+    </form>
+
+    <div class="success-message" id="successMessage">
+      <i class="fa-solid fa-circle-check"></i>
+      <p>Your form was submitted successfully!</p>
+    </div>
+
+    <div class="summary-section" id="summary">
+      <h3>Profile Summary</h3>
+
+      <div class="summary-group">
+        <h4>Company Information</h4>
+        <div class="summary-item"><span>Company Name:</span> <span id="summaryCompanyName"></span></div>
+        <div class="summary-item"><span>Full Address:</span> <span id="summaryAddress"></span></div>
+        <div class="summary-item"><span>Primary Work Location:</span> <span id="summaryWorkLocation"></span></div>
+        <div class="summary-item"><span>Nature of Business:</span> <span id="summaryNatureOfBusiness"></span></div>
+        <div class="summary-item"><span>Company Type:</span> <span id="summaryCompanyType"></span></div>
+        <div class="summary-item"><span>Company Registration Number:</span> <span id="summaryRegNumber"></span></div>
+        <div class="summary-item"><span>PAN Number:</span> <span id="summaryPAN"></span></div>
+        <div class="summary-item"><span>GST Number:</span> <span id="summaryGST"></span></div>
+        <div class="summary-item"><span>Active Projects:</span> <span id="summaryActiveProjects"></span></div>
+      </div>
+
+      <div class="summary-group">
+        <h4>Contact Details</h4>
+        <div class="summary-item"><span>Contact Person:</span> <span id="summaryContactPerson"></span></div>
+        <div class="summary-item"><span>Designation:</span> <span id="summaryDesignation"></span></div>
+        <div class="summary-item"><span>Phone Number:</span> <span id="summaryPhone"></span></div>
+        <div class="summary-item"><span>Email:</span> <span id="summaryEmail"></span></div>
+      </div>
+
+      <div class="summary-group">
+        <h4>Labour & Project Preferences</h4>
+        <div class="summary-item"><span>Preferred Labour Types:</span> <span id="summaryLabourTypes"></span></div>
+        <div class="summary-item"><span>Average Daily Labour Requirement:</span> <span id="summaryDailyLabourReq"></span></div>
+        <div class="summary-item"><span>Wage Offering (₹/day):</span> <span id="summaryWageOffering"></span></div>
+        <div class="summary-item"><span>Preferred Payment Method:</span> <span id="summaryPaymentMethod"></span></div>
+        <div class="summary-item"><span>Payment Cycle:</span> <span id="summaryPaymentCycle"></span></div>
+        <div class="summary-item"><span>Project Categories:</span> <span id="summaryProjectCategories"></span></div>
+      </div>
+
+      <button type="button" class="edit-button" onclick="editProfile()">Edit Profile</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+  <script>
+    function toggleOtherField(select) {
+      const otherField = document.getElementById('other-business-field');
+      otherField.style.display = select.value === 'Other' ? 'block' : 'none';
+    }
+
+    function toggleCompanyTypeOther(select) {
+      const otherTypeField = document.getElementById('other-company-type-field');
+      otherTypeField.style.display = select.value === 'Other' ? 'block' : 'none';
+    }
+
+    const labourSelect = new Choices('#labourTypes', {
+      removeItemButton: true,
+      placeholderValue: 'Select Labour Types',
+      searchPlaceholderValue: 'Search...',
+    });
+
+    document.getElementById('labourTypes').addEventListener('change', function() {
+      const selected = Array.from(this.selectedOptions).map(opt => opt.value);
+      const otherField = document.getElementById('other-labour-field');
+      otherField.style.display = selected.includes('Other') ? 'block' : 'none';
+    });
+
+    document.getElementById('companyForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Hide the form
+      document.getElementById('companyForm').style.display = 'none';
+
+      // Show the success message
+      const successMessage = document.getElementById('successMessage');
+      successMessage.style.display = 'block';
+      successMessage.style.opacity = '0'; // Start invisible for fade-in
+      setTimeout(() => {
+        successMessage.style.opacity = '1'; // Fade in
+      }, 10); // Small delay to trigger transition
+
+      // Populate summary fields after a short delay, then show summary
+      setTimeout(() => {
+        const getVal = id => document.getElementById(id).value.trim();
+        const setText = (id, value) => document.getElementById(id).textContent = value;
+
+        // Populate summary fields
+        setText('summaryCompanyName', getVal('companyName'));
+        setText('summaryAddress', getVal('address'));
+        setText('summaryWorkLocation', getVal('workLocation'));
+        setText('summaryContactPerson', getVal('contactPerson'));
+        setText('summaryDesignation', getVal('designation') || 'N/A');
+        setText('summaryPhone', getVal('phone'));
+        setText('summaryEmail', getVal('email'));
+
+        let business = getVal('natureOfBusiness');
+        if (business === 'Other' && getVal('otherBusiness')) business = getVal('otherBusiness');
+        setText('summaryNatureOfBusiness', business || 'N/A');
+
+        let companyType = getVal('companyType');
+        if (companyType === 'Other' && getVal('otherCompanyType')) companyType = getVal('otherCompanyType');
+        setText('summaryCompanyType', companyType || 'N/A');
+
+        setText('summaryRegNumber', getVal('regNumber'));
+        setText('summaryPAN', getVal('pan'));
+        setText('summaryGST', getVal('gst'));
+        setText('summaryActiveProjects', getVal('activeProjects') || 'N/A');
+
+        const selectedLabourTypes = Array.from(document.getElementById('labourTypes').selectedOptions).map(opt => opt.value);
+        let labourText = selectedLabourTypes.length > 0 ? selectedLabourTypes.join(', ') : 'N/A';
+        if (selectedLabourTypes.includes('Other') && getVal('otherLabour')) {
+          labourText = labourText.replace('Other', getVal('otherLabour'));
+        }
+        setText('summaryLabourTypes', labourText);
+
+        setText('summaryDailyLabourReq', getVal('dailyLabourReq') || 'N/A');
+        setText('summaryWageOffering', getVal('wageOffering') || 'N/A');
+        setText('summaryPaymentMethod', getVal('paymentMethod') || 'N/A');
+        setText('summaryPaymentCycle', getVal('paymentCycle') || 'N/A');
+        setText('summaryProjectCategories', getVal('projectCategories') || 'N/A');
+
+        // Hide success message and show summary
+        successMessage.style.display = 'none';
+        document.getElementById('summary').style.display = 'block';
+      }, 2000); // Display success message for 2 seconds (2000 milliseconds)
+    });
+
+    function editProfile() {
+      document.getElementById('summary').style.display = 'none';
+      document.getElementById('companyForm').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
